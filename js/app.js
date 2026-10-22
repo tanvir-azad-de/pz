@@ -80,7 +80,7 @@ const App = (() => {
           <span class="t-title-sm nav-bar__title">${Render.esc(title)}</span>
         </div>
         <div class="wallet-pill">
-          <span class="t-label-lg">$ ${Render.esc(balance)}</span>
+          <span class="t-label-lg" style="font-size:18px;"><span style="color:var(--color-primary);">$</span> ${Render.esc(balance)}</span>
         </div>
       </div>
     `;

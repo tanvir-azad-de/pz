@@ -39,9 +39,10 @@ Discover
 
 Route `#/my-games`. Per a later product decision, this tab is now intentionally empty — it no
 longer lists any games (previously it mirrored Discover's "All Games" in a 2-column grid; that
-behavior was removed). Renders just a header "My Games" (`.t-title-md`, `padding:16px`)
-followed by a centered empty-state message (`.state-message`, same pattern used for "Game not
-found" / "Reward not found"): "No games yet" / "Games you start playing will appear here."
+behavior was removed). Renders just a centered empty-state message (`.state-message`, same
+pattern used for "Game not found" / "Reward not found"): "No games yet" / "Games you start
+playing will appear here." No header text (removed per a later product decision — the nav bar
+already shows "My Games" as the screen title).
 
 `gameCardHtml()` (defined in `js/views/discover.js`) and the `.game-card` styles are unaffected
 — Discover still uses them.
@@ -125,8 +126,9 @@ Profile
 
 ## Decisions
 
-- Discover shows the trending game in BOTH the Trending section and the All Games list,
-  matching Figma exactly (no de-duplication).
+- Discover's "All Games" list excludes the Trending game (later product decision — originally
+  matched Figma exactly with the trending game duplicated in both sections; de-duplication was
+  added afterward).
 - My Games is intentionally empty (later product decision) — no game list, no filtering, just
   a header and an empty-state message.
 - Rewards' featured top row (PayPal/Zalando cards with progress bars at the very top of the

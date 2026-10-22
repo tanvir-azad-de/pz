@@ -78,7 +78,8 @@ Present on every screen, fixed height ~68px, bottom border `1px solid var(--purp
 - Left: either nothing (tab screens) or a back-arrow icon button (detail screens) + screen
   title (`.t-title-sm`, 20/700, white).
 - Right: the green wallet pill — `padding: 8px 12px`, `border: 1px solid var(--color-primary)`,
-  `border-radius: 8px`, content `$ {balance}` from `settings.balance`, `.t-label-lg` white text.
+  `border-radius: 8px`, content `$ {balance}` from `settings.balance`, text size 18px 800; the
+  `$` is colored `var(--color-primary)`, the amount is white.
 
 The wallet pill is rendered by `app.js` itself (not per-view), since it reads the same
 `settings.balance` value regardless of screen.

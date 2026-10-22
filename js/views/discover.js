@@ -5,7 +5,7 @@ function renderDiscover(container, params, store) {
   const content = store.data.content;
 
   const trending = games[0];
-  const all = games;
+  const all = games.slice(1);
 
   container.innerHTML = `
     <div class="screen-stack">
