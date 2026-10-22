@@ -101,14 +101,10 @@ which map known brand names to local PNGs in `assets/icons/` (falls back to a co
 circle for unknown brands). The sheet previously had `icon_url`/`detail_image_url` columns for
 this, but they were never read by the app and have been removed.
 
-Reward Detail screen (tap any payout card) shows that single reward's `amount`, plus a
-secondary currency figure computed client-side by `Render.progressAmount()`:
-`amount x progress_pct`, e.g. `$5` at 35% progress -> `$ 1.75`. This is NOT a stored column —
-it's derived on every render from `amount` + `progress_pct`, so the payout card and the Reward
-Detail screen for the same reward always show the identical figure. Resolves to `""` (nothing
-rendered) if `amount` doesn't parse as a number, since the column allows placeholder junk like
-`xxx`. The deprecated coin icon and its decorative `1 000`-style points number (previously
-static `content` tab copy) have been removed.
+Reward Detail screen (tap any payout card) shows that single reward's `amount`. The deprecated
+coin icon and its decorative `1 000`-style points number (previously static `content` tab copy),
+plus the later `Render.progressAmount()` derived currency figure that replaced it, have both
+been removed.
 
 ### `wallet`
 

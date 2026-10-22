@@ -366,7 +366,8 @@
   display: flex;
   gap: var(--space-card-gap);
   overflow-x: auto;
-  padding: 0 var(--space-screen-x) 4px;
+  margin: 0 var(--space-screen-x);
+  padding: 0 0 4px;
   scroll-snap-type: x proximity;
 }
 
@@ -422,13 +423,6 @@
   height: 100%;
   border-radius: 100px;
   background: var(--purple-400);
-}
-
-.payout-card__points {
-  display: flex;
-  align-items: center;
-  padding: 4px 0;
-  color: #fff;
 }
 
 /* ---------- Wallet card ---------- */

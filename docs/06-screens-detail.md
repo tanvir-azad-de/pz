@@ -70,11 +70,8 @@ Route `#/reward/:id`. Back arrow + `rewards.brand` in nav bar. Sticky "Confirm P
    centered content: large brand logo via `Render.brandLogoWide(reward.brand)` (local PNG,
    ~200×64 area, falls back to a letter circle for unknown brands — see `01-data-model.md`).
 
-2. **Amount row** — below the white card, `display:flex; gap:24px; align-items:baseline`:
-   - `rewards.amount` in large text (`.t-display-lg`, 32/800)
-   - secondary figure: `Render.progressAmount()` — `amount x progress_pct` (e.g. `$5` at 35%
-     progress -> `$ 1.75`), deterministic per reward so this matches the payout card exactly
-     (see `01-data-model.md`), `.t-title-md` 24/800. Deprecated coin icon removed.
+2. **Amount row** — below the white card: `rewards.amount` in large text (`.t-display-lg`,
+   32/800). Deprecated coin icon removed; no secondary derived currency figure.
 
 3. **How it works** — "How it works" header (`.t-title-sm`, 20/700) + 3 bullet lines
    (`content.reward_detail_how_1/2/3`, `.t-body-sm` 12/300).

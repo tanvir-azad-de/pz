@@ -183,9 +183,8 @@ Values observed consistently across all 7 screen frames:
 - No iOS status bar, "prompt" bar, or search field are rendered on any screen — these are Figma
   mockup/device chrome, not product UI, and a real mobile browser supplies its own status bar.
 - Dollars only. The coin icon and its decorative `1 000` / `2 000` points-style numbers next
-  to payout amounts are deprecated — the app is real-currency-only. The secondary figure next
-  to each reward's amount is now `Render.progressAmount()`: `amount x progress_pct`, e.g. `$5`
-  at 35% progress renders `$ 1.75`.
+  to payout amounts are deprecated — the app is real-currency-only, and reward cards show only
+  the plain `amount` + progress bar (no secondary derived currency figure).
 
 ## Open items
 

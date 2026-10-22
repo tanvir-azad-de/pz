@@ -17,9 +17,8 @@ function renderRewardDetail(container, params, store) {
         </div>
       </div>
 
-      <div class="padded-x flex-row gap-md" style="align-items:baseline;">
+      <div class="padded-x">
         <span class="t-display-lg">${Render.esc(reward.amount)}</span>
-        <div class="flex-row gap-xs"><span class="t-title-md">${Render.progressAmount(reward)}</span></div>
       </div>
 
       <div class="padded-x flex-col gap-sm">

@@ -65,8 +65,7 @@ rows:
    - Header: category name (`.t-title-md`, 24/800) + "See All" ghost button,
      `justify-content:space-between`, `padding:0 16px`.
    - Horizontally scrollable row (`.payout-row`, see `04-components.md`) of every `rewards` row
-     where `rewards.category` matches, each rendered as a `.payout-card` with its progress bar
-     and derived currency figure (`Render.progressAmount()`).
+     where `rewards.category` matches, each rendered as a `.payout-card` with its progress bar.
    - Tapping any card navigates to `#/reward/:id`.
 
 ```

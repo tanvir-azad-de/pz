@@ -64,17 +64,14 @@ Small card, 141×108, used inside horizontally-scrollable rows:
 .payout-card__fill { height: 100%; border-radius: 100px; background: var(--purple-400); }
 ```
 
-Progress fill width = `rewards.progress_pct` as a percentage. Below the card, a separate pill
-shows a derived currency figure (`Render.progressAmount()`: `amount x progress_pct` — see
-`01-data-model.md`; the deprecated coin icon and static "points" number are gone), `padding:
-4px 0`, `.t-body-lg` (16/800) white.
+Progress fill width = `rewards.progress_pct` as a percentage.
 
 Tapping a payout card navigates to `#/reward/:id`.
 
 ### Horizontal scroll row wrapper
 
 ```css
-.payout-row { display: flex; gap: 12px; overflow-x: auto; padding: 0 16px 4px; scroll-snap-type: x proximity; }
+.payout-row { display: flex; gap: 12px; overflow-x: auto; margin: 0 16px; padding: 0 0 4px; scroll-snap-type: x proximity; }
 .payout-row > * { scroll-snap-align: start; flex: 0 0 auto; }
 ```
 

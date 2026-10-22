@@ -26,19 +26,6 @@ const Render = (() => {
     return tasks.reduce((acc, t) => acc + (Number(t.amount) || 0), 0);
   }
 
-  // Secondary currency figure shown next to a reward's headline amount (payout card +
-  // Reward Detail). Replaces the deprecated decorative "points" number now that the app is
-  // real-currency-only: amount x progress_pct, e.g. "$5" at 35% -> "$ 1.75". Deterministic
-  // per reward so the card and its detail screen always agree. Returns "" when amount isn't
-  // numeric (the rewards.amount column allows placeholder junk like "xxx" per
-  // docs/01-data-model.md) rather than rendering "$ NaN".
-  function progressAmount(reward) {
-    const amt = parseFloat(String(reward.amount).replace(/[^0-9.]/g, ""));
-    if (!Number.isFinite(amt)) return "";
-    const pct = Math.max(0, Math.min(100, Number(reward.progress_pct) || 0));
-    return `$ ${((amt * pct) / 100).toFixed(2)}`;
-  }
-
   function skeletonBlock(height, extraClass) {
     return `<div class="skeleton ${extraClass || ""}" style="height:${height}px"></div>`;
   }
@@ -164,7 +151,6 @@ const Render = (() => {
     esc,
     computedTotal,
     computedTotalAmount,
-    progressAmount,
     skeletonBlock,
     icon,
     brandLogo,

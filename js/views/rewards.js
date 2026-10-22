@@ -58,7 +58,6 @@ function payoutCardHtml(reward) {
           <div class="payout-card__fill" style="width:${pct}%"></div>
         </div>
       </div>
-      <div class="payout-card__points"><span class="t-label-lg">${Render.progressAmount(reward)}</span></div>
     </button>
   `;
 }
