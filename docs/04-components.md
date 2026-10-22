@@ -134,7 +134,7 @@ Canonical button styles, reused everywhere:
 ```css
 .btn { border: none; cursor: pointer; font-family: inherit; display:inline-flex; align-items:center; justify-content:center; gap:10px; }
 .btn-primary       { height:58px; border-radius:12px; background:var(--color-primary); color:var(--color-on-primary); font:16px/21px; font-weight:800; width:100%; }
-.btn-danger-ghost  { height:58px; border-radius:12px; background:transparent; border:1px solid var(--color-error); color:var(--color-error); font:16px/21px; font-weight:800; width:100%; }
+.btn-danger-ghost  { height:58px; border-radius:12px; background:transparent; color:var(--color-error); font:16px/21px; font-weight:800; width:100%; }
 .btn-small         { height:36px; border-radius:8px; background:var(--color-primary); color:var(--color-on-primary); padding:13px 20px; font:14px/21px; font-weight:800; }
 .btn-ghost         { height:36px; border-radius:8px; background:transparent; color:var(--color-on-bg); padding:13px 0; font:14px/21px; font-weight:800; }
 .btn-pill-outline  { height:36px; border-radius:54px; background:transparent; border:1px solid currentColor; padding:12px 0; font:16px/21px; font-weight:800; }
@@ -187,8 +187,12 @@ fallback to a colored letter-circle for any unknown brand.
 | Google Play | `brand-google-play.png` | `brand-google-play-wide.png` |
 | Apple | `brand-apple.png` | `brand-apple-wide.png` |
 
-Illustrations (decorative, non-interactive art) are plain `background-image`/`<img>` references
-with a CSS gradient left in place underneath as a fallback if the file 404s:
+Illustrations (decorative, non-interactive art) are plain `background-image`/`<img>` references.
+Most still carry a CSS gradient underneath as a fallback if the file 404s — **except
+`illus-cashback.png`**, which is removed of its gradient layer: the PNG has transparent
+(RGBA) pixels, so a gradient placed behind it bled through as an unwanted purple tint on the
+Game Detail cashback card. The other illustrations below are unaffected (not yet reported /
+not in scope):
 
 | File | Size | Used in |
 |---|---|---|

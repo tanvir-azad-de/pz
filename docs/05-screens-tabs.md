@@ -54,7 +54,7 @@ top is **not** built — the screen starts directly with the balance card, then 
 rows:
 
 1. **Balance card** — full-width, `padding: 0 16px` wrapper around an inner card:
-   `background: var(--color-surface)`, `border: 1px solid #fff`, `border-radius: 16px`,
+   `background: var(--color-surface)`, no border, `border-radius: 16px`,
    `padding: 12px 16px`. Content: wallet icon (24×24) + text block ("Your Balance" `.t-label-tiny`
    800 + `$ {settings.balance}` `.t-label-lg` 800) + "Payout Now" button (`.btn-small`) right-
    aligned. "Payout Now" is visual only (no target screen specified — Reward Detail requires
@@ -111,9 +111,10 @@ Route `#/profile`. Sections top to bottom:
    - Imprint — label + chevron-right, inert
    - Privacy — label + chevron-right, inert
 
-4. **Delete account** — full-width ghost-danger button (`.btn-danger-ghost`), `padding: 12px
-   24px`, pinned near the bottom of the content (not sticky — scrolls with the page, per
-   Figma's "Frame 2609211" which sits inline after the menu, not fixed). Visual only, no action.
+4. **Delete account** — full-width danger button (`.btn-danger-ghost`): `background:
+   transparent`, no border, red text, `padding: 12px 24px`, pinned near the bottom of the
+   content (not sticky — scrolls with the page, per Figma's "Frame 2609211" which sits inline
+   after the menu, not fixed). Visual only, no action.
 
 ```
 Profile

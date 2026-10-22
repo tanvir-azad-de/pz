@@ -102,6 +102,10 @@ Consequences for `base.css`:
 
 ```css
 html, body { height: 100%; margin: 0; }
+/* scrollbar-width is NOT inherited — must target every element (`*`), not just
+   `html`, or nested scrollers like .payout-row keep their native scrollbar. */
+* { scrollbar-width: none; -ms-overflow-style: none; } /* Firefox / IE */
+*::-webkit-scrollbar { width: 0; height: 0; display: none; } /* Safari / Chrome */
 body {
   min-height: 100dvh;
   background: var(--color-bg);
@@ -122,6 +126,9 @@ body {
   (expected to be a phone).
 - `env(safe-area-inset-bottom)` accounts for the iOS home indicator area so the sticky CTA
   buttons and tab bar aren't obscured.
+- Scrollbars are hidden everywhere (page + the `.payout-row` h-scrollers) — a native scrollbar
+  track/thumb reads as desktop chrome on this mobile-only app. Scrolling itself still works;
+  only the visual indicator is suppressed.
 
 ## No-build-step rationale
 

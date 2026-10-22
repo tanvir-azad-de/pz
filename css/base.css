@@ -4,6 +4,22 @@
   box-sizing: border-box;
 }
 
+/* Scrollbars hidden app-wide (mobile-only app; native scrollbars only add visual
+   noise, notably on the .payout-row h-scrollers). Scrolling itself is unaffected.
+   scrollbar-width is NOT inherited (per spec), so it must be set on every scrollable
+   element individually — `*` rather than just `html` — or nested scrollers like
+   .payout-row keep their native scrollbar. */
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
 html, body {
   height: 100%;
   margin: 0;

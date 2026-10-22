@@ -139,12 +139,13 @@ const Render = (() => {
   }
 
   // 360x160 wide brand lockup on the Reward Detail header (js/views/reward-detail.js), shown
-  // on a white card capped at max-height:64px. Falls back to the letter-circle (at a larger
-  // size, since there's no wide-format fallback) if the PNG 404s.
+  // on a white card. Fixed 360x160 box per spec; object-fit:contain keeps the brand PNG
+  // (720x320 source) from distorting. Falls back to the letter-circle (at a larger size,
+  // since there's no wide-format fallback) if the PNG 404s.
   function brandLogoWide(brand) {
     const slug = BRAND_SLUGS[brand];
     if (!slug) return brandLogoFallback(brand, 64);
-    return `<img src="assets/icons/brand-${slug}-wide.png" alt="${esc(brand)}" style="max-height:64px;object-fit:contain;" onerror="Render._brandLogoFallback(this,'${esc(brand)}',64)" />`;
+    return `<img src="assets/icons/brand-${slug}-wide.png" alt="${esc(brand)}" width="360" height="160" style="width:360px;height:160px;object-fit:contain;" onerror="Render._brandLogoFallback(this,'${esc(brand)}',64)" />`;
   }
 
   return {

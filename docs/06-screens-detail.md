@@ -13,10 +13,12 @@ Route `#/game/:id`. Back arrow + game name in nav bar. No tab bar; sticky "Play 
 
 2. **Icon + title block** — 92×92 rounded icon (`border-radius: 20px`, reusing
    `games.image_url`, cropped via `object-fit: cover` / `background-size: cover`) stacked above
-   the game name (`.t-title-sm`, 20/700), `gap: 8px`, `padding: 0 16px`.
+   the game name (`.t-title-sm`, 20/700), `gap: 8px`, `padding: 0 16px`, horizontally centered
+   (`align-items: center; text-align: center`).
 
 3. **Stats row** — `display:flex; gap:12px; padding:0 16px`, two equal-width stat blocks
-   separated by a vertical `1px solid var(--purple-600)` divider:
+   separated by a vertical `1px solid var(--purple-600)` divider, each centered
+   (`align-items: center; text-align: center`):
    - "total reward" (`.t-body-sm` 12/300 label) above a pill:
      `games.total_reward` (`.t-title-sm`, 20/700), pill `border-radius: 32px`
    - "max per task" label above a pill: `games.max_per_task`
@@ -24,10 +26,12 @@ Route `#/game/:id`. Back arrow + game name in nav bar. No tab bar; sticky "Play 
 4. **IAP cashback card** — `background: var(--color-surface)`, `border-radius: 8px`,
    `padding: 12px`, `gap: 12px`. Row: text block (title "Earn up to $50 cashback"
    `.t-body-lg` 16/800 + subtitle "Earn 50% cashback every time you make a purchase"
-   `.t-body-md` 14/400) + decorative image (81×57) — both static copy per Figma (not
-   Sheet-driven; this card's text is hardcoded, not a `content` key, since it's a fixed promo
-   unit not described as needing to vary). Below: "How it works?" pill ghost button with arrow
-   icon, visual only.
+   `.t-body-md` 14/400) + decorative image (81×57, `illus-cashback.png` only — no gradient
+   backing; the PNG has transparent pixels and a gradient placed behind it bled through as an
+   unwanted tint, so it was removed for this image specifically) — both static copy per Figma
+   (not Sheet-driven; this card's text is hardcoded, not a `content` key, since it's a fixed
+   promo unit not described as needing to vary). Below: "How it works?" pill ghost button with
+   arrow icon, visual only.
 
 5. **Tasks card** — `background: var(--color-surface)`, `border-radius: 8px`, `padding: 16px
    12px 8px`:
@@ -68,7 +72,7 @@ Route `#/reward/:id`. Back arrow + `rewards.brand` in nav bar. Sticky "Confirm P
 
 1. **Offer card** — white card (`background: #fff`, `border-radius: 20px`, `padding: 20px 16px`),
    centered content: large brand logo via `Render.brandLogoWide(reward.brand)` (local PNG,
-   ~200×64 area, falls back to a letter circle for unknown brands — see `01-data-model.md`).
+   fixed 360×160 box, falls back to a letter circle for unknown brands — see `01-data-model.md`).
 
 2. **Amount row** — below the white card: `rewards.amount` in large text (`.t-display-lg`,
    32/800). Deprecated coin icon removed; no secondary derived currency figure.

@@ -18,20 +18,20 @@ function renderGameDetail(container, params, store) {
         <div style="height:200px;border-radius:var(--radius-xl);background-image:url('${Render.esc(game.image_url)}');background-size:cover;background-position:center;background-color:var(--purple-700);"></div>
       </div>
 
-      <div class="padded-x flex-col gap-sm">
+      <div class="padded-x flex-col gap-sm" style="align-items:center;text-align:center;">
         <div style="width:92px;height:92px;border-radius:var(--radius-xl);background-image:url('${Render.esc(game.image_url)}');background-size:cover;background-position:center;background-color:var(--purple-700);"></div>
         <h1 class="t-title-sm" style="margin:0;">${Render.esc(game.name)}</h1>
       </div>
 
       <div class="padded-x flex-row gap-md">
-        <div class="flex-col gap-xs" style="flex:1;">
+        <div class="flex-col gap-xs" style="flex:1;align-items:center;text-align:center;">
           <span class="t-body-sm">total reward</span>
-          <div class="flex-row gap-xs"><span class="t-title-sm">${Render.esc(game.total_reward)}</span></div>
+          <div class="flex-row gap-xs" style="justify-content:center;"><span class="t-title-sm">${Render.esc(game.total_reward)}</span></div>
         </div>
         <div style="width:1px;background:var(--purple-600);align-self:stretch;"></div>
-        <div class="flex-col gap-xs" style="flex:1;">
+        <div class="flex-col gap-xs" style="flex:1;align-items:center;text-align:center;">
           <span class="t-body-sm">max per task</span>
-          <div class="flex-row gap-xs"><span class="t-title-sm">${Render.esc(game.max_per_task)}</span></div>
+          <div class="flex-row gap-xs" style="justify-content:center;"><span class="t-title-sm">${Render.esc(game.max_per_task)}</span></div>
         </div>
       </div>
 
@@ -42,7 +42,7 @@ function renderGameDetail(container, params, store) {
               <span class="t-body-lg">Earn up to $50 cashback</span>
               <span class="t-body-md">Earn 50% cashback every time you make a purchase</span>
             </div>
-            <div style="width:81px;height:57px;border-radius:8px;background:url('assets/icons/illus-cashback.png') center / cover, linear-gradient(135deg, var(--purple-400), var(--purple-200));flex-shrink:0;"></div>
+            <div style="width:81px;height:57px;border-radius:8px;background:url('assets/icons/illus-cashback.png') center / cover;flex-shrink:0;"></div>
           </div>
           <button class="btn btn-pill-outline" type="button">How it works? ${Render.icon.arrowRight()}</button>
         </div>
