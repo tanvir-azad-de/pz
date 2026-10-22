@@ -11,7 +11,7 @@ function renderDiscover(container, params, store) {
     <div class="screen-stack">
       <div class="padded-x">
         <div class="illustration-card">
-          <div class="illustration-card__art"></div>
+          <div class="illustration-card__art" style="background-image:url('assets/icons/illus-invite-card.png');"></div>
           <div class="illustration-card__body">
             <p class="t-body-sm illustration-card__title">${Render.esc(content.invite_card_discover_text)}</p>
             <button class="btn btn-pill-outline" type="button">Get Bonus ${Render.icon.arrowRight()}</button>

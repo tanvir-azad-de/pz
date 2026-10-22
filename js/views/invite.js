@@ -8,7 +8,7 @@ function renderInvite(container, params, store) {
     <div class="flex-col" style="padding-bottom: 140px;">
       <div style="padding:24px 20px 48px;background:linear-gradient(180deg, var(--purple-700), var(--color-bg));">
         <div class="flex-col gap-md" style="align-items:center;text-align:center;">
-          <div style="width:166px;height:145px;border-radius:50%;background:radial-gradient(circle, var(--purple-400), var(--purple-200));"></div>
+          <div style="width:166px;height:145px;border-radius:50%;background:url('assets/icons/illus-invite-hero.png') center / cover, radial-gradient(circle, var(--purple-400), var(--purple-200));"></div>
           <div class="flex-col gap-sm">
             <h1 class="t-title-sm" style="margin:0;">${Render.esc(content.invite_hero_title)}</h1>
             <p class="t-body-md" style="margin:0;">${Render.esc(content.invite_hero_subtitle)}</p>

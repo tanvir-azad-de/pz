@@ -96,19 +96,63 @@ const Render = (() => {
     icon[key] = () => imgIcon(key);
   });
 
-  // Generic brand logo placeholder: colored circle + first letter, swappable for real SVGs.
-  function brandLogo(brand, size) {
-    const s = size || 36;
+  // Brand -> filename slug for assets/icons/brand-{slug}.png / brand-{slug}-wide.png.
+  const BRAND_SLUGS = {
+    PayPal: "paypal",
+    Amazon: "amazon",
+    "Google Play": "google-play",
+    Apple: "apple",
+  };
+
+  const BRAND_LETTER_COLORS = {
+    PayPal: "#003087",
+    Amazon: "#FF9900",
+    "Google Play": "#34A853",
+    Apple: "#A3AAAE",
+  };
+
+  // Fallback used when a brand has no PNG (unknown brand, or onerror on a known one):
+  // colored circle + first letter.
+  function brandLogoFallback(brand, size) {
     const letter = esc((brand || "?").trim().charAt(0).toUpperCase());
-    const colors = {
-      PayPal: "#003087",
-      Amazon: "#FF9900",
-      "Google Play": "#34A853",
-      Apple: "#A3AAAE",
-    };
-    const bg = colors[brand] || "var(--purple-400)";
-    return `<div class="brand-logo" style="width:${s}px;height:${s}px;background:${bg}">${letter}</div>`;
+    const bg = BRAND_LETTER_COLORS[brand] || "var(--purple-400)";
+    return `<div class="brand-logo" style="width:${size}px;height:${size}px;background:${bg}">${letter}</div>`;
   }
 
-  return { esc, computedTotal, progressAmount, skeletonBlock, icon, brandLogo, _iconImgFallback };
+  // Called from onerror="" on brand <img> tags — restores the letter-circle fallback if the
+  // PNG is missing/renamed. Must stay reachable as Render._brandLogoFallback (invoked from
+  // markup, not JS call sites).
+  function _brandLogoFallback(imgEl, brand, size) {
+    imgEl.outerHTML = brandLogoFallback(brand, size);
+  }
+
+  // 36px rounded brand mark on the Rewards payout card (js/views/rewards.js). .brand-logo
+  // clips to a circle via border-radius, so the PNG just needs to cover that area.
+  function brandLogo(brand, size) {
+    const s = size || 36;
+    const slug = BRAND_SLUGS[brand];
+    if (!slug) return brandLogoFallback(brand, s);
+    return `<img class="brand-logo" width="${s}" height="${s}" src="assets/icons/brand-${slug}.png" alt="${esc(brand)}" onerror="Render._brandLogoFallback(this,'${esc(brand)}',${s})" />`;
+  }
+
+  // 360x160 wide brand lockup on the Reward Detail header (js/views/reward-detail.js), shown
+  // on a white card capped at max-height:64px. Falls back to the letter-circle (at a larger
+  // size, since there's no wide-format fallback) if the PNG 404s.
+  function brandLogoWide(brand) {
+    const slug = BRAND_SLUGS[brand];
+    if (!slug) return brandLogoFallback(brand, 64);
+    return `<img src="assets/icons/brand-${slug}-wide.png" alt="${esc(brand)}" style="max-height:64px;object-fit:contain;" onerror="Render._brandLogoFallback(this,'${esc(brand)}',64)" />`;
+  }
+
+  return {
+    esc,
+    computedTotal,
+    progressAmount,
+    skeletonBlock,
+    icon,
+    brandLogo,
+    brandLogoWide,
+    _iconImgFallback,
+    _brandLogoFallback,
+  };
 })();

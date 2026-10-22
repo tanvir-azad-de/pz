@@ -189,6 +189,6 @@ Values observed consistently across all 7 screen frames:
 
 ## Open items
 
-- Brand logo images (PayPal, Amazon, Google Play, Apple) pending from the user — see
-  `docs/04-components.md` icon inventory. Everything else (tab bar, back/chevron/arrow/info/
-  copy/wallet, both game-card badges) now ships as real SVG files in `assets/icons/`.
+None blocking. All icon and illustration assets (tab bar, back/chevron/arrow/info/copy/wallet,
+both game-card badges, all 4 brand logos, all illustrations, favicon) now ship as real files —
+see `docs/04-components.md` icon inventory.

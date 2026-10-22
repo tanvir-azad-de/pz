@@ -42,7 +42,7 @@ function renderGameDetail(container, params, store) {
               <span class="t-body-lg">Earn up to $50 cashback</span>
               <span class="t-body-md">Earn 50% cashback every time you make a purchase</span>
             </div>
-            <div style="width:81px;height:57px;border-radius:8px;background:linear-gradient(135deg, var(--purple-400), var(--purple-200));flex-shrink:0;"></div>
+            <div style="width:81px;height:57px;border-radius:8px;background:url('assets/icons/illus-cashback.png') center / cover, linear-gradient(135deg, var(--purple-400), var(--purple-200));flex-shrink:0;"></div>
           </div>
           <button class="btn btn-pill-outline" type="button" style="align-self:flex-start;">How it works? ${Render.icon.arrowRight()}</button>
         </div>

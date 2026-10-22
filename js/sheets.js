@@ -99,7 +99,9 @@ const Sheets = (() => {
 
   function collectBonuses(content) {
     const bonuses = [];
-    for (let i = 1; i <= 3; i++) {
+    // Only 2 bonus cards ship on Profile (bonus_3 removed per product decision — the Sheet
+    // may still carry bonus_3_* columns harmlessly, they're just not read here).
+    for (let i = 1; i <= 2; i++) {
       const title = content[`bonus_${i}_title`];
       if (title === undefined) continue;
       bonuses.push({

@@ -234,7 +234,7 @@
   font-weight: 800;
 }
 
-/* ---------- Brand logo placeholder ---------- */
+/* ---------- Brand logo (real PNG, or letter-circle fallback) ---------- */
 .brand-logo {
   border-radius: 54px;
   display: flex;
@@ -244,6 +244,8 @@
   font-family: var(--font-family);
   font-weight: 800;
   flex-shrink: 0;
+  overflow: hidden;
+  object-fit: cover;
 }
 
 /* ---------- Section header (title + "See All") ---------- */
@@ -551,6 +553,8 @@
   height: 69px;
   border-radius: var(--radius-sm);
   background: linear-gradient(135deg, var(--purple-400), var(--purple-200));
+  background-size: cover;
+  background-position: center;
   flex-shrink: 0;
 }
 

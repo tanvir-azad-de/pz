@@ -23,7 +23,7 @@
 │       ├── profile.js
 │       └── invite.js
 ├── assets/
-│   └── icons/              # real SVG icon set + badge art; brand logos still pending
+│   └── icons/              # icon SVGs, brand logo PNGs, illustration PNGs
 ├── data/
 │   └── fallback.json        # bundled offline copy of all 6 tabs, used when Sheets fetch fails
 ├── docs/                    # this documentation set
@@ -141,5 +141,5 @@ body {
 
 ## Open items
 
-- None blocking. Brand logo images (PayPal, Amazon, Google Play, Apple) are pending from the
-  user — see `docs/04-components.md` icon inventory.
+- None. All assets (icons, brand logos, illustrations, favicon) are in place — see
+  `docs/04-components.md` icon inventory.

@@ -58,8 +58,8 @@ Before/after deploying, confirm the sheet itself is correctly exposed:
 - [ ] All 6 Sheet tabs exist, are named exactly as specified, and are publicly viewable.
 - [ ] `js/sheets.js` `SHEET_ID` constant matches the live sheet.
 - [ ] `data/fallback.json` still mirrors the 6-tab schema (update if columns ever change).
-- [ ] Brand logo SVGs (PayPal/Amazon/Google Play/Apple) dropped into `assets/icons/` if
-      provided, and `render.js` icon functions updated to reference them.
+- [x] Brand logo PNGs (PayPal/Amazon/Google Play/Apple) dropped into `assets/icons/` and
+      `render.js` (`brandLogo`/`brandLogoWide`) updated to reference them.
 - [ ] Open the deployed URL on an actual phone (or responsive mode pinned to a phone width) —
       this app has no desktop layout by design, so desktop testing is not meaningful.
 - [ ] Spot-check each of the 8 routes directly by URL (`#/discover`, `#/my-games`, `#/rewards`,

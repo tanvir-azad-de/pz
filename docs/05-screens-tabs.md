@@ -85,19 +85,23 @@ Route `#/profile`. Sections top to bottom:
 
 1. **Your Wallet row** — card, `background: var(--color-surface)`, `border-radius: 16px`,
    `padding: 8px 12px`, height 66px. `display:flex; justify-content:space-between;
-   align-items:center`. Left: small icon (61×56) + "Your Wallet" label (`.t-label-lg`). Right:
+   align-items:center`. Left: `illus-wallet.png` (50×50, native asset size — Figma specs
+   61×56 but the delivered art is square) + "Your Wallet" label (`.t-label-lg`). Right:
    chevron-right icon. Tapping navigates to `#/wallet`.
 
-2. **Bonuses** — section header "Bonuses" (`.t-title-sm`, 20/700), `padding: 8px 0`. Three
-   cards (`gap: 8px` or `12px` between them — Figma shows both 12 and 8 depending on sub-frame;
-   use 12px for consistency), each: `background: var(--color-surface)`, `border: 1px solid
+2. **Bonuses** — section header "Bonuses" (`.t-title-sm`, 20/700), `padding: 8px 0`. Two
+   cards (bonus 3 removed per product decision; `gap: 8px` or `12px` between them — Figma
+   shows both 12 and 8 depending on sub-frame; use 12px for consistency), each:
+   `background: var(--color-surface)`, `border: 1px solid
    var(--purple-400)`, `border-radius: 16px`, `padding: 12px 12px 8px`, height ~89px.
-   `display:flex; gap:12px`. Left: decorative illustration (91×69, placeholder/static). Right:
+   `display:flex; gap:12px`. Left: decorative illustration (91×69 — bonus 1 reuses
+   `illus-invite-card.png`, same as the Discover invite card; bonus 2 uses
+   `illus-bonus-2.png`). Right:
    text (`content.bonus_{n}_title`, `.t-body-sm` 14/800, 2-line) + pill CTA button
-   (`content.bonus_{n}_cta`, outline style, `var(--color-primary)` text + arrow icon). All 3
+   (`content.bonus_{n}_cta`, outline style, `var(--color-primary)` text + arrow icon). Both
    visual only, no real navigation (per "visual only interactions" decision) — except bonus 1
    ("Invite your friends...") which may optionally link to `#/invite` since that screen exists;
-   bonuses 2–3 (Instagram follow, generic invite) have no corresponding screen and stay inert.
+   bonus 2 (Instagram follow) has no corresponding screen and stays inert.
 
 3. **Menu list** — 5 rows, each `border-bottom: 1px solid var(--purple-700)`, `padding: 12px
    16px`, `display:flex; justify-content:space-between; align-items:center`, height 48px

@@ -139,7 +139,6 @@ email
 invite_card_discover_text        # "Invite your friends and earn up to $xx bonus" (Discover)
 bonus_1_title / bonus_1_cta / bonus_1_icon
 bonus_2_title / bonus_2_cta / bonus_2_icon
-bonus_3_title / bonus_3_cta / bonus_3_icon
 reward_detail_how_1 / reward_detail_how_2 / reward_detail_how_3
 reward_detail_conditions_1 / reward_detail_conditions_2
 reward_detail_disclaimer
@@ -148,9 +147,11 @@ invite_hero_subtitle             # "Just share your link and start earning. Work
 invite_how_1 / invite_how_2 / invite_how_3 / invite_how_4
 ```
 
-Bonuses are stored as indexed keys (`bonus_1_*`, `bonus_2_*`, `bonus_3_*`) rather than a separate
-tab, per product decision. The loader (`js/sheets.js`) collects these into an array of 3 objects
-`{title, cta, icon}` after fetching.
+Bonuses are stored as indexed keys (`bonus_1_*`, `bonus_2_*`) rather than a separate
+tab, per product decision. The loader (`js/sheets.js`) collects these into an array of 2 objects
+`{title, cta, icon}` after fetching (a third "bonus_3" card existed earlier but was removed per
+product decision — any leftover `bonus_3_*` columns in the live Sheet are simply ignored, not
+an error).
 
 ## Decisions
 

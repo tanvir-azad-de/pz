@@ -185,7 +185,28 @@ Icons are real SVG files in `assets/icons/`, registered in two manifests in `ren
 | `tabDiscover` / `tabMyGames` / `tabRewards` / `tabProfile` | `tab-*.svg` | 24 | tab bar |
 | `dollar` (img) | `badge-cashback.svg` | 20 | game card Cashback badge |
 | `stopwatch` (img) | `badge-limited-bonus.svg` | 20 | game card Limited Bonus badge |
-| Brand logos: PayPal, Amazon, Google Play, Apple | reward cards + reward detail | **real exports needed from user** — placeholder = colored circle with first letter until provided |
+
+Brand logos (`Render.brandLogo()` / `Render.brandLogoWide()`) are a separate mechanism from
+`icon.*` since they're keyed by brand name, not a fixed set: PNG `<img>` with an `onerror`
+fallback to a colored letter-circle for any unknown brand.
+
+| Brand | 36×36 (payout card) | 360×160 (Reward Detail, on white) |
+|---|---|---|
+| PayPal | `brand-paypal.png` | `brand-paypal-wide.png` |
+| Amazon | `brand-amazon.png` | `brand-amazon-wide.png` |
+| Google Play | `brand-google-play.png` | `brand-google-play-wide.png` |
+| Apple | `brand-apple.png` | `brand-apple-wide.png` |
+
+Illustrations (decorative, non-interactive art) are plain `background-image`/`<img>` references
+with a CSS gradient left in place underneath as a fallback if the file 404s:
+
+| File | Size | Used in |
+|---|---|---|
+| `illus-invite-card.png` | 91×69 | Discover invite promo card; reused for Profile bonus 1 |
+| `illus-bonus-2.png` | 91×69 | Profile bonus 2 (Instagram follow) |
+| `illus-invite-hero.png` | 166×145 | Invite Friends hero |
+| `illus-cashback.png` | 81×57 | Game Detail IAP cashback card |
+| `illus-wallet.png` | 50×50 | Profile "Your Wallet" row |
 
 All icons are still called the same way from every view (e.g. `Render.icon.back()`,
 `Render.icon.chevronRight()`) — only `render.js` changed, not the call sites.
@@ -197,9 +218,9 @@ All icons are still called the same way from every view (e.g. `Render.icon.back(
 - My Games reuses the exact same card component as Discover; only the grid container differs.
 - Progress bars ARE implemented on payout cards (reinstated per product decision).
 - Wallet chips are client-side visual filters only — no state persists across reload.
-- Brand logos are the one icon category that genuinely needs user-provided assets; everything
-  else now ships as real SVG files per the icon inventory above.
+- Profile ships 2 bonus cards, not 3 — bonus 3 removed per product decision. The Sheet's
+  `content` tab may still carry unused `bonus_3_*` columns harmlessly (see `01-data-model.md`).
 
 ## Open items
 
-- Swap brand logo placeholders for real images once provided.
+None.

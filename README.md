@@ -66,7 +66,7 @@ setup and pre-deploy checklist.
 
 ## Known gaps
 
-- Brand logo images (PayPal, Amazon, Google Play, Apple) are pending from the user — see
-  "Open items" in `docs/04-components.md`. Everything else in the icon set is real SVG art.
+None. All icon, brand logo, illustration, and favicon assets are in place — see
+`docs/04-components.md` icon inventory.
 - All interactions beyond navigation (Play Now, Confirm Payout, Get Bonus, Copy & Shop, etc.)
   are visual only — no backend, no persistence, by design.
