@@ -6,13 +6,15 @@
 - Sheet ID: `1M70ITzDuJapNMhcd9H_HEPUyuOWHkJIMyrFBb4cSubU`
 - Sharing: must be public ("Anyone with the link can view") for the gviz endpoint to work
   unauthenticated.
-- **Status as of 2026-10-22: the sheet is public but completely empty — 0 tabs, 0 bytes.**
-  The app ships with `data/fallback.json` so it renders fully before any tab is created.
+- **Status as of 2026-10-22: all 6 tabs exist with header rows in place, but no data rows yet.**
+  `settings` and `content` were initially built as wide single-row tables and have since been
+  corrected to vertical `key`/`value` layout (see seed files below). The app ships with
+  `data/fallback.json` and `seed/*.tsv` so it renders fully and can be populated by paste.
 
 ## Fetch mechanism: gviz JSON endpoint
 
 ```
-https://docs.google.com/spreadsheets/d/<SHEET_ID>/gviz/tq?tqx=out:json&sheet=<TAB_NAME>
+https://docs.google.com/spreadsheets/d/<SHEET_ID>/gviz/tq?tqx=out:json&gid=<TAB_GID>
 ```
 
 - No API key required, CORS-friendly, returns typed values.
@@ -22,16 +24,32 @@ https://docs.google.com/spreadsheets/d/<SHEET_ID>/gviz/tq?tqx=out:json&sheet=<TA
   has a proper header row recognized by gviz; otherwise `label` is empty and `id` is `ColN`.
   To be safe, **the app treats row 1 as headers explicitly** rather than relying on `cols[].label`.
 
-### ⚠️ Critical gotcha — silent fallback on bad tab name
+### ⚠️ Critical gotcha #1 — silent fallback on bad tab name
 
-Confirmed by testing: requesting a `sheet=` name that does not exist does **not** return an
-error. gviz silently falls back to the first sheet in the spreadsheet and returns
-`"status":"ok"` with whatever that first sheet contains (empty, in our test). A typo in a tab
-name will NOT throw — it will quietly return wrong/empty data.
+Confirmed by testing against the live sheet: requesting `sheet=<name>` with ANY name — including
+the correct tab names AND deliberately nonsense names like `zzzznope123` — returns
+`"status":"ok"` with the **`games`** tab's data every time. Tab-name-based lookup is completely
+unreliable on this sheet. A typo, or even a correctly-spelled tab name, will NOT throw — it will
+silently return the wrong tab's data.
 
-**Mitigation implemented in `js/sheets.js` (chunk 3):** after fetching each tab, validate that
-the returned header row matches the expected column list for that tab. If it doesn't match,
-treat it as a fetch failure (trigger retry UI / fallback), not as "tab is empty."
+**Resolution: address tabs by numeric `gid` instead of `sheet=<name>`.** Each tab's gid is
+visible in the sheet's URL when that tab is active (`#gid=<number>`), and is stable unless the
+tab is deleted and recreated.
+
+| Tab | gid |
+|---|---|
+| `games` | `420976241` |
+| `tasks` | `666986029` |
+| `rewards` | `955004045` |
+| `wallet` | `1476565906` |
+| `settings` | `719558094` |
+| `content` | `1744568315` |
+
+### ⚠️ Gotcha #2 — header validation still required
+
+Even with gid-based addressing, validate the returned header row against the expected column
+list for that gid before trusting the data. If it doesn't match, treat it as a fetch failure
+(trigger retry UI / fallback), not as "tab is empty." Implemented in `js/sheets.js` (chunk 3).
 
 ## Tabs and columns
 
@@ -147,8 +165,10 @@ tab, per product decision. The loader (`js/sheets.js`) collects these into an ar
 
 ## Open items
 
-- All 6 tabs need to be created in the live sheet with the header rows specified above.
-- `data/fallback.json` (written in this same chunk) mirrors this schema and is seeded with
-  real copy extracted from the Figma file (Coin Master, Royal Match, Fishdom, Monopoly Go;
-  Level 1–10 tasks; PayPal/Amazon/Google Play/Apple categories; wallet transactions across two
-  date groups; Invite Friends and Reward Detail paragraphs).
+- All 6 tabs exist with correct header rows. Data rows are pasted in via `seed/*.tsv`
+  (see `seed/README.md`) — same demo content as `data/fallback.json`, generated from a single
+  source so the two never drift: Coin Master, Royal Match, Fishdom, Monopoly Go; Level 1–10
+  tasks; PayPal/Amazon/Google Play/Apple categories; wallet transactions across two date groups;
+  Invite Friends and Reward Detail paragraphs.
+- `data/fallback.json` mirrors this schema exactly and is what the app renders from until the
+  seed data is pasted into the live sheet (or any time the live fetch fails).

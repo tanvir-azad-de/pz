@@ -1,0 +1,133 @@
+{
+  "games": [
+    {
+      "id": "g1",
+      "name": "Coin Master",
+      "image_url": "https://picsum.photos/seed/coinmaster/600/400",
+      "description": "Spin, build, and raid your way to the top.",
+      "total_reward": "$ 1000",
+      "max_per_task": "$ 75",
+      "long_description": "Coin Master invites you to spin the slot machine, raid villages, and build your very own Viking empire. Collect coins from daily spins, attack other players' villages to steal their loot, and defend your own by placing powerful traps. Join clans, compete in events, and climb the leaderboards as you upgrade your village to its full glory.",
+      "has_cashback": "TRUE",
+      "has_limited_bonus": "TRUE"
+    },
+    {
+      "id": "g2",
+      "name": "Royal Match",
+      "image_url": "https://picsum.photos/seed/royalmatch/600/400",
+      "description": "Match tiles and restore the royal castle.",
+      "total_reward": "$ 800",
+      "max_per_task": "$ 60",
+      "long_description": "Royal Match is a match-3 puzzle adventure where every level you complete helps restore a different room in King Robert's castle. Solve clever puzzles, collect boosters, and decorate rooms with the coins and stars you earn. New challenges and events are added every week to keep the kingdom growing.",
+      "has_cashback": "TRUE",
+      "has_limited_bonus": "FALSE"
+    },
+    {
+      "id": "g3",
+      "name": "Fishdom",
+      "image_url": "https://picsum.photos/seed/fishdom/600/400",
+      "description": "Solve puzzles and design your dream aquarium.",
+      "total_reward": "$ 1000",
+      "max_per_task": "$ 75",
+      "long_description": "Dorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.",
+      "has_cashback": "FALSE",
+      "has_limited_bonus": "TRUE"
+    },
+    {
+      "id": "g4",
+      "name": "Monopoly Go",
+      "image_url": "https://picsum.photos/seed/monopolygo/600/400",
+      "description": "Roll the dice and build your empire.",
+      "total_reward": "$ 650",
+      "max_per_task": "$ 45",
+      "long_description": "Monopoly Go brings the classic board game to your pocket. Roll the dice, collect rent, build landmarks, and go head-to-head with friends and players around the world in fast, fun mini-events held every day.",
+      "has_cashback": "TRUE",
+      "has_limited_bonus": "FALSE"
+    }
+  ],
+  "tasks": [
+    { "game_id": "g1", "name": "Level 1",  "amount": "5",  "is_active": "TRUE" },
+    { "game_id": "g1", "name": "Level 2",  "amount": "8",  "is_active": "FALSE" },
+    { "game_id": "g1", "name": "Level 3",  "amount": "12", "is_active": "FALSE" },
+    { "game_id": "g1", "name": "Level 4",  "amount": "15", "is_active": "FALSE" },
+    { "game_id": "g1", "name": "Level 5",  "amount": "20", "is_active": "FALSE" },
+    { "game_id": "g1", "name": "Level 10", "amount": "75", "is_active": "FALSE" },
+
+    { "game_id": "g2", "name": "Level 1", "amount": "4",  "is_active": "FALSE" },
+    { "game_id": "g2", "name": "Level 2", "amount": "7",  "is_active": "TRUE" },
+    { "game_id": "g2", "name": "Level 3", "amount": "10", "is_active": "FALSE" },
+    { "game_id": "g2", "name": "Level 4", "amount": "14", "is_active": "FALSE" },
+    { "game_id": "g2", "name": "Level 5", "amount": "18", "is_active": "FALSE" },
+    { "game_id": "g2", "name": "Level 10","amount": "60", "is_active": "FALSE" },
+
+    { "game_id": "g3", "name": "Level 1",  "amount": "5",  "is_active": "FALSE" },
+    { "game_id": "g3", "name": "Level 2",  "amount": "8",  "is_active": "FALSE" },
+    { "game_id": "g3", "name": "Level 3",  "amount": "12", "is_active": "FALSE" },
+    { "game_id": "g3", "name": "Level 4",  "amount": "15", "is_active": "FALSE" },
+    { "game_id": "g3", "name": "Level 5",  "amount": "20", "is_active": "TRUE" },
+    { "game_id": "g3", "name": "Level 10", "amount": "75", "is_active": "FALSE" },
+
+    { "game_id": "g4", "name": "Level 1", "amount": "3",  "is_active": "FALSE" },
+    { "game_id": "g4", "name": "Level 2", "amount": "6",  "is_active": "FALSE" },
+    { "game_id": "g4", "name": "Level 3", "amount": "9",  "is_active": "FALSE" },
+    { "game_id": "g4", "name": "Level 4", "amount": "12", "is_active": "TRUE" },
+    { "game_id": "g4", "name": "Level 5", "amount": "16", "is_active": "FALSE" },
+    { "game_id": "g4", "name": "Level 10","amount": "45", "is_active": "FALSE" }
+  ],
+  "rewards": [
+    { "id": "r1", "category": "Cash", "brand": "PayPal", "amount": "$5",  "progress_pct": "35", "icon_url": "https://picsum.photos/seed/paypal1/80/80", "detail_image_url": "https://picsum.photos/seed/paypaldetail/400/160" },
+    { "id": "r2", "category": "Cash", "brand": "PayPal", "amount": "$10", "progress_pct": "20", "icon_url": "https://picsum.photos/seed/paypal2/80/80", "detail_image_url": "https://picsum.photos/seed/paypaldetail/400/160" },
+    { "id": "r3", "category": "Cash", "brand": "PayPal", "amount": "$20", "progress_pct": "10", "icon_url": "https://picsum.photos/seed/paypal3/80/80", "detail_image_url": "https://picsum.photos/seed/paypaldetail/400/160" },
+
+    { "id": "r4", "category": "Amazon", "brand": "Amazon", "amount": "$5",  "progress_pct": "40", "icon_url": "https://picsum.photos/seed/amazon1/80/80", "detail_image_url": "https://picsum.photos/seed/amazondetail/400/160" },
+    { "id": "r5", "category": "Amazon", "brand": "Amazon", "amount": "$15", "progress_pct": "15", "icon_url": "https://picsum.photos/seed/amazon2/80/80", "detail_image_url": "https://picsum.photos/seed/amazondetail/400/160" },
+    { "id": "r6", "category": "Amazon", "brand": "Amazon", "amount": "$25", "progress_pct": "8",  "icon_url": "https://picsum.photos/seed/amazon3/80/80", "detail_image_url": "https://picsum.photos/seed/amazondetail/400/160" },
+
+    { "id": "r7", "category": "Google Play", "brand": "Google Play", "amount": "$5",  "progress_pct": "50", "icon_url": "https://picsum.photos/seed/gplay1/80/80", "detail_image_url": "https://picsum.photos/seed/gplaydetail/400/160" },
+    { "id": "r8", "category": "Google Play", "brand": "Google Play", "amount": "$10", "progress_pct": "25", "icon_url": "https://picsum.photos/seed/gplay2/80/80", "detail_image_url": "https://picsum.photos/seed/gplaydetail/400/160" },
+    { "id": "r9", "category": "Google Play", "brand": "Google Play", "amount": "$20", "progress_pct": "12", "icon_url": "https://picsum.photos/seed/gplay3/80/80", "detail_image_url": "https://picsum.photos/seed/gplaydetail/400/160" },
+
+    { "id": "r10", "category": "Apple", "brand": "Apple", "amount": "$5",  "progress_pct": "30", "icon_url": "https://picsum.photos/seed/apple1/80/80", "detail_image_url": "https://picsum.photos/seed/appledetail/400/160" },
+    { "id": "r11", "category": "Apple", "brand": "Apple", "amount": "$15", "progress_pct": "18", "icon_url": "https://picsum.photos/seed/apple2/80/80", "detail_image_url": "https://picsum.photos/seed/appledetail/400/160" },
+    { "id": "r12", "category": "Apple", "brand": "Apple", "amount": "$25", "progress_pct": "5",  "icon_url": "https://picsum.photos/seed/apple3/80/80", "detail_image_url": "https://picsum.photos/seed/appledetail/400/160" }
+  ],
+  "wallet": [
+    { "date": "October 8th",   "type": "earned", "name": "Fishdom",        "subtitle": "Level 10",         "amount": "75", "status": "Pending", "icon_url": "https://picsum.photos/seed/fishdom/80/80",    "coupon_code": "" },
+    { "date": "October 8th",   "type": "earned", "name": "Survey",         "subtitle": "Opinion Rewards",  "amount": "12", "status": "",        "icon_url": "https://picsum.photos/seed/survey/80/80",     "coupon_code": "" },
+    { "date": "October 8th",   "type": "spent",  "name": "Zalando Coupon", "subtitle": "10% off storewide","amount": "20", "status": "",        "icon_url": "https://picsum.photos/seed/zalando/80/80",    "coupon_code": "AUDU10" },
+    { "date": "September 29th","type": "earned", "name": "Coin Master",    "subtitle": "Level 5",          "amount": "20", "status": "",        "icon_url": "https://picsum.photos/seed/coinmaster/80/80", "coupon_code": "" },
+    { "date": "September 29th","type": "spent",  "name": "Amazon Voucher", "subtitle": "$5",                "amount": "5",  "status": "",        "icon_url": "https://picsum.photos/seed/amazon1/80/80",    "coupon_code": "" },
+    { "date": "September 29th","type": "earned", "name": "Survey",         "subtitle": "Quick Poll",       "amount": "8",  "status": "Pending", "icon_url": "https://picsum.photos/seed/survey2/80/80",    "coupon_code": "" }
+  ],
+  "settings": {
+    "balance": "2.30",
+    "referral_balance": "120",
+    "referral_first_task": "5",
+    "referral_pct": "10"
+  },
+  "content": {
+    "email": "demo@example.com",
+    "invite_card_discover_text": "Invite your friends and earn up to $50 bonus",
+    "bonus_1_title": "Invite your friends and earn up to $50 bonus",
+    "bonus_1_cta": "Get Bonus",
+    "bonus_1_icon": "",
+    "bonus_2_title": "Follow Us on Instagram and earn $5 bonus",
+    "bonus_2_cta": "Follow and earn $5",
+    "bonus_2_icon": "",
+    "bonus_3_title": "Earn up to $100 bonus for every friend you invite",
+    "bonus_3_cta": "Follow and earn $10",
+    "bonus_3_icon": "",
+    "reward_detail_how_1": "This payout will be sent directly to your PayPal account.",
+    "reward_detail_how_2": "If this is your first PayPal payout, you'll need to log in to your PayPal account or create a new one.",
+    "reward_detail_how_3": "If you've already used PayPal for payouts, simply tap the button below to receive your reward within minutes.",
+    "reward_detail_conditions_1": "Changing or editing your PayPal account for payouts is currently not possible.",
+    "reward_detail_conditions_2": "If you don't receive your payout within 7 business days, please contact our Customer Support.",
+    "reward_detail_disclaimer": "We DO NOT require nor collect your PayPal log in details. When you request a payout, you are redirected outside the PlayZone environment to the official PayPal or Hyperwallet website.",
+    "invite_hero_title": "Earn up to $100 for every friend invited!",
+    "invite_hero_subtitle": "Just share your link and start earning. Works on iOS & Android",
+    "invite_how_1": "Share your referral link with friends on Android or iOS.",
+    "invite_how_2": "You can earn referral bonuses for up to 5 friends who join and start playing.",
+    "invite_how_3": "When your friend completes their first game task, you'll receive a one-time bonus of $5.",
+    "invite_how_4": "After that, you'll earn 10% of every game reward they earn\u2014up to $20."
+  }
+}

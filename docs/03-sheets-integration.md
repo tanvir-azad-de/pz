@@ -10,14 +10,22 @@ or the sheet itself is unavailable or malformed.
 
 1. `app.js` calls `Sheets.load()` once, before the router renders the first view.
 2. `Sheets.load()` issues 6 parallel `fetch()` calls, one per tab, using `Promise.allSettled`
-   (not `Promise.all` — one bad tab must not block the others):
+   (not `Promise.all` — one bad tab must not block the others). Tabs are addressed by **gid**,
+   not by name — see the gotcha below.
 
 ```js
 const SHEET_ID = "1M70ITzDuJapNMhcd9H_HEPUyuOWHkJIMyrFBb4cSubU";
-const TABS = ["games", "tasks", "rewards", "wallet", "settings", "content"];
+const TABS = {
+  games:    { gid: "420976241" },
+  tasks:    { gid: "666986029" },
+  rewards:  { gid: "955004045" },
+  wallet:   { gid: "1476565906" },
+  settings: { gid: "719558094" },
+  content:  { gid: "1744568315" },
+};
 
-function gvizUrl(tab) {
-  return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(tab)}`;
+function gvizUrl(gid) {
+  return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${gid}`;
 }
 ```
 
@@ -55,15 +63,19 @@ function gvizToObjects(table) {
    > `table.cols[0].label` — if all `cols[].label` are non-empty, use those as headers and
    > `table.rows` as data directly; otherwise fall back to treating `rows[0]` as the header row.
 
-## ⚠️ Header validation (mandatory — see 01-data-model.md gotcha)
+## ⚠️ Tab addressing: use gid, not sheet name
 
-A request for a nonexistent `sheet=` tab name does NOT error; gviz silently returns the first
-sheet in the spreadsheet with `status: "ok"`. Confirmed by direct testing against the live
-sheet. Without validation, a typo'd tab name produces wrong data with no visible failure.
+Confirmed by direct testing against the live sheet: requesting `sheet=<name>` — even with the
+exact correct tab name, or a deliberately nonsense name — always returns the **`games`** tab's
+data with `status: "ok"`. Tab-name lookup is unreliable on this sheet; there is no error to
+catch. **All tab requests use `gid=<number>` instead** (see the `TABS` map above). If a tab is
+ever deleted and recreated, grab its new gid from the sheet's URL and update the map.
 
-**Mitigation:** after extracting headers for each tab, compare them against a hardcoded
-expected-column list. Mismatch ⇒ treat as a failed fetch for that tab (same code path as a
-network error).
+## ⚠️ Header validation (still mandatory, even with gid addressing)
+
+A gid is stable but doesn't protect against someone restructuring a tab's columns. After
+extracting headers for each tab, compare them against a hardcoded expected-column list.
+Mismatch ⇒ treat as a failed fetch for that tab (same code path as a network error).
 
 ```js
 const EXPECTED_COLUMNS = {
@@ -121,21 +133,22 @@ app-shell level, before routing even happens:
 
 ## Swapping the Sheet ID
 
-To point the app at a different spreadsheet: change the single `SHEET_ID` constant at the top
-of `js/sheets.js`. No other code changes needed, as long as the target sheet has the 6 tabs
-named exactly `games`, `tasks`, `rewards`, `wallet`, `settings`, `content` with the header rows
-specified in `01-data-model.md`.
+To point the app at a different spreadsheet: change the `SHEET_ID` constant AND every gid in
+the `TABS` map at the top of `js/sheets.js` (gids are per-spreadsheet, not portable). The target
+sheet must have 6 tabs with the header rows specified in `01-data-model.md`, in any tab order
+and under any tab names — only the gids matter for fetching.
 
 ## Decisions
 
 - `Promise.allSettled`, not `Promise.all` — partial data beats no data for a demo.
 - Row-1-as-header parsing, handling both gviz header representations.
-- Hardcoded `EXPECTED_COLUMNS` validation is mandatory, not optional, given the confirmed
-  silent-fallback behavior.
+- **Tabs addressed by gid, not by name** — the live sheet's `sheet=<name>` lookup is broken
+  (always returns `games`), confirmed by direct testing.
+- Hardcoded `EXPECTED_COLUMNS` validation is mandatory, not optional.
 - No localStorage, no TTL-based cache — fetch once per page load, matches "simple demo" scope.
 - Fallback merges per-tab, not all-or-nothing.
 
 ## Open items
 
-- None blocking implementation. Once real tabs exist in the live sheet, no code changes are
-  needed — only verify header rows match `EXPECTED_COLUMNS` exactly (case-sensitive).
+- None blocking implementation. If a tab is ever deleted/recreated in the live sheet, its gid
+  changes — update the `TABS` map in `js/sheets.js` accordingly (see `seed/README.md`).
