@@ -23,7 +23,7 @@
 │       ├── profile.js
 │       └── invite.js
 ├── assets/
-│   └── icons/              # SVGs (pending from user); placeholders shipped meanwhile
+│   └── icons/              # real SVG icon set + badge art; brand logos still pending
 ├── data/
 │   └── fallback.json        # bundled offline copy of all 6 tabs, used when Sheets fetch fails
 ├── docs/                    # this documentation set
@@ -141,5 +141,5 @@ body {
 
 ## Open items
 
-- None blocking. Icon SVGs referenced by the nav bar back-arrow and tab bar icons are
-  placeholders until the user provides exports.
+- None blocking. Brand logo images (PayPal, Amazon, Google Play, Apple) are pending from the
+  user — see `docs/04-components.md` icon inventory.

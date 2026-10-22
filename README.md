@@ -66,7 +66,7 @@ setup and pre-deploy checklist.
 
 ## Known gaps
 
-- Icon set (tab bar icons, badge icons, brand logos) is placeholder inline SVG pending real
-  exports from Figma — see "Open items" in `docs/04-components.md`.
+- Brand logo images (PayPal, Amazon, Google Play, Apple) are pending from the user — see
+  "Open items" in `docs/04-components.md`. Everything else in the icon set is real SVG art.
 - All interactions beyond navigation (Play Now, Confirm Payout, Get Bonus, Copy & Shop, etc.)
   are visual only — no backend, no persistence, by design.

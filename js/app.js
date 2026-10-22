@@ -49,7 +49,7 @@ const App = (() => {
     const tabBar = document.getElementById("tab-bar");
     tabBar.innerHTML = TABS_CONFIG.map((t) => `
       <button class="tab-bar__item" type="button" data-route="${t.key}">
-        <div style="width:24px;height:24px;">${t.icon()}</div>
+        ${t.icon()}
         <span class="tab-bar__label">${t.label}</span>
       </button>
     `).join("");

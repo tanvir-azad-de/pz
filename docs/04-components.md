@@ -160,23 +160,35 @@ fixed-position container above `env(safe-area-inset-bottom)`:
 }
 ```
 
-## Icon inventory (placeholders pending real SVGs)
+## Icon inventory
 
-| Icon | Used in | Placeholder approach |
-|---|---|---|
-| Back arrow | nav bar on detail screens | inline SVG chevron-left |
-| Tab: Discover / My Games / Rewards / Profile | tab bar | 4 simple inline SVG glyphs (grid, controller, gift, user) |
-| Dollar / Cashback | game card badge | inline SVG `$` glyph |
-| Stopwatch / Limited Bonus | game card badge | inline SVG stopwatch glyph |
-| Coin | footer amounts, wallet amounts | inline SVG coin glyph |
-| Info | invite friends note | inline SVG "i" circle |
-| Copy | wallet coupon card | inline SVG copy/clipboard glyph |
-| Chevron right | profile menu rows | inline SVG chevron-right |
+Icons are real SVG files in `assets/icons/`, registered in two manifests in `render.js`:
+
+- `ICON_MASK` — monochrome icons rendered as `<span class="icon">` with a CSS `mask`
+  (`background-color: currentColor` + `-webkit-mask`/`mask: url(...)`). One file inherits
+  whatever color its context provides (e.g. `arrowRight` renders green inside a primary pill
+  button, white in a plain row; tab icons switch tint via `.tab-bar__item` /
+  `.tab-bar__item.is-active`). No onerror fallback exists for CSS mask — a missing file fails
+  silently as empty space, so filenames must stay in sync with `assets/icons/`.
+- `ICON_IMG` — multi-color icons (the 2 game-card badges) rendered as `<img>`, since masking
+  would flatten their multiple fills to one color. Has an `onerror` handler
+  (`Render._iconImgFallback`) that restores an inline SVG placeholder if the file 404s.
+
+| Icon key | File | Size | Used in |
+|---|---|---|---|
+| `back` | `back.svg` | 24 | nav bar back button, detail screens |
+| `chevronRight` | `chevron-right.svg` | 20 | profile menu rows |
+| `arrowRight` | `arrow-right.svg` | 20 | outline pill CTAs (Discover, Profile, Game Detail) |
+| `info` | `info.svg` | 16 | invite friends footnote |
+| `copy` | `copy.svg` | 20 | wallet coupon code row |
+| `wallet` | `wallet.svg` | 24 | balance card (Rewards, Wallet) |
+| `tabDiscover` / `tabMyGames` / `tabRewards` / `tabProfile` | `tab-*.svg` | 24 | tab bar |
+| `dollar` (img) | `badge-cashback.svg` | 20 | game card Cashback badge |
+| `stopwatch` (img) | `badge-limited-bonus.svg` | 20 | game card Limited Bonus badge |
 | Brand logos: PayPal, Amazon, Google Play, Apple | reward cards + reward detail | **real exports needed from user** — placeholder = colored circle with first letter until provided |
 
-All placeholders live inline in `render.js` as small SVG-returning functions (e.g.
-`icon.back()`, `icon.chevronRight()`), so swapping to real files later means only changing the icon
-module, not every view.
+All icons are still called the same way from every view (e.g. `Render.icon.back()`,
+`Render.icon.chevronRight()`) — only `render.js` changed, not the call sites.
 
 ## Decisions
 
@@ -186,10 +198,8 @@ module, not every view.
 - Progress bars ARE implemented on payout cards (reinstated per product decision).
 - Wallet chips are client-side visual filters only — no state persists across reload.
 - Brand logos are the one icon category that genuinely needs user-provided assets; everything
-  else ships as inline placeholder SVG so no screen is blocked.
+  else now ships as real SVG files per the icon inventory above.
 
 ## Open items
 
-- Swap brand logo placeholders for real SVGs once provided.
-- Swap all placeholder glyphs for Figma-exported SVGs once provided (lower priority — visual
-  parity is close enough with placeholders for a demo).
+- Swap brand logo placeholders for real images once provided.

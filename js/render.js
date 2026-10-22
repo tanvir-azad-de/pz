@@ -35,32 +35,66 @@ const Render = (() => {
     return `<div class="skeleton ${extraClass || ""}" style="height:${height}px"></div>`;
   }
 
-  // ---- Inline icon set (placeholders — swap for real SVG exports in assets/icons/ later) ----
-  const icon = {
-    back: () => `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-
-    chevronRight: () => `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-
-    arrowRight: () => `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-
-    dollar: () => `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="#07E562"/><text x="12" y="16" font-size="12" text-anchor="middle" fill="#064420" font-family="sans-serif" font-weight="bold">$</text></svg>`,
-
-    stopwatch: () => `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="13" r="8" fill="#FF9719"/><rect x="10" y="2" width="4" height="3" rx="1" fill="#FF9900"/><path d="M12 9v4l3 2" stroke="#FFF4E0" stroke-width="1.5" stroke-linecap="round"/></svg>`,
-
-    info: () => `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M12 8v.01M12 11v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
-
-    copy: () => `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="9" y="9" width="11" height="11" rx="2" stroke="currentColor" stroke-width="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9" stroke="currentColor" stroke-width="2"/></svg>`,
-
-    wallet: () => `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="6" width="18" height="13" rx="2" stroke="currentColor" stroke-width="2"/><path d="M3 10h18" stroke="currentColor" stroke-width="2"/><circle cx="16" cy="14" r="1.2" fill="currentColor"/></svg>`,
-
-    tabDiscover: () => `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="7" height="7" rx="1.5" fill="currentColor"/><rect x="14" y="3" width="7" height="7" rx="1.5" fill="currentColor"/><rect x="3" y="14" width="7" height="7" rx="1.5" fill="currentColor"/><rect x="14" y="14" width="7" height="7" rx="1.5" fill="currentColor"/></svg>`,
-
-    tabMyGames: () => `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="7" width="20" height="11" rx="5" fill="currentColor"/><circle cx="8" cy="12.5" r="1.5" fill="#06071C"/><circle cx="8" cy="12.5" r="1.5" fill="#06071C" transform="rotate(90 8 12.5)"/><circle cx="17" cy="11" r="1.2" fill="#06071C"/><circle cx="17" cy="14" r="1.2" fill="#06071C"/></svg>`,
-
-    tabRewards: () => `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="9" width="18" height="11" rx="1.5" fill="currentColor"/><rect x="2" y="6" width="20" height="4" rx="1" fill="currentColor"/><rect x="11" y="6" width="2" height="14" fill="#06071C"/></svg>`,
-
-    tabProfile: () => `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="8" r="4" fill="currentColor"/><path d="M4 20c0-4 3.5-6 8-6s8 2 8 6" fill="currentColor"/></svg>`,
+  // ---- Icon set ----
+  // Monochrome icons are real SVG files in assets/icons/, rendered as a CSS mask so they
+  // inherit `currentColor` from their rendering context (e.g. green inside a primary pill
+  // button, white in a menu row, tinted by the tab bar's active/inactive state) — one file
+  // works everywhere instead of needing per-context color variants.
+  //
+  // NOTE: CSS mask has no onerror equivalent, so a missing/renamed file in ICON_MASK fails
+  // silently (icon renders as empty space, not a broken-image glyph). Keep filenames in sync
+  // with assets/icons/.
+  const ICON_MASK = {
+    back: { file: "back.svg", size: 24 },
+    chevronRight: { file: "chevron-right.svg", size: 20 },
+    arrowRight: { file: "arrow-right.svg", size: 20 },
+    info: { file: "info.svg", size: 16 },
+    copy: { file: "copy.svg", size: 20 },
+    wallet: { file: "wallet.svg", size: 24 },
+    tabDiscover: { file: "tab-discover.svg", size: 24 },
+    tabMyGames: { file: "tab-mygames.svg", size: 24 },
+    tabRewards: { file: "tab-rewards.svg", size: 24 },
+    tabProfile: { file: "tab-profile.svg", size: 24 },
   };
+
+  // Multi-color icons can't be CSS-masked (mask flattens every fill to one color), so these
+  // render as <img> and keep their own baked-in colors. onerror restores the inline SVG below
+  // so a missing/renamed file degrades to the placeholder instead of a broken-image icon.
+  const ICON_IMG = {
+    dollar: { file: "badge-cashback.svg", size: 20 },
+    stopwatch: { file: "badge-limited-bonus.svg", size: 20 },
+  };
+
+  // Inline fallbacks — used by ICON_IMG entries on load failure, and for any icon key not yet
+  // backed by a real file.
+  const ICON_FALLBACK = {
+    dollar: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="#07E562"/><text x="12" y="16" font-size="12" text-anchor="middle" fill="#064420" font-family="sans-serif" font-weight="bold">$</text></svg>`,
+    stopwatch: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="13" r="8" fill="#FF9719"/><rect x="10" y="2" width="4" height="3" rx="1" fill="#FF9900"/><path d="M12 9v4l3 2" stroke="#FFF4E0" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+  };
+
+  // Called from the onerror="" attribute on ICON_IMG <img> tags (see note above) — must stay
+  // reachable as Render._iconImgFallback since it's invoked from markup, not JS call sites.
+  function _iconImgFallback(imgEl, key) {
+    imgEl.outerHTML = ICON_FALLBACK[key] || "";
+  }
+
+  function maskIcon(key) {
+    const def = ICON_MASK[key];
+    return `<span class="icon" style="--icon-src:url('assets/icons/${def.file}');width:${def.size}px;height:${def.size}px"></span>`;
+  }
+
+  function imgIcon(key) {
+    const def = ICON_IMG[key];
+    return `<img class="icon" width="${def.size}" height="${def.size}" src="assets/icons/${def.file}" alt="" onerror="Render._iconImgFallback(this,'${key}')" />`;
+  }
+
+  const icon = {};
+  Object.keys(ICON_MASK).forEach((key) => {
+    icon[key] = () => maskIcon(key);
+  });
+  Object.keys(ICON_IMG).forEach((key) => {
+    icon[key] = () => imgIcon(key);
+  });
 
   // Generic brand logo placeholder: colored circle + first letter, swappable for real SVGs.
   function brandLogo(brand, size) {
@@ -76,5 +110,5 @@ const Render = (() => {
     return `<div class="brand-logo" style="width:${s}px;height:${s}px;background:${bg}">${letter}</div>`;
   }
 
-  return { esc, computedTotal, progressAmount, skeletonBlock, icon, brandLogo };
+  return { esc, computedTotal, progressAmount, skeletonBlock, icon, brandLogo, _iconImgFallback };
 })();

@@ -189,5 +189,6 @@ Values observed consistently across all 7 screen frames:
 
 ## Open items
 
-- Brand logo SVGs (PayPal, Amazon, Google Play, Apple) and the 4 tab-bar icons are pending from
-  the user. Placeholder inline SVGs will be used until provided, swappable via `assets/icons/`.
+- Brand logo images (PayPal, Amazon, Google Play, Apple) pending from the user — see
+  `docs/04-components.md` icon inventory. Everything else (tab bar, back/chevron/arrow/info/
+  copy/wallet, both game-card badges) now ships as real SVG files in `assets/icons/`.

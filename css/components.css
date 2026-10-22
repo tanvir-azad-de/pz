@@ -1,5 +1,14 @@
 /* Shared components: nav bar, tab bar, buttons, badges, cards. See docs/04-components.md. */
 
+/* ---------- Icon (mask-tinted SVG, see render.js ICON_MASK) ---------- */
+.icon {
+  display: inline-block;
+  flex-shrink: 0;
+  background-color: currentColor;
+  -webkit-mask: var(--icon-src) no-repeat center / contain;
+  mask: var(--icon-src) no-repeat center / contain;
+}
+
 /* ---------- Nav bar ---------- */
 .nav-bar {
   display: flex;
