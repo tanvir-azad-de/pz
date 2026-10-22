@@ -1,0 +1,72 @@
+/* Design tokens — exact values read from Figma file OTXhsXviEGsy3KmOAAefAP
+   (page "Design System", frames Colors + Typography). See docs/00-design-system.md. */
+
+:root {
+  /* core accent colors */
+  --color-primary: #69F89B;
+  --color-on-primary: #06071C;
+  --color-secondary: #181A44;
+  --color-on-secondary: #FFFFFF;
+  --color-error: #FF6565;
+  --color-on-error: #06071C;
+
+  /* background / surface */
+  --color-bg: #06071C;
+  --color-on-bg: #FFFFFF;
+  --color-surface: #181A44;
+  --color-on-surface: #FFFFFF;
+
+  /* status */
+  --color-success: #69F89B;
+  --color-warning: #FF6565;
+  --color-info: #FFCC4A;
+  --color-on-status: #FFFFFF;
+
+  /* purple ramp */
+  --purple-700: #181A44;
+  --purple-600: #3A3E72;
+  --purple-500: #51558C;
+  --purple-400: #7C71E0;
+  --purple-300: #575A8D;
+  --purple-200: #A39AF0;
+  --purple-100: #BDC0EF;
+
+  /* neutral */
+  --color-white: #FFFFFF;
+  --color-white-70: rgba(255, 255, 255, 0.7);
+  --color-black: #000000;
+
+  /* spacing */
+  --space-screen-x: 16px;
+  --space-card-gap: 12px;
+  --space-section-gap: 24px;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 20px;
+
+  /* radii */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-pill: 999px;
+
+  /* font */
+  --font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Type scale — use numeric font-weight ONLY. Figma's named weights
+   (ExtraBold/Light/Regular) are not valid CSS values. */
+.t-display-lg  { font-family: var(--font-family); font-size: 32px; line-height: 41px; font-weight: 800; }
+.t-title-lg    { font-family: var(--font-family); font-size: 28px; line-height: 34px; font-weight: 800; }
+.t-title-md    { font-family: var(--font-family); font-size: 24px; line-height: 28px; font-weight: 800; }
+.t-title-sm    { font-family: var(--font-family); font-size: 20px; line-height: 28px; font-weight: 700; }
+.t-label-lg    { font-family: var(--font-family); font-size: 16px; line-height: 21px; font-weight: 800; }
+.t-label-sm    { font-family: var(--font-family); font-size: 14px; line-height: 16px; font-weight: 800; }
+.t-label-tiny  { font-family: var(--font-family); font-size: 12px; line-height: 16px; font-weight: 800; }
+.t-body-lg     { font-family: var(--font-family); font-size: 16px; line-height: 21px; font-weight: 700; }
+.t-body-md     { font-family: var(--font-family); font-size: 14px; line-height: 21px; font-weight: 400; }
+.t-body-sm     { font-family: var(--font-family); font-size: 12px; line-height: 14px; font-weight: 300; }
+.t-caption     { font-family: var(--font-family); font-size: 12px; line-height: 14px; font-weight: 400; }
