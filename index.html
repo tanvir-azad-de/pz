@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>PlayZone</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/components.css" />
+</head>
+<body>
+  <div id="app"></div>
+
+  <!-- dependency order: helpers -> data layer -> view modules -> app shell -->
+  <script src="js/render.js"></script>
+  <script src="js/sheets.js"></script>
+  <script src="js/views/discover.js"></script>
+  <script src="js/views/my-games.js"></script>
+  <script src="js/views/game-detail.js"></script>
+  <script src="js/views/rewards.js"></script>
+  <script src="js/views/reward-detail.js"></script>
+  <script src="js/views/wallet.js"></script>
+  <script src="js/views/profile.js"></script>
+  <script src="js/views/invite.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

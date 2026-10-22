@@ -1,0 +1,612 @@
+/* Shared components: nav bar, tab bar, buttons, badges, cards. See docs/04-components.md. */
+
+/* ---------- Nav bar ---------- */
+.nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: 12px var(--space-screen-x);
+  height: 68px;
+  border-bottom: 1px solid var(--purple-700);
+  position: sticky;
+  top: 0;
+  background: var(--color-bg);
+  z-index: 10;
+}
+
+.nav-bar__left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
+.nav-bar__back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: var(--color-on-bg);
+  flex-shrink: 0;
+}
+
+.nav-bar__title {
+  color: var(--color-on-bg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wallet-pill {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 8px 12px;
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  color: var(--color-on-bg);
+  flex-shrink: 0;
+}
+
+/* ---------- Tab bar ---------- */
+.tab-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 8px calc(16px + env(safe-area-inset-bottom));
+  background: var(--color-bg);
+  border-top: 1px solid var(--purple-700);
+  z-index: 20;
+}
+
+.tab-bar__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  flex: 1 1 0;
+  color: var(--purple-300);
+}
+
+.tab-bar__item.is-active {
+  color: var(--color-primary);
+}
+
+.tab-bar__label {
+  font-family: var(--font-family);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+/* ---------- Sticky footer CTA ---------- */
+.sticky-footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 12px 24px calc(12px + env(safe-area-inset-bottom));
+  background: var(--color-bg);
+  z-index: 20;
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: var(--font-family);
+  cursor: pointer;
+  border: none;
+  background: none;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  height: 58px;
+  border-radius: var(--radius-md);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-size: 16px;
+  line-height: 21px;
+  font-weight: 800;
+  width: 100%;
+}
+
+.btn-danger-ghost {
+  height: 58px;
+  border-radius: var(--radius-md);
+  background: transparent;
+  border: 1px solid var(--color-error);
+  color: var(--color-error);
+  font-size: 16px;
+  line-height: 21px;
+  font-weight: 800;
+  width: 100%;
+}
+
+.btn-small {
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  padding: 0 20px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.btn-ghost {
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-on-bg);
+  padding: 0;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.btn-pill-outline {
+  height: 36px;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
+  padding: 0 16px;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.btn-outline-copy {
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
+  padding: 0 20px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+/* ---------- Badges / chips ---------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 4px 8px;
+  border-radius: 52px;
+  font-family: var(--font-family);
+}
+
+.badge--surface {
+  background: var(--color-surface);
+  color: var(--color-on-bg);
+  font-size: 14px;
+  line-height: 21px;
+  font-weight: 400;
+}
+
+.badge--success {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-size: 12px;
+  line-height: 14px;
+  font-weight: 400;
+}
+
+.badge--pending {
+  background: var(--purple-400);
+  color: #fff;
+  font-size: 12px;
+  line-height: 14px;
+  font-weight: 400;
+}
+
+.chip {
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-family: var(--font-family);
+  font-size: 14px;
+  line-height: 21px;
+  font-weight: 400;
+  background: var(--color-surface);
+  color: var(--color-on-bg);
+  cursor: pointer;
+}
+
+.chip.is-active {
+  background: var(--purple-400);
+  color: var(--color-on-primary);
+  font-weight: 800;
+}
+
+/* ---------- Brand logo placeholder ---------- */
+.brand-logo {
+  border-radius: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-family: var(--font-family);
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+/* ---------- Section header (title + "See All") ---------- */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-screen-x);
+  gap: var(--space-md);
+}
+
+/* ---------- Balance card (Rewards + Wallet) ---------- */
+.balance-card {
+  padding: 0 var(--space-screen-x);
+}
+
+.balance-card__inner {
+  background: var(--color-surface);
+  border: 1px solid var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.balance-card__icon {
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.balance-card__text {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  min-width: 0;
+}
+
+/* ---------- Game card ---------- */
+.game-card {
+  width: 100%;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  background: var(--color-surface);
+  display: block;
+  cursor: pointer;
+  text-align: left;
+}
+
+.game-card__art {
+  height: 201px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 8px;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--purple-700);
+}
+
+.game-card__name {
+  color: #fff;
+}
+
+.game-card__desc {
+  color: #fff;
+}
+
+.game-card__badges {
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+.game-card__footer {
+  height: 60px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-surface);
+}
+
+.game-card__amount {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  color: #fff;
+}
+
+.my-games__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-card-gap);
+  padding: 0 var(--space-screen-x);
+}
+
+.my-games__grid .game-card__art {
+  height: 140px;
+}
+
+/* ---------- Payout card ---------- */
+.payout-row {
+  display: flex;
+  gap: var(--space-card-gap);
+  overflow-x: auto;
+  padding: 0 var(--space-screen-x) 4px;
+  scroll-snap-type: x proximity;
+}
+
+.payout-row > * {
+  scroll-snap-align: start;
+  flex: 0 0 auto;
+}
+
+.payout-card {
+  width: 141px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  cursor: pointer;
+  text-align: left;
+}
+
+.payout-card__body {
+  width: 141px;
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.payout-card__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.payout-card__brand-name {
+  color: #fff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.payout-card__amount {
+  color: #fff;
+}
+
+.payout-card__track {
+  height: 4px;
+  border-radius: 100px;
+  background: var(--purple-600);
+  overflow: hidden;
+}
+
+.payout-card__fill {
+  height: 100%;
+  border-radius: 100px;
+  background: var(--purple-400);
+}
+
+.payout-card__points {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 4px 0;
+  color: #fff;
+}
+
+/* ---------- Wallet card ---------- */
+.wallet-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.wallet-card--coupon {
+  border: 1px solid var(--purple-600);
+}
+
+.wallet-card__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  justify-content: space-between;
+}
+
+.wallet-card__left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  min-width: 0;
+}
+
+.wallet-card__icon {
+  width: 50px;
+  height: 50px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--purple-700);
+}
+
+.wallet-card__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  min-width: 0;
+}
+
+.wallet-card__name {
+  color: #fff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wallet-card__subtitle {
+  color: var(--color-white-70);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wallet-card__amount-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-xs);
+  flex-shrink: 0;
+}
+
+.wallet-card__amount {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.wallet-card__amount.is-earned { color: var(--color-primary); }
+.wallet-card__amount.is-spent { color: var(--color-on-bg); }
+
+.wallet-card__divider {
+  border-top: 1px solid var(--purple-400);
+}
+
+.wallet-card__coupon-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.wallet-card__code-box {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  border: 1px solid var(--purple-400);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  color: #fff;
+  flex: 1 1 auto;
+}
+
+.wallet-date-group {
+  padding: 0 var(--space-screen-x);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.wallet-date-group__title {
+  color: #fff;
+}
+
+.wallet-cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.wallet-chips {
+  display: flex;
+  gap: var(--space-md);
+  padding: 0 var(--space-screen-x);
+}
+
+/* ---------- Invite / bonus illustration card ---------- */
+.illustration-card {
+  background: var(--color-surface);
+  border: 1px solid var(--purple-400);
+  border-radius: var(--radius-lg);
+  padding: 12px 12px 8px;
+  display: flex;
+  gap: var(--space-md);
+  align-items: center;
+}
+
+.illustration-card__art {
+  width: 91px;
+  height: 69px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--purple-400), var(--purple-200));
+  flex-shrink: 0;
+}
+
+.illustration-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.illustration-card__title {
+  color: #fff;
+}
+
+/* ---------- Generic card / list row ---------- */
+.surface-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+}
+
+.menu-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px var(--space-screen-x);
+  border-bottom: 1px solid var(--purple-700);
+  color: #fff;
+}
+
+.menu-row__value {
+  color: var(--color-white-70);
+}
+
+/* ---------- Layout helpers ---------- */
+.screen-section {
+  padding: var(--space-screen-x) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-card-gap);
+}
+
+.screen-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-section-gap);
+  padding-top: var(--space-lg);
+}
+
+.padded-x {
+  padding: 0 var(--space-screen-x);
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-row {
+  display: flex;
+  align-items: center;
+}
+
+.gap-xs { gap: var(--space-xs); }
+.gap-sm { gap: var(--space-sm); }
+.gap-md { gap: var(--space-md); }
