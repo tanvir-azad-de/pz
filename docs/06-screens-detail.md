@@ -17,9 +17,9 @@ Route `#/game/:id`. Back arrow + game name in nav bar. No tab bar; sticky "Play 
 
 3. **Stats row** — `display:flex; gap:12px; padding:0 16px`, two equal-width stat blocks
    separated by a vertical `1px solid var(--purple-600)` divider:
-   - "total reward" (`.t-body-sm` 12/300 label) above a pill: coin icon (24×24) +
+   - "total reward" (`.t-body-sm` 12/300 label) above a pill:
      `games.total_reward` (`.t-title-sm`, 20/700), pill `border-radius: 32px`
-   - "max per task" label above a pill: coin icon + `games.max_per_task`
+   - "max per task" label above a pill: `games.max_per_task`
 
 4. **IAP cashback card** — `background: var(--color-surface)`, `border-radius: 8px`,
    `padding: 12px`, `gap: 12px`. Row: text block (title "Earn up to $50 cashback"
@@ -31,7 +31,7 @@ Route `#/game/:id`. Back arrow + game name in nav bar. No tab bar; sticky "Play 
 
 5. **Tasks card** — `background: var(--color-surface)`, `border-radius: 8px`, `padding: 16px
    12px 8px`:
-   - Header row: "Tasks" (`.t-body-lg` 16/800) + total pill (coin icon + **computed**
+   - Header row: "Tasks" (`.t-body-lg` 16/800) + total pill (**computed**
      `SUM(tasks.amount where game_id matches)` + "total" label), `justify-content:
      space-between`
    - Subcopy: "Complete the tasks below and receive rewards for each of them." (`.t-body-sm`
@@ -41,7 +41,7 @@ Route `#/game/:id`. Back arrow + game name in nav bar. No tab bar; sticky "Play 
        `justify-content: space-between`
      - Left: `tasks.name` (`.t-body-lg` 16/800); if `tasks.is_active`, a green "Active task"
        pill badge (`.badge--success`) rendered below the name
-     - Right: coin icon (18×18) + `$ {tasks.amount}` (`.t-title-sm`, 20/700)
+     - Right: `$ {tasks.amount}` (`.t-title-sm`, 20/700)
 
 6. **Description card** — `background: var(--color-surface)`, `border-radius: 8px`, `padding:
    12px`: "Description" label (`.t-body-md` 14/800) + `games.long_description` (`.t-body-sm`
@@ -71,8 +71,9 @@ Route `#/reward/:id`. Back arrow + `rewards.brand` in nav bar. Sticky "Confirm P
 
 2. **Amount row** — below the white card, `display:flex; gap:24px; align-items:baseline`:
    - `rewards.amount` in large text (`.t-display-lg`, 32/800)
-   - points pill: coin icon (32×32) + a static points-style number from `content` (shared
-     across all categories per product decision — NOT per-reward data), `.t-title-md` 24/800
+   - secondary figure: `Render.progressAmount()` — `amount x progress_pct` (e.g. `$5` at 35%
+     progress -> `$ 1.75`), deterministic per reward so this matches the payout card exactly
+     (see `01-data-model.md`), `.t-title-md` 24/800. Deprecated coin icon removed.
 
 3. **How it works** — "How it works" header (`.t-title-sm`, 20/700) + 3 bullet lines
    (`content.reward_detail_how_1/2/3`, `.t-body-sm` 12/300).
@@ -106,7 +107,7 @@ Route `#/wallet`. Back arrow + "Wallet" in nav bar. No sticky footer (scrolling 
    (`04-components.md`/`05-screens-tabs.md`): `settings.balance` + "Payout Now" button (visual
    only here too — or could deep-link to `#/rewards`; left inert per "visual only" decision).
 
-2. **Secondary balance + filter row** — a larger standalone balance figure (coin icon + amount,
+2. **Secondary balance + filter row** — a larger standalone balance figure (amount,
    `.t-title-md` 24/800) followed by the 3 filter chips: **All** (active by default,
    `background: var(--purple-400)`), **Earned**, **Spent** (`04-components.md`). Tapping a chip
    client-side filters the transaction list below by `wallet.type` (no network refetch, no

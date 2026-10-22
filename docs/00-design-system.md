@@ -182,8 +182,10 @@ Values observed consistently across all 7 screen frames:
   (including "Missions"), but no Missions screen exists in the file — dropped per product decision.
 - No iOS status bar, "prompt" bar, or search field are rendered on any screen — these are Figma
   mockup/device chrome, not product UI, and a real mobile browser supplies its own status bar.
-- Dollars only. The `1 000` / `2 000` points-style numbers next to payout amounts render as
-  decorative text, not a second currency system.
+- Dollars only. The coin icon and its decorative `1 000` / `2 000` points-style numbers next
+  to payout amounts are deprecated — the app is real-currency-only. The secondary figure next
+  to each reward's amount is now `Render.progressAmount()`: `amount x progress_pct`, e.g. `$5`
+  at 35% progress renders `$ 1.75`.
 
 ## Open items
 

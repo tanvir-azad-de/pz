@@ -26,12 +26,12 @@ function renderGameDetail(container, params, store) {
       <div class="padded-x flex-row gap-md">
         <div class="flex-col gap-xs" style="flex:1;">
           <span class="t-body-sm">total reward</span>
-          <div class="flex-row gap-xs">${Render.icon.coin()}<span class="t-title-sm">${Render.esc(game.total_reward)}</span></div>
+          <div class="flex-row gap-xs"><span class="t-title-sm">${Render.esc(game.total_reward)}</span></div>
         </div>
         <div style="width:1px;background:var(--purple-600);align-self:stretch;"></div>
         <div class="flex-col gap-xs" style="flex:1;">
           <span class="t-body-sm">max per task</span>
-          <div class="flex-row gap-xs">${Render.icon.coin()}<span class="t-title-sm">${Render.esc(game.max_per_task)}</span></div>
+          <div class="flex-row gap-xs"><span class="t-title-sm">${Render.esc(game.max_per_task)}</span></div>
         </div>
       </div>
 
@@ -52,7 +52,7 @@ function renderGameDetail(container, params, store) {
         <div class="surface-card flex-col gap-md">
           <div class="flex-row gap-sm" style="justify-content:space-between;">
             <span class="t-body-lg">Tasks</span>
-            <span class="badge badge--surface">${Render.esc(total)} ${Render.icon.coin()} total</span>
+            <span class="badge badge--surface">${Render.esc(total)} total</span>
           </div>
           <p class="t-body-sm" style="margin:0;">Complete the tasks below and receive rewards for each of them.</p>
           <div class="flex-col gap-xs">
@@ -92,7 +92,7 @@ function taskRowHtml(task, active) {
         <span class="t-body-lg">${Render.esc(task.name)}</span>
         ${active ? `<span class="badge badge--success" style="align-self:flex-start;">Active task</span>` : ""}
       </div>
-      <div class="flex-row gap-xs">${Render.icon.coin()}<span class="t-title-sm">$ ${Render.esc(task.amount)}</span></div>
+      <div class="flex-row gap-xs"><span class="t-title-sm">$ ${Render.esc(task.amount)}</span></div>
     </div>
   `;
 }

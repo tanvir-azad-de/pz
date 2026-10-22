@@ -404,7 +404,6 @@
 .payout-card__points {
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
   padding: 4px 0;
   color: #fff;
 }
@@ -478,7 +477,6 @@
 .wallet-card__amount {
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
 }
 
 .wallet-card__amount.is-earned { color: var(--color-primary); }

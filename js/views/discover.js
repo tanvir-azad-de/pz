@@ -65,7 +65,6 @@ function gameCardHtml(game, store) {
       </div>
       <div class="game-card__footer">
         <div class="game-card__amount">
-          ${Render.icon.coin()}
           <span class="t-title-sm">${Render.esc(total)}</span>
         </div>
         <span class="btn btn-small">Play</span>

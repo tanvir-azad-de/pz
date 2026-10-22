@@ -24,7 +24,7 @@ cover`), padding 12px, content bottom-aligned:
 
 **Footer section** — 60px tall, `background: var(--color-surface)`, `border-radius: 0 0 20px
 20px`, padding 12px, `display:flex; justify-content:space-between; align-items:center`:
-- Left: coin icon (20×20) + computed total `$ {sum of tasks.amount}` — `.t-title-sm` (20/700)
+- Left: computed total `$ {sum of tasks.amount}` — `.t-title-sm` (20/700)
   white
 - Right: "Play" button — pill, `background: var(--color-primary)`, `padding: 13px 20px`,
   `border-radius: 8px`, text `.t-body-md` 800, color `var(--color-on-primary)`. Visual only —
@@ -72,8 +72,9 @@ Small card, 141×108, used inside horizontally-scrollable rows:
 ```
 
 Progress fill width = `rewards.progress_pct` as a percentage. Below the card, a separate pill
-shows the points-style number (static decorative text from `content`, not per-reward data —
-see `01-data-model.md`), `padding: 4px 0`, icon (20×20) + `.t-body-lg` (16/800) white.
+shows a derived currency figure (`Render.progressAmount()`: `amount x progress_pct` — see
+`01-data-model.md`; the deprecated coin icon and static "points" number are gone), `padding:
+4px 0`, `.t-body-lg` (16/800) white.
 
 Tapping a payout card navigates to `#/reward/:id`.
 
@@ -96,7 +97,7 @@ All variants share a base: `background: var(--color-surface)`, `border-radius: 1
 ```
 [50×50 icon, r8]  [name .t-body-lg / subtitle .t-caption]     [+$/-$ amount  Pending?]
 ```
-Amount row: coin icon (20×20) + `±$ {amount}` `.t-label-lg` (16/800), color
+Amount row: `±$ {amount}` `.t-label-lg` (16/800), color
 `var(--color-primary)` if `type === 'earned'`, `var(--color-on-bg)` if `spent`. If `status ===
 'Pending'`, a pill badge below the amount: `background: var(--purple-400)`, text "Pending"
 `.t-caption` white.
@@ -174,7 +175,7 @@ fixed-position container above `env(safe-area-inset-bottom)`:
 | Brand logos: PayPal, Amazon, Google Play, Apple | reward cards + reward detail | **real exports needed from user** — placeholder = colored circle with first letter until provided |
 
 All placeholders live inline in `render.js` as small SVG-returning functions (e.g.
-`icon.coin()`, `icon.back()`), so swapping to real files later means only changing the icon
+`icon.back()`, `icon.chevronRight()`), so swapping to real files later means only changing the icon
 module, not every view.
 
 ## Decisions

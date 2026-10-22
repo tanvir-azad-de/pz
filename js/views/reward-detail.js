@@ -19,7 +19,7 @@ function renderRewardDetail(container, params, store) {
 
       <div class="padded-x flex-row gap-md" style="align-items:baseline;">
         <span class="t-display-lg">${Render.esc(reward.amount)}</span>
-        <div class="flex-row gap-xs">${Render.icon.coin()}<span class="t-title-md">1 000</span></div>
+        <div class="flex-row gap-xs"><span class="t-title-md">${Render.progressAmount(reward)}</span></div>
       </div>
 
       <div class="padded-x flex-col gap-sm">

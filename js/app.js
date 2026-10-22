@@ -74,7 +74,6 @@ const App = (() => {
           <span class="t-title-sm nav-bar__title">${Render.esc(title)}</span>
         </div>
         <div class="wallet-pill">
-          <span style="color:var(--color-primary);">${Render.icon.coin()}</span>
           <span class="t-label-lg">$ ${Render.esc(balance)}</span>
         </div>
       </div>

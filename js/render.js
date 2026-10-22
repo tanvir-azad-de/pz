@@ -13,16 +13,22 @@ const Render = (() => {
       .replace(/'/g, "&#39;");
   }
 
-  // Render a string as-is for amounts that already include a currency symbol in the sheet
-  // (e.g. "$ 1000", "$5") — the data is inconsistent in spacing by design (real Figma copy),
-  // so this simply trusts and escapes the stored string rather than reformatting it.
-  function money(str) {
-    return esc(str);
-  }
-
   function computedTotal(tasks) {
     const sum = tasks.reduce((acc, t) => acc + (Number(t.amount) || 0), 0);
     return `$ ${sum}`;
+  }
+
+  // Secondary currency figure shown next to a reward's headline amount (payout card +
+  // Reward Detail). Replaces the deprecated decorative "points" number now that the app is
+  // real-currency-only: amount x progress_pct, e.g. "$5" at 35% -> "$ 1.75". Deterministic
+  // per reward so the card and its detail screen always agree. Returns "" when amount isn't
+  // numeric (the rewards.amount column allows placeholder junk like "xxx" per
+  // docs/01-data-model.md) rather than rendering "$ NaN".
+  function progressAmount(reward) {
+    const amt = parseFloat(String(reward.amount).replace(/[^0-9.]/g, ""));
+    if (!Number.isFinite(amt)) return "";
+    const pct = Math.max(0, Math.min(100, Number(reward.progress_pct) || 0));
+    return `$ ${((amt * pct) / 100).toFixed(2)}`;
   }
 
   function skeletonBlock(height, extraClass) {
@@ -36,8 +42,6 @@ const Render = (() => {
     chevronRight: () => `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
 
     arrowRight: () => `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-
-    coin: () => `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9" fill="#FFCC4A"/><circle cx="12" cy="12" r="6" fill="#FFD45A"/><text x="12" y="16" font-size="8" text-anchor="middle" fill="#8A5A00" font-family="sans-serif" font-weight="bold">$</text></svg>`,
 
     dollar: () => `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="#07E562"/><text x="12" y="16" font-size="12" text-anchor="middle" fill="#064420" font-family="sans-serif" font-weight="bold">$</text></svg>`,
 
@@ -56,8 +60,6 @@ const Render = (() => {
     tabRewards: () => `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="9" width="18" height="11" rx="1.5" fill="currentColor"/><rect x="2" y="6" width="20" height="4" rx="1" fill="currentColor"/><rect x="11" y="6" width="2" height="14" fill="#06071C"/></svg>`,
 
     tabProfile: () => `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="8" r="4" fill="currentColor"/><path d="M4 20c0-4 3.5-6 8-6s8 2 8 6" fill="currentColor"/></svg>`,
-
-    search: () => `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
   };
 
   // Generic brand logo placeholder: colored circle + first letter, swappable for real SVGs.
@@ -74,5 +76,5 @@ const Render = (() => {
     return `<div class="brand-logo" style="width:${s}px;height:${s}px;background:${bg}">${letter}</div>`;
   }
 
-  return { esc, money, computedTotal, skeletonBlock, icon, brandLogo };
+  return { esc, computedTotal, progressAmount, skeletonBlock, icon, brandLogo };
 })();

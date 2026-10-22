@@ -97,10 +97,14 @@ Rows for a given `game_id` render in sheet order (top to bottom = display order)
 | `icon_url` | string (URL) | 36px rounded logo shown on the small payout card |
 | `detail_image_url` | string (URL) | larger logo image shown on the Reward Detail screen's white card |
 
-Reward Detail screen (tap any payout card) shows that single reward's `amount`,
-`progress_pct`-derived point count is NOT stored separately — the "1 000" style number next to
-the dollar amount is static decorative content from the `content` tab (see below), shared across
-all categories per product decision, not per-reward data.
+Reward Detail screen (tap any payout card) shows that single reward's `amount`, plus a
+secondary currency figure computed client-side by `Render.progressAmount()`:
+`amount x progress_pct`, e.g. `$5` at 35% progress -> `$ 1.75`. This is NOT a stored column —
+it's derived on every render from `amount` + `progress_pct`, so the payout card and the Reward
+Detail screen for the same reward always show the identical figure. Resolves to `""` (nothing
+rendered) if `amount` doesn't parse as a number, since the column allows placeholder junk like
+`xxx`. The deprecated coin icon and its decorative `1 000`-style points number (previously
+static `content` tab copy) have been removed.
 
 ### `wallet`
 
