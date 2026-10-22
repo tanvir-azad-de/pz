@@ -94,8 +94,12 @@ Rows for a given `game_id` render in sheet order (top to bottom = display order)
 | `brand` | string | logo label shown on the card, e.g. `PayPal`, `Zalando`, `Amazon` |
 | `amount` | string | e.g. `$5`, `$10`, `xxx` |
 | `progress_pct` | number (0–100) | fill percentage of the progress bar under the amount |
-| `icon_url` | string (URL) | 36px rounded logo shown on the small payout card |
-| `detail_image_url` | string (URL) | larger logo image shown on the Reward Detail screen's white card |
+
+Brand logos (36px payout card + larger Reward Detail lockup) are NOT sourced from the sheet —
+they're resolved client-side from `brand` via `Render.brandLogo()` / `Render.brandLogoWide()`,
+which map known brand names to local PNGs in `assets/icons/` (falls back to a colored letter
+circle for unknown brands). The sheet previously had `icon_url`/`detail_image_url` columns for
+this, but they were never read by the app and have been removed.
 
 Reward Detail screen (tap any payout card) shows that single reward's `amount`, plus a
 secondary currency figure computed client-side by `Render.progressAmount()`:

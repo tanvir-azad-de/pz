@@ -18,6 +18,14 @@ const Render = (() => {
     return `$ ${sum}`;
   }
 
+  // Same sum as computedTotal() but without the leading "$ ", so callers that want to style
+  // the currency sign separately (e.g. in --color-primary on the game card) can do so without
+  // re-implementing the reduce. computedTotal() stays as-is since Game Detail renders it as a
+  // single plain string.
+  function computedTotalAmount(tasks) {
+    return tasks.reduce((acc, t) => acc + (Number(t.amount) || 0), 0);
+  }
+
   // Secondary currency figure shown next to a reward's headline amount (payout card +
   // Reward Detail). Replaces the deprecated decorative "points" number now that the app is
   // real-currency-only: amount x progress_pct, e.g. "$5" at 35% -> "$ 1.75". Deterministic
@@ -44,6 +52,13 @@ const Render = (() => {
   // NOTE: CSS mask has no onerror equivalent, so a missing/renamed file in ICON_MASK fails
   // silently (icon renders as empty space, not a broken-image glyph). Keep filenames in sync
   // with assets/icons/.
+  //
+  // NOTE: the url() below is resolved to an absolute URL via `new URL(..., document.baseURI)`
+  // before being written into the inline style attribute. A bare relative url() inside a CSS
+  // custom property (--icon-src) resolves against the *stylesheet* that consumes it
+  // (css/components.css), not the document, so it would 404 as e.g. /css/assets/icons/... —
+  // this previously made every mask icon render as empty space. Resolving it in JS keeps the
+  // var() indirection (needed for currentColor tinting) while pointing at the right file.
   const ICON_MASK = {
     back: { file: "back.svg", size: 24 },
     chevronRight: { file: "chevron-right.svg", size: 20 },
@@ -80,12 +95,13 @@ const Render = (() => {
 
   function maskIcon(key) {
     const def = ICON_MASK[key];
-    return `<span class="icon" style="--icon-src:url('assets/icons/${def.file}');width:${def.size}px;height:${def.size}px"></span>`;
+    const src = new URL(`assets/icons/${def.file}`, document.baseURI).href;
+    return `<span class="icon" style="--icon-src:url('${src}');width:${def.size}px;height:${def.size}px"></span>`;
   }
 
   function imgIcon(key) {
     const def = ICON_IMG[key];
-    return `<img class="icon" width="${def.size}" height="${def.size}" src="assets/icons/${def.file}" alt="" onerror="Render._iconImgFallback(this,'${key}')" />`;
+    return `<img class="icon-img" width="${def.size}" height="${def.size}" src="assets/icons/${def.file}" alt="" onerror="Render._iconImgFallback(this,'${key}')" />`;
   }
 
   const icon = {};
@@ -147,6 +163,7 @@ const Render = (() => {
   return {
     esc,
     computedTotal,
+    computedTotalAmount,
     progressAmount,
     skeletonBlock,
     icon,

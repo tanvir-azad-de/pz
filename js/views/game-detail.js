@@ -44,7 +44,7 @@ function renderGameDetail(container, params, store) {
             </div>
             <div style="width:81px;height:57px;border-radius:8px;background:url('assets/icons/illus-cashback.png') center / cover, linear-gradient(135deg, var(--purple-400), var(--purple-200));flex-shrink:0;"></div>
           </div>
-          <button class="btn btn-pill-outline" type="button" style="align-self:flex-start;">How it works? ${Render.icon.arrowRight()}</button>
+          <button class="btn btn-pill-outline" type="button">How it works? ${Render.icon.arrowRight()}</button>
         </div>
       </div>
 

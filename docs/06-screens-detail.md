@@ -67,7 +67,8 @@ Game Detail
 Route `#/reward/:id`. Back arrow + `rewards.brand` in nav bar. Sticky "Confirm Payout" footer.
 
 1. **Offer card** — white card (`background: #fff`, `border-radius: 20px`, `padding: 20px 16px`),
-   centered content: large logo (`rewards.detail_image_url`, ~200×64 area).
+   centered content: large brand logo via `Render.brandLogoWide(reward.brand)` (local PNG,
+   ~200×64 area, falls back to a letter circle for unknown brands — see `01-data-model.md`).
 
 2. **Amount row** — below the white card, `display:flex; gap:24px; align-items:baseline`:
    - `rewards.amount` in large text (`.t-display-lg`, 32/800)
@@ -90,7 +91,7 @@ Route `#/reward/:id`. Back arrow + `rewards.brand` in nav bar. Sticky "Confirm P
 
 ```
 Reward Detail
-├─ White offer card (detail_image_url)
+├─ White offer card (brand logo via Render.brandLogoWide)
 ├─ Amount + points pill
 ├─ "How it works" (3 bullets, shared content)
 ├─ divider

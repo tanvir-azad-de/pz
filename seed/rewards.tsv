@@ -1,13 +1,13 @@
-id	category	brand	amount	progress_pct	icon_url	detail_image_url
-r1	Cash	PayPal	$5	35	https://picsum.photos/seed/paypal1/80/80	https://picsum.photos/seed/paypaldetail/400/160
-r2	Cash	PayPal	$10	20	https://picsum.photos/seed/paypal2/80/80	https://picsum.photos/seed/paypaldetail/400/160
-r3	Cash	PayPal	$20	10	https://picsum.photos/seed/paypal3/80/80	https://picsum.photos/seed/paypaldetail/400/160
-r4	Amazon	Amazon	$5	40	https://picsum.photos/seed/amazon1/80/80	https://picsum.photos/seed/amazondetail/400/160
-r5	Amazon	Amazon	$15	15	https://picsum.photos/seed/amazon2/80/80	https://picsum.photos/seed/amazondetail/400/160
-r6	Amazon	Amazon	$25	8	https://picsum.photos/seed/amazon3/80/80	https://picsum.photos/seed/amazondetail/400/160
-r7	Google Play	Google Play	$5	50	https://picsum.photos/seed/gplay1/80/80	https://picsum.photos/seed/gplaydetail/400/160
-r8	Google Play	Google Play	$10	25	https://picsum.photos/seed/gplay2/80/80	https://picsum.photos/seed/gplaydetail/400/160
-r9	Google Play	Google Play	$20	12	https://picsum.photos/seed/gplay3/80/80	https://picsum.photos/seed/gplaydetail/400/160
-r10	Apple	Apple	$5	30	https://picsum.photos/seed/apple1/80/80	https://picsum.photos/seed/appledetail/400/160
-r11	Apple	Apple	$15	18	https://picsum.photos/seed/apple2/80/80	https://picsum.photos/seed/appledetail/400/160
-r12	Apple	Apple	$25	5	https://picsum.photos/seed/apple3/80/80	https://picsum.photos/seed/appledetail/400/160
+id	category	brand	amount	progress_pct
+r1	Cash	PayPal	$5	35
+r2	Cash	PayPal	$10	20
+r3	Cash	PayPal	$20	10
+r4	Amazon	Amazon	$5	40
+r5	Amazon	Amazon	$15	15
+r6	Amazon	Amazon	$25	8
+r7	Google Play	Google Play	$5	50
+r8	Google Play	Google Play	$10	25
+r9	Google Play	Google Play	$20	12
+r10	Apple	Apple	$5	30
+r11	Apple	Apple	$15	18
+r12	Apple	Apple	$25	5

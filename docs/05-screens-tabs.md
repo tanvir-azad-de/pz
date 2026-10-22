@@ -37,16 +37,14 @@ Discover
 
 ## My Games (no Figma frame — derived per product decision)
 
-Route `#/my-games`. Identical content to Discover's "All Games" list — same `games` data, same
-shared card component, same tap-to-`#/game/:id` behavior. Per explicit product decision, there
-is no separate My Games dataset or filter; the only difference from Discover is presentation:
+Route `#/my-games`. Per a later product decision, this tab is now intentionally empty — it no
+longer lists any games (previously it mirrored Discover's "All Games" in a 2-column grid; that
+behavior was removed). Renders just a header "My Games" (`.t-title-md`, `padding:16px`)
+followed by a centered empty-state message (`.state-message`, same pattern used for "Game not
+found" / "Reward not found"): "No games yet" / "Games you start playing will appear here."
 
-```css
-.my-games__grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:0 16px; }
-```
-
-No invite card, no Trending section, no "See All" — just a header "My Games" (`.t-title-md`,
-`padding:16px`) followed directly by the 2-column grid.
+`gameCardHtml()` (defined in `js/views/discover.js`) and the `.game-card` styles are unaffected
+— Discover still uses them.
 
 ## Rewards (Figma node `1:5889`)
 
@@ -129,8 +127,8 @@ Profile
 
 - Discover shows the trending game in BOTH the Trending section and the All Games list,
   matching Figma exactly (no de-duplication).
-- My Games has zero unique data or filtering — same `games` array as Discover, 2-column grid,
-  no invite card, no trending section.
+- My Games is intentionally empty (later product decision) — no game list, no filtering, just
+  a header and an empty-state message.
 - Rewards' featured top row (PayPal/Zalando cards with progress bars at the very top of the
   Figma frame) is dropped; the screen starts at the balance card. The 4 category rows DO use
   progress bars (that part of the design is kept).

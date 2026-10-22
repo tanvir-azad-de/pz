@@ -6,7 +6,8 @@ estimated.
 
 ## Game card
 
-Used on Discover (Trending + All Games) and My Games (identical cards, 2-column grid).
+Used on Discover (Trending + All Games). Previously also used on My Games before that tab was
+made intentionally empty — see `05-screens-tabs.md`.
 
 Total height 261px, two stacked parts:
 
@@ -41,19 +42,11 @@ cover`), padding 12px, content bottom-aligned:
 }
 ```
 
-### My Games 2-column grid
+### My Games — removed
 
-```css
-.my-games__grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  padding: 0 16px;
-}
-```
-Each card's internal layout is unchanged from the Discover card; only the container becomes a
-2-column grid instead of a vertical stack. Text may wrap/truncate more aggressively at half
-width — `text-overflow: ellipsis; white-space: nowrap` on the name and description.
+My Games previously reused this card in a 2-column grid (`.my-games__grid`). Per a later
+product decision the tab is now intentionally empty; the grid container and its CSS were
+removed. See `05-screens-tabs.md`.
 
 ## Payout card (Rewards horizontal rows + Reward Detail source data)
 
@@ -215,7 +208,8 @@ All icons are still called the same way from every view (e.g. `Render.icon.back(
 
 - Game card art and footer are visually one unit (combined border-radius) even though
   implemented as two stacked divs.
-- My Games reuses the exact same card component as Discover; only the grid container differs.
+- My Games no longer uses the game card — the tab is now intentionally empty (later product
+  decision, see `05-screens-tabs.md`).
 - Progress bars ARE implemented on payout cards (reinstated per product decision).
 - Wallet chips are client-side visual filters only — no state persists across reload.
 - Profile ships 2 bonus cards, not 3 — bonus 3 removed per product decision. The Sheet's

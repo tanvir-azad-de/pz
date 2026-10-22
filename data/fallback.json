@@ -75,21 +75,21 @@
     { "game_id": "g4", "name": "Level 10","amount": "45", "is_active": "FALSE" }
   ],
   "rewards": [
-    { "id": "r1", "category": "Cash", "brand": "PayPal", "amount": "$5",  "progress_pct": "35", "icon_url": "https://picsum.photos/seed/paypal1/80/80", "detail_image_url": "https://picsum.photos/seed/paypaldetail/400/160" },
-    { "id": "r2", "category": "Cash", "brand": "PayPal", "amount": "$10", "progress_pct": "20", "icon_url": "https://picsum.photos/seed/paypal2/80/80", "detail_image_url": "https://picsum.photos/seed/paypaldetail/400/160" },
-    { "id": "r3", "category": "Cash", "brand": "PayPal", "amount": "$20", "progress_pct": "10", "icon_url": "https://picsum.photos/seed/paypal3/80/80", "detail_image_url": "https://picsum.photos/seed/paypaldetail/400/160" },
+    { "id": "r1", "category": "Cash", "brand": "PayPal", "amount": "$5",  "progress_pct": "35" },
+    { "id": "r2", "category": "Cash", "brand": "PayPal", "amount": "$10", "progress_pct": "20" },
+    { "id": "r3", "category": "Cash", "brand": "PayPal", "amount": "$20", "progress_pct": "10" },
 
-    { "id": "r4", "category": "Amazon", "brand": "Amazon", "amount": "$5",  "progress_pct": "40", "icon_url": "https://picsum.photos/seed/amazon1/80/80", "detail_image_url": "https://picsum.photos/seed/amazondetail/400/160" },
-    { "id": "r5", "category": "Amazon", "brand": "Amazon", "amount": "$15", "progress_pct": "15", "icon_url": "https://picsum.photos/seed/amazon2/80/80", "detail_image_url": "https://picsum.photos/seed/amazondetail/400/160" },
-    { "id": "r6", "category": "Amazon", "brand": "Amazon", "amount": "$25", "progress_pct": "8",  "icon_url": "https://picsum.photos/seed/amazon3/80/80", "detail_image_url": "https://picsum.photos/seed/amazondetail/400/160" },
+    { "id": "r4", "category": "Amazon", "brand": "Amazon", "amount": "$5",  "progress_pct": "40" },
+    { "id": "r5", "category": "Amazon", "brand": "Amazon", "amount": "$15", "progress_pct": "15" },
+    { "id": "r6", "category": "Amazon", "brand": "Amazon", "amount": "$25", "progress_pct": "8" },
 
-    { "id": "r7", "category": "Google Play", "brand": "Google Play", "amount": "$5",  "progress_pct": "50", "icon_url": "https://picsum.photos/seed/gplay1/80/80", "detail_image_url": "https://picsum.photos/seed/gplaydetail/400/160" },
-    { "id": "r8", "category": "Google Play", "brand": "Google Play", "amount": "$10", "progress_pct": "25", "icon_url": "https://picsum.photos/seed/gplay2/80/80", "detail_image_url": "https://picsum.photos/seed/gplaydetail/400/160" },
-    { "id": "r9", "category": "Google Play", "brand": "Google Play", "amount": "$20", "progress_pct": "12", "icon_url": "https://picsum.photos/seed/gplay3/80/80", "detail_image_url": "https://picsum.photos/seed/gplaydetail/400/160" },
+    { "id": "r7", "category": "Google Play", "brand": "Google Play", "amount": "$5",  "progress_pct": "50" },
+    { "id": "r8", "category": "Google Play", "brand": "Google Play", "amount": "$10", "progress_pct": "25" },
+    { "id": "r9", "category": "Google Play", "brand": "Google Play", "amount": "$20", "progress_pct": "12" },
 
-    { "id": "r10", "category": "Apple", "brand": "Apple", "amount": "$5",  "progress_pct": "30", "icon_url": "https://picsum.photos/seed/apple1/80/80", "detail_image_url": "https://picsum.photos/seed/appledetail/400/160" },
-    { "id": "r11", "category": "Apple", "brand": "Apple", "amount": "$15", "progress_pct": "18", "icon_url": "https://picsum.photos/seed/apple2/80/80", "detail_image_url": "https://picsum.photos/seed/appledetail/400/160" },
-    { "id": "r12", "category": "Apple", "brand": "Apple", "amount": "$25", "progress_pct": "5",  "icon_url": "https://picsum.photos/seed/apple3/80/80", "detail_image_url": "https://picsum.photos/seed/appledetail/400/160" }
+    { "id": "r10", "category": "Apple", "brand": "Apple", "amount": "$5",  "progress_pct": "30" },
+    { "id": "r11", "category": "Apple", "brand": "Apple", "amount": "$15", "progress_pct": "18" },
+    { "id": "r12", "category": "Apple", "brand": "Apple", "amount": "$25", "progress_pct": "5" }
   ],
   "wallet": [
     { "date": "October 8th",   "type": "earned", "name": "Fishdom",        "subtitle": "Level 10",         "amount": "75", "status": "Pending", "icon_url": "https://picsum.photos/seed/fishdom/80/80",    "coupon_code": "" },

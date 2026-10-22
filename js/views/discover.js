@@ -14,7 +14,7 @@ function renderDiscover(container, params, store) {
           <div class="illustration-card__art" style="background-image:url('assets/icons/illus-invite-card.png');"></div>
           <div class="illustration-card__body">
             <p class="t-body-sm illustration-card__title">${Render.esc(content.invite_card_discover_text)}</p>
-            <button class="btn btn-pill-outline" type="button">Get Bonus ${Render.icon.arrowRight()}</button>
+            <button class="btn btn-pill-outline" type="button" id="get-bonus-btn">Get Bonus ${Render.icon.arrowRight()}</button>
           </div>
         </div>
       </div>
@@ -43,20 +43,26 @@ function renderDiscover(container, params, store) {
       location.hash = `#/game/${el.dataset.gameId}`;
     });
   });
+
+  const getBonusBtn = container.querySelector("#get-bonus-btn");
+  if (getBonusBtn) {
+    getBonusBtn.addEventListener("click", () => {
+      location.hash = "#/invite";
+    });
+  }
 }
 
 function gameCardHtml(game, store) {
-  const total = Render.computedTotal(
+  const totalAmount = Render.computedTotalAmount(
     store.data.tasks.filter((t) => t.game_id === game.id)
   );
   const isTrue = (v) => String(v).trim().toUpperCase() === "TRUE";
 
   return `
     <button class="game-card" type="button" data-game-id="${Render.esc(game.id)}">
-      <div class="game-card__art" style="background-image:url('${Render.esc(game.image_url)}')">
+      <div class="game-card__art" style="background-image:linear-gradient(to top, #06071C 0%, rgba(6,7,28,0) 100%), url('${Render.esc(game.image_url)}')">
         <div>
           <p class="t-title-sm game-card__name" style="margin:0;">${Render.esc(game.name)}</p>
-          <p class="t-body-sm game-card__desc line-clamp-1" style="margin:0;">${Render.esc(game.description)}</p>
         </div>
         <div class="game-card__badges">
           ${isTrue(game.has_cashback) ? `<span class="badge badge--surface">${Render.icon.dollar()} Cashback</span>` : ""}
@@ -65,9 +71,10 @@ function gameCardHtml(game, store) {
       </div>
       <div class="game-card__footer">
         <div class="game-card__amount">
-          <span class="t-title-sm">${Render.esc(total)}</span>
+          <span class="t-title-sm" style="color:var(--color-primary);">$</span>
+          <span class="t-title-sm">${Render.esc(totalAmount)}</span>
         </div>
-        <span class="btn btn-small">Play</span>
+        <span class="btn btn-play">Play</span>
       </div>
     </button>
   `;

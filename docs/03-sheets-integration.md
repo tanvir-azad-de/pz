@@ -81,7 +81,7 @@ Mismatch ⇒ treat as a failed fetch for that tab (same code path as a network e
 const EXPECTED_COLUMNS = {
   games:    ["id","name","image_url","description","total_reward","max_per_task","long_description","has_cashback","has_limited_bonus"],
   tasks:    ["game_id","name","amount","is_active"],
-  rewards:  ["id","category","brand","amount","progress_pct","icon_url","detail_image_url"],
+  rewards:  ["id","category","brand","amount","progress_pct"],
   wallet:   ["date","type","name","subtitle","amount","status","icon_url","coupon_code"],
   settings: ["key","value"],
   content:  ["key","value"],

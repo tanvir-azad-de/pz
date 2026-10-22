@@ -29,6 +29,12 @@ const App = (() => {
 
   let store = null;
 
+  // Baseline history.length captured at boot. Used by the back-arrow handler below to decide
+  // between history.back() (return to wherever the user actually came from, e.g. Profile when
+  // they tapped a bonus CTA into #/invite) and a hard fallback to #/discover (when there's no
+  // in-app history to go back to, e.g. a cold load straight to a detail URL via bookmark/share).
+  let bootHistoryLength = 0;
+
   function parseHash() {
     const hash = (location.hash || "#/discover").replace(/^#\//, "");
     const [route, id] = hash.split("/");
@@ -82,7 +88,11 @@ const App = (() => {
     const backBtn = document.getElementById("back-btn");
     if (backBtn) {
       backBtn.addEventListener("click", () => {
-        location.hash = "#/discover";
+        if (history.length > bootHistoryLength) {
+          history.back();
+        } else {
+          location.hash = "#/discover";
+        }
       });
     }
   }
@@ -136,6 +146,7 @@ const App = (() => {
   async function boot() {
     renderShell();
     renderSkeleton();
+    bootHistoryLength = history.length;
 
     try {
       store = await Sheets.load();

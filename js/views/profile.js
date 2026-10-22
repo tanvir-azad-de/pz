@@ -66,12 +66,23 @@ function renderProfile(container, params, store) {
       location.hash = "#/wallet";
     });
   }
+
+  // Bonus slot 1 is the invite-friends promo (see PROFILE_BONUS_ILLUSTRATIONS above) — tapping
+  // its "Get Bonus" CTA navigates to #/invite. Keyed by bonus.slot (the 1-based column suffix
+  // from content.bonus_N_*), not array index, so this stays correct even if bonus_1_title were
+  // ever missing from the Sheet and collectBonuses() (js/sheets.js) shifted bonus 2 into index 0.
+  const inviteBonusBtn = container.querySelector('[data-bonus-slot="1"] .btn-pill-outline');
+  if (inviteBonusBtn) {
+    inviteBonusBtn.addEventListener("click", () => {
+      location.hash = "#/invite";
+    });
+  }
 }
 
 function bonusCardHtml(bonus, index) {
   const art = bonus.icon || PROFILE_BONUS_ILLUSTRATIONS[index] || "";
   return `
-    <div class="illustration-card">
+    <div class="illustration-card" data-bonus-slot="${bonus.slot}">
       <div class="illustration-card__art" style="${art ? `background-image:url('${Render.esc(art)}');` : ""}"></div>
       <div class="illustration-card__body">
         <p class="t-body-sm illustration-card__title">${Render.esc(bonus.title)}</p>

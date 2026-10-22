@@ -9,6 +9,16 @@
   mask: var(--icon-src) no-repeat center / contain;
 }
 
+/* ---------- Icon (multi-color <img>, see render.js ICON_IMG) ----------
+   Separate from .icon: these are real <img> elements with their own baked-in colors, not
+   CSS masks, so they must NOT get background-color/mask (that combination previously showed
+   as a solid colored square behind the badge icons since the mask had no --icon-src to clip
+   against). */
+.icon-img {
+  display: inline-block;
+  flex-shrink: 0;
+}
+
 /* ---------- Nav bar ---------- */
 .nav-bar {
   display: flex;
@@ -150,6 +160,19 @@
   font-weight: 800;
 }
 
+/* Game card Play pill — fixed 36x90, distinct from .btn-small (shared with Payout Now/Retry,
+   which need to flex to their longer labels). */
+.btn-play {
+  height: 36px;
+  width: 90px;
+  border-radius: var(--radius-sm);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  padding: 0;
+  font-size: 14px;
+  font-weight: 800;
+}
+
 .btn-ghost {
   height: 36px;
   border-radius: var(--radius-sm);
@@ -161,13 +184,13 @@
 }
 
 .btn-pill-outline {
+  align-self: flex-start;
   height: 36px;
   border-radius: var(--radius-pill);
   background: transparent;
-  border: 1px solid var(--color-primary);
   color: var(--color-primary);
-  padding: 0 16px;
-  font-size: 16px;
+  padding: 0;
+  font-size: 14px;
   font-weight: 800;
 }
 
@@ -297,6 +320,7 @@
 }
 
 .game-card__art {
+  position: relative;
   height: 201px;
   padding: 12px;
   display: flex;
@@ -312,11 +336,10 @@
   color: #fff;
 }
 
-.game-card__desc {
-  color: #fff;
-}
-
 .game-card__badges {
+  position: absolute;
+  top: 12px;
+  left: 12px;
   display: flex;
   gap: var(--space-xs);
   flex-wrap: wrap;
@@ -336,17 +359,6 @@
   align-items: center;
   gap: var(--space-xs);
   color: #fff;
-}
-
-.my-games__grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-card-gap);
-  padding: 0 var(--space-screen-x);
-}
-
-.my-games__grid .game-card__art {
-  height: 140px;
 }
 
 /* ---------- Payout card ---------- */
@@ -567,6 +579,9 @@
 
 .illustration-card__title {
   color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 18px;
 }
 
 /* ---------- Generic card / list row ---------- */
