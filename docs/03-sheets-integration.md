@@ -6,26 +6,62 @@ Fetch all 6 tabs once at app boot, normalize them into plain JS objects/arrays, 
 for the session, and degrade gracefully (skeletons → retry → bundled fallback) if the network
 or the sheet itself is unavailable or malformed.
 
+## Locale resolution (which spreadsheet to fetch)
+
+Before fetching the 6 content tabs, `Sheets.load()` first resolves WHICH spreadsheet to fetch
+them from, by reading a single cell out of a separate master spreadsheet:
+
+```js
+const MASTER_SHEET_ID = "1g9h9pcDypXhZEFuPyVZmaQ7DUI-RqqhpnV-zivLkeXY";
+const MASTER_GID = "0";
+const DEFAULT_SHEET_ID = "1M70ITzDuJapNMhcd9H_HEPUyuOWHkJIMyrFBb4cSubU"; // pz-en
+
+async function resolveSheetId() {
+  try {
+    const id = await fetchMasterSheetId(); // scans master rows for the "isActive" key
+    if (!SHEET_ID_PATTERN.test(id)) throw new Error("not a spreadsheet ID");
+    return id;
+  } catch (err) {
+    console.warn("falling back to default locale —", err.message);
+    return DEFAULT_SHEET_ID;
+  }
+}
+```
+
+The master sheet has **no header row** (`parsedNumHeaders: 0`, blank `cols[].label]`), so it
+is NOT parsed by `gvizToObjects()` (below) — that function would treat row 0 as the header and
+discard the sheet's one real row. `fetchMasterSheetId()` instead scans `table.rows` directly for
+a row whose column A is `isActive` and returns column B.
+
+`resolveSheetId()` never throws — any failure (network, missing row, malformed value) resolves
+to `DEFAULT_SHEET_ID` with a `console.warn`, so a broken master cell degrades to "show pz-en",
+never to a hard failure. See `docs/01-data-model.md` for the master-sheet contract and how to
+flip locales.
+
+The resolved spreadsheet ID is then used for all 6 `fetchTab()` calls below — **pz-en and pz-de
+are duplicates of each other and share identical gids**, so the `TABS` map (gid per tab name)
+is locale-independent; only the spreadsheet ID varies.
+
 ## Fetch sequence
 
 1. `app.js` calls `Sheets.load()` once, before the router renders the first view.
-2. `Sheets.load()` issues 6 parallel `fetch()` calls, one per tab, using `Promise.allSettled`
-   (not `Promise.all` — one bad tab must not block the others). Tabs are addressed by **gid**,
-   not by name — see the gotcha below.
+2. `Sheets.load()` resolves the locale spreadsheet ID (above), then issues 6 parallel
+   `fetch()` calls against it, one per tab, using `Promise.allSettled` (not `Promise.all` —
+   one bad tab must not block the others). Tabs are addressed by **gid**, not by name — see
+   the gotcha below.
 
 ```js
-const SHEET_ID = "1M70ITzDuJapNMhcd9H_HEPUyuOWHkJIMyrFBb4cSubU";
 const TABS = {
-  games:    { gid: "420976241" },
-  tasks:    { gid: "666986029" },
-  rewards:  { gid: "955004045" },
-  wallet:   { gid: "1476565906" },
-  settings: { gid: "719558094" },
-  content:  { gid: "1744568315" },
+  games:    "420976241",
+  tasks:    "666986029",
+  rewards:  "955004045",
+  wallet:   "1476565906",
+  settings: "719558094",
+  content:  "1744568315",
 };
 
-function gvizUrl(gid) {
-  return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${gid}`;
+function gvizUrl(sheetId, gid) {
+  return `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gid}`;
 }
 ```
 
@@ -131,12 +167,20 @@ app-shell level, before routing even happens:
    6-tab schema exactly. It is the data source used for any tab that fails validation after one
    retry attempt, so the demo never shows a permanently empty screen.
 
-## Swapping the Sheet ID
+## Swapping which locale is live
 
-To point the app at a different spreadsheet: change the `SHEET_ID` constant AND every gid in
-the `TABS` map at the top of `js/sheets.js` (gids are per-spreadsheet, not portable). The target
-sheet must have 6 tabs with the header rows specified in `01-data-model.md`, in any tab order
-and under any tab names — only the gids matter for fetching.
+Edit the master sheet's `isActive` row (column B) to the target locale's spreadsheet ID — no
+code change, no deploy. See `docs/01-data-model.md` for the 3 spreadsheet IDs.
+
+## Adding a new locale / pointing at a different spreadsheet from scratch
+
+Change `DEFAULT_SHEET_ID` in `js/sheets.js` only if you're replacing the fallback locale itself.
+To add a brand-new locale sheet: duplicate an existing locale spreadsheet (so its 6 tab gids
+match the `TABS` map — gids are per-spreadsheet, but Sheets preserves them on "Make a copy"),
+translate its `content`/`wallet` tabs and set its `settings.currency_symbol` /
+`currency_position` / `number_locale`, then point the master sheet's `isActive` value at its ID.
+If you instead create a tab from scratch rather than duplicating, you must update every gid in
+the `TABS` map to match the new sheet's actual gids.
 
 ## Decisions
 
@@ -147,8 +191,27 @@ and under any tab names — only the gids matter for fetching.
 - Hardcoded `EXPECTED_COLUMNS` validation is mandatory, not optional.
 - No localStorage, no TTL-based cache — fetch once per page load, matches "simple demo" scope.
 - Fallback merges per-tab, not all-or-nothing.
+- **Locale is resolved via a master spreadsheet, not a URL param or build-time config** — so
+  non-technical staff can flip the live locale by editing one cell, with zero deploy. There is
+  deliberately no override mechanism (query string, localStorage) — the master sheet is the
+  single source of truth.
+- `data/fallback.json` stays a single English-only bundle, used for both locales' offline/
+  total-failure fallback — accepted tradeoff per product decision, rather than maintaining a
+  second bundle.
+- Row-level sanity guards (`ROW_GUARDS` in `js/sheets.js`) drop structurally malformed
+  `games`/`tasks` rows (e.g. `id` not matching `g\d+`) with a `console.warn`, since header
+  validation alone can't catch a shifted row (confirmed root cause of an earlier pz-de
+  incident: a cell-internal newline in `long_description` wrapped into an extra row).
+- `wallet.type` is validated (warn-only, not corrected) against `["earned", "spent"]` after
+  every fetch, since it's a machine enum read by exact string match in `js/views/wallet.js`,
+  not translatable copy.
 
 ## Open items
 
-- None blocking implementation. If a tab is ever deleted/recreated in the live sheet, its gid
-  changes — update the `TABS` map in `js/sheets.js` accordingly (see `seed/README.md`).
+- If a tab is ever deleted/recreated in any locale spreadsheet, its gid changes — update the
+  `TABS` map in `js/sheets.js` accordingly (see `seed/README.md`). Since all locale sheets are
+  expected to be duplicates of one another, this should be done by duplicating the sheet with
+  the gid already fixed, not recreating tabs independently per locale.
+- `data/fallback.json` predates the `currency_symbol`/`currency_position`/`number_locale`
+  settings keys and the sheet's current row counts (4 games vs. 19 live) — it still works via
+  `Render.initCurrency()`'s legacy sniffing fallback, but is stale as a demo dataset.

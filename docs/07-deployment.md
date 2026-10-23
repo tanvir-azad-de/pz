@@ -40,31 +40,50 @@ different hash, which GitHub Pages serves correctly by default.
 
 ## Google Sheet publishing checklist
 
-Before/after deploying, confirm the sheet itself is correctly exposed:
+Before/after deploying, confirm all **3** spreadsheets (master + pz-en + pz-de) are correctly
+exposed:
 
-1. Sheet → **Share** → **General access** → **Anyone with the link** → **Viewer**.
-2. Create the 6 required tabs with exact lowercase names: `games`, `tasks`, `rewards`,
-   `wallet`, `settings`, `content` (see `01-data-model.md` for header rows).
-3. Verify each tab with a direct gviz request, e.g.:
+1. Each spreadsheet → **Share** → **General access** → **Anyone with the link** → **Viewer**.
+   This includes the master sheet — it's fetched over the same unauthenticated gviz endpoint.
+2. pz-en and pz-de each need the 6 required tabs with exact lowercase names: `games`, `tasks`,
+   `rewards`, `wallet`, `settings`, `content` (see `01-data-model.md` for header rows), AND must
+   share identical gids with each other (duplicate one from the other rather than recreating
+   tabs independently, or the `TABS` map in `js/sheets.js` will be wrong for one of them).
+3. The master sheet needs exactly one row with `isActive` in column A and a valid pz-en/pz-de
+   spreadsheet ID in column B, on **gid 0**, with no header row.
+4. Verify each locale tab with a direct gviz request by **gid** (not `sheet=<name>`, which is
+   unreliable — see `03-sheets-integration.md`), e.g.:
    ```
-   curl "https://docs.google.com/spreadsheets/d/<SHEET_ID>/gviz/tq?tqx=out:json&sheet=games"
+   curl "https://docs.google.com/spreadsheets/d/<SHEET_ID>/gviz/tq?tqx=out:json&gid=<TAB_GID>"
    ```
-   Confirm `"status":"ok"` AND that the returned column headers match what you typed — remember
-   gviz does not error on a wrong tab name (see `03-sheets-integration.md`), so a visual check
-   of the headers in the response is the only reliable confirmation.
+   Confirm `"status":"ok"` AND that the returned column headers match what you typed.
+5. Verify the master sheet resolves correctly:
+   ```
+   curl "https://docs.google.com/spreadsheets/d/1g9h9pcDypXhZEFuPyVZmaQ7DUI-RqqhpnV-zivLkeXY/gviz/tq?tqx=out:json&gid=0"
+   ```
+   Confirm the single row is `["isActive", "<a 25-60 char spreadsheet ID>"]`.
 
 ## Pre-deploy checklist
 
-- [ ] All 6 Sheet tabs exist, are named exactly as specified, and are publicly viewable.
-- [ ] `js/sheets.js` `SHEET_ID` constant matches the live sheet.
+- [ ] All 3 spreadsheets (master, pz-en, pz-de) are publicly viewable.
+- [ ] pz-en and pz-de each have all 6 tabs, named exactly as specified, sharing identical gids.
+- [ ] Master sheet's `isActive` row (gid 0, no header) points at the intended default locale.
+- [ ] Each locale's `settings` tab has `currency_symbol` / `currency_position` /
+      `number_locale` as **plain text** cells (not Sheets-native number/currency format).
+- [ ] `wallet.type` in every locale sheet is `earned`/`spent` — never translated.
+- [ ] `rewards.brand` in every locale sheet stays the exact English brand name — never
+      translated (it's a logo lookup key, not display text).
+- [ ] `js/sheets.js` `MASTER_SHEET_ID` and `DEFAULT_SHEET_ID` constants are correct.
 - [ ] `data/fallback.json` still mirrors the 6-tab schema (update if columns ever change).
+      Currently an English-only bundle, intentionally shared by both locales for
+      offline/total-failure fallback.
 - [x] Brand logo PNGs (PayPal/Amazon/Google Play/Apple) dropped into `assets/icons/` and
       `render.js` (`brandLogo`/`brandLogoWide`) updated to reference them.
 - [ ] Open the deployed URL on an actual phone (or responsive mode pinned to a phone width) —
       this app has no desktop layout by design, so desktop testing is not meaningful.
 - [ ] Spot-check each of the 8 routes directly by URL (`#/discover`, `#/my-games`, `#/rewards`,
       `#/profile`, `#/game/<a-real-id>`, `#/reward/<a-real-id>`, `#/wallet`, `#/invite`) to
-      confirm hash routing + GitHub Pages interact correctly.
+      confirm hash routing + GitHub Pages interact correctly — under BOTH locales.
 
 ## Rollback / iteration
 

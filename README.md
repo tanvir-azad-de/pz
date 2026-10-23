@@ -25,20 +25,37 @@ The app reads from a public Google Sheet via the gviz JSON endpoint, fetched onc
 [`docs/01-data-model.md`](docs/01-data-model.md) for the full schema and
 [`docs/03-sheets-integration.md`](docs/03-sheets-integration.md) for fetch/fallback behavior.
 
-- Current sheet: `1M70ITzDuJapNMhcd9H_HEPUyuOWHkJIMyrFBb4cSubU`
+- **Locale switching via a master sheet**: at boot, the app first reads one cell from a master
+  spreadsheet (`1g9h9pcDypXhZEFuPyVZmaQ7DUI-RqqhpnV-zivLkeXY`, gid 0, row `isActive`), whose
+  value is the spreadsheet ID of the currently-live locale — either pz-en
+  (`1M70ITzDuJapNMhcd9H_HEPUyuOWHkJIMyrFBb4cSubU`) or pz-de
+  (`12jvO2x_ay8umdq22SDwrpxkr_2HD705hujnnwNbGRrs`). Flip locales by editing that one cell — no
+  code change, no deploy. If the master sheet is unreachable or malformed, the app falls back
+  to pz-en with a console warning.
 - Tabs are addressed by **gid**, not name (name-based lookup is unreliable on Google Sheets —
-  see the gotcha documented in `docs/01-data-model.md`)
+  see the gotcha documented in `docs/01-data-model.md`). pz-en and pz-de share identical gids,
+  so the gid map is locale-independent.
+- Currency symbol/position/decimal convention are read from each locale sheet's `settings` tab
+  (`currency_symbol`, `currency_position`, `number_locale`) — never hardcoded in JS.
 - If the live fetch fails or a tab's headers don't match the expected schema, that tab falls
-  back to `data/fallback.json` automatically — the app never shows a blank screen
+  back to `data/fallback.json` automatically — the app never shows a blank screen.
+  `data/fallback.json` is a single English bundle shared by both locales.
 
 ### Pointing at your own sheet
 
-1. Duplicate the sheet, keeping the 6 tabs (`games`, `tasks`, `rewards`, `wallet`, `settings`,
-   `content`) with header rows matching `docs/01-data-model.md`.
+1. Duplicate an existing locale spreadsheet (pz-en or pz-de), keeping all 6 tabs (`games`,
+   `tasks`, `rewards`, `wallet`, `settings`, `content`) — duplicating preserves their gids, so
+   you don't need to touch `js/sheets.js`.
 2. Set sharing to "Anyone with the link — Viewer".
-3. Grab each tab's `gid` from its URL (`#gid=<number>` when that tab is active in the browser).
-4. Update `SHEET_ID` and the `TABS` map in `js/sheets.js`.
+3. Edit content as needed, keeping header rows matching `docs/01-data-model.md`. Never
+   translate `wallet.type`, `games.has_cashback`/`has_limited_bonus`, `tasks.is_active`, or
+   `rewards.brand` — these are machine enums / lookup keys, not display copy.
+4. Point the master sheet's `isActive` cell at the new spreadsheet's ID to make it live.
 5. Optionally paste the files in `seed/*.tsv` to seed demo content — see `seed/README.md`.
+
+To add a brand-new locale (not just re-skin an existing one), also update `MASTER_SHEET_ID`/
+`DEFAULT_SHEET_ID` in `js/sheets.js` only if you're changing which sheet is the hardcoded
+fallback.
 
 ## Project structure
 

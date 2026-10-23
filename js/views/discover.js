@@ -52,15 +52,17 @@ function renderDiscover(container, params, store) {
   }
 }
 
-// Card footer shows games.total_reward verbatim (sheet-formatted, e.g. "$1000.00") — NOT a
-// computed sum of that game's tasks. Those two numbers are intentionally different: total_reward
-// is the game's overall promo figure, while the per-task amounts (summed on Game Detail's
-// "Tasks ... total" badge via Render.computedTotal()) are what the player actually earns per
-// task. Splitting the symbol out (Render.splitAmount) keeps the green-symbol/white-number
-// treatment without the app hardcoding what that symbol is.
+// Card footer shows games.total_reward verbatim (sheet-formatted, e.g. "$1000.00" or
+// "1000,00€") — NOT a computed sum of that game's tasks. Those two numbers are intentionally
+// different: total_reward is the game's overall promo figure, while the per-task amounts
+// (summed on Game Detail's "Tasks ... total" badge via Render.computedTotal()) are what the
+// player actually earns per task. Splitting the symbol out (Render.splitAmount) keeps the
+// green-symbol/white-number treatment without the app hardcoding what that symbol is or
+// which side of the number it sits on.
 function gameCardHtml(game) {
-  const { symbol, rest } = Render.splitAmount(game.total_reward);
-  const isTrue = (v) => String(v).trim().toUpperCase() === "TRUE";
+  const { symbol, rest, position } = Render.splitAmount(game.total_reward);
+  const symbolHtml = `<span class="t-title-sm" style="color:var(--color-primary);">${Render.esc(symbol)}</span>`;
+  const restHtml = `<span class="t-title-sm">${Render.esc(rest)}</span>`;
 
   return `
     <button class="game-card" type="button" data-game-id="${Render.esc(game.id)}">
@@ -69,14 +71,13 @@ function gameCardHtml(game) {
           <p class="t-title-sm game-card__name" style="margin:0;">${Render.esc(game.name)}</p>
         </div>
         <div class="game-card__badges">
-          ${isTrue(game.has_cashback) ? `<span class="badge badge--surface">${Render.icon.dollar()} ${Render.t("game_card_badge_cashback")}</span>` : ""}
-          ${isTrue(game.has_limited_bonus) ? `<span class="badge badge--surface">${Render.icon.stopwatch()} ${Render.t("game_card_badge_limited_bonus")}</span>` : ""}
+          ${Render.boolTrue(game.has_cashback) ? `<span class="badge badge--surface">${Render.icon.dollar()} ${Render.t("game_card_badge_cashback")}</span>` : ""}
+          ${Render.boolTrue(game.has_limited_bonus) ? `<span class="badge badge--surface">${Render.icon.stopwatch()} ${Render.t("game_card_badge_limited_bonus")}</span>` : ""}
         </div>
       </div>
       <div class="game-card__footer">
         <div class="game-card__amount">
-          <span class="t-title-sm" style="color:var(--color-primary);">${Render.esc(symbol)}</span>
-          <span class="t-title-sm">${Render.esc(rest)}</span>
+          ${position === "suffix" ? restHtml + symbolHtml : symbolHtml + restHtml}
         </div>
         <span class="btn btn-play">${Render.t("game_card_play_cta")}</span>
       </div>

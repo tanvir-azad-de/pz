@@ -1,6 +1,36 @@
 # 01 — Data Model (Google Sheets)
 
-## Sheet
+## Locale sheets + master sheet
+
+The app is served by **three** spreadsheets, not one:
+
+| Role | Sheet ID | Purpose |
+|---|---|---|
+| Master | `1g9h9pcDypXhZEFuPyVZmaQ7DUI-RqqhpnV-zivLkeXY` | A single `isActive` row whose value is the spreadsheet ID of whichever locale sheet is currently live. |
+| pz-en | `1M70ITzDuJapNMhcd9H_HEPUyuOWHkJIMyrFBb4cSubU` | English content. Also the hardcoded `DEFAULT_SHEET_ID` fallback. |
+| pz-de | `12jvO2x_ay8umdq22SDwrpxkr_2HD705hujnnwNbGRrs` | German content. |
+
+At boot, `js/sheets.js` (`Sheets.load()`) first fetches **gid 0** of the master sheet, reads the
+row whose column A is `isActive`, and takes column B as the spreadsheet ID to use for the 6
+content tabs below. **pz-en and pz-de are duplicates of each other — all 6 tab gids are
+identical across both** — so switching locale is purely "which spreadsheet ID", never "which
+gid map".
+
+The master sheet has **no header row** (gviz reports `parsedNumHeaders: 0`, blank
+`cols[].label`), by design — it's a single ad-hoc key/value pair, not a table. It is therefore
+parsed by a dedicated function (`fetchMasterSheetId` in `js/sheets.js`), NOT by the generic
+`gvizToObjects()` used for the 6 content tabs (which would misinterpret row 0 as a header and
+discard the one real row).
+
+**Failure handling:** if the master sheet is unreachable, has no `isActive` row, or its value
+doesn't look like a spreadsheet ID (`/^[A-Za-z0-9_-]{25,60}$/`), the app logs a `console.warn`
+and falls back to `DEFAULT_SHEET_ID` (pz-en). A broken master cell degrades to "show English",
+never to a hard failure.
+
+To switch the live locale: edit the master sheet's `isActive` row, column B, to the target
+locale's spreadsheet ID. No code change, no deploy.
+
+## Locale sheet (pz-en / pz-de)
 
 - URL: `https://docs.google.com/spreadsheets/d/1M70ITzDuJapNMhcd9H_HEPUyuOWHkJIMyrFBb4cSubU/edit`
 - Sheet ID: `1M70ITzDuJapNMhcd9H_HEPUyuOWHkJIMyrFBb4cSubU`
@@ -146,10 +176,19 @@ like every other amount column, with no `$` hardcoded in the app.
 
 | `key` | Example `value` (as read by the app) | Used by |
 |---|---|---|
-| `balance` | `$2.30` | wallet pill in every nav bar, Rewards balance card, Wallet balance card |
-| `referral_balance` | `$120.00` | Invite Friends "Your Referral Balance" |
-| `referral_first_task` | `$5.00` | Invite Friends reward rule, for completing first task |
+| `balance` | `$2.30` (pz-en) / `2,30€` (pz-de) | wallet pill in every nav bar, Rewards balance card, Wallet balance card |
+| `referral_balance` | `$120.00` / `120,00€` | Invite Friends "Your Referral Balance" |
+| `referral_first_task` | `$5.00` / `5,00€` | Invite Friends reward rule, for completing first task |
 | `referral_pct` | `10` | Invite Friends "xx%" of game rewards — percent-formatted, not currency |
+| `currency_symbol` | `$` / `€` | Plain text, read verbatim. Drives `Render.splitAmount()`/`parseAmount()`/`formatAmount()` (`js/render.js`) — the ONLY code-level knowledge of which symbol is active. |
+| `currency_position` | `prefix` / `suffix` | Whether the symbol renders before or after the number (pz-en: `$5.00`, pz-de: `5,00€`). Any other value is treated as `prefix`. |
+| `number_locale` | `en-US` / `de-DE` | A BCP-47 tag passed to `Intl.NumberFormat`/`toLocaleString` to derive the decimal/thousands separators (`,`/`.` swap between locales) and to set `<html lang>` at boot (`js/app.js`). |
+
+These 3 keys must be **plain text cells**, not Sheets-native currency/number formats — they're
+read via `v`, not `f`, so autoformatting would corrupt them. If they're absent (e.g. an older
+sheet, or `data/fallback.json`, which intentionally still lacks them), `Render.initCurrency()`
+falls back to sniffing a leading symbol off real data, assuming `en-US`/prefix — the original
+pre-locale behavior.
 
 ### `content` (key/value — all static screen text)
 
@@ -237,9 +276,27 @@ A handful of strings are intentionally NOT sheet-driven and remain hardcoded in 
   symbol concatenated in JS. `js/render.js` exposes `splitAmount()` for the few spots that tint
   the symbol a different color than the number (nav-bar wallet pill, game card total), and
   `parseAmount()`/`formatAmount()` for the one place that must do arithmetic — summing a game's
-  task amounts (`Render.computedTotal()`) — which re-applies whatever symbol the sheet data
-  used. Changing currency (symbol, decimal places, grouping) is a sheet-formatting change only,
-  never a code change.
+  task amounts (`Render.computedTotal()`). Both now read the active locale's
+  `currency_symbol`/`currency_position`/`number_locale` from `settings` (see above) rather than
+  sniffing format off sample data, so switching locale is purely a sheet-authoring change
+  (which spreadsheet the master points at + its `settings` values), never a code change.
+- **Enum-like columns must never be translated, in any locale sheet.** These are read by exact
+  string match in app code, not displayed as copy — translating them breaks the app silently
+  (wrong badge, wrong filter, wrong card variant) rather than throwing:
+  - `games.has_cashback` / `games.has_limited_bonus` / `tasks.is_active` — must stay
+    `TRUE`/`FALSE`.
+  - `wallet.type` — must stay `earned`/`spent`. (A prior pz-de draft translated this to
+    `Verdient`/`Ausgegeben`; `js/sheets.js`'s `fetchAll()` now warns in the console if any
+    wallet row's `type` isn't `earned`/`spent`, but it doesn't correct the data.)
+  - `rewards.brand` — must stay the exact English brand name (`PayPal`, `Amazon`,
+    `Google Play`, `Apple`); it's a lookup key into `BRAND_SLUGS`/`BRAND_LETTER_COLORS`
+    (`js/render.js`) for logo PNGs, not display text. `rewards.category` (shown verbatim as a
+    section heading) IS safe to translate (pz-de uses `Bargeld` for `Cash`).
+  - `games.id` must stay the pattern `g<number>` — `js/sheets.js` drops any `games`/`tasks` row
+    that fails a basic shape check (`id` not matching `g\d+`, or `tasks.game_id` blank) as a
+    guard against structurally broken rows (e.g. a cell-internal newline shifting a row's
+    columns), logging a `console.warn` rather than rendering garbage.
+
 - 6 tabs total: `games`, `tasks`, `rewards`, `wallet`, `settings`, `content`. No separate
   `profile`/`bonuses`/`referral` tabs — those values live in `settings`/`content`.
 - `settings` holds ONLY single scalars (key/value, one row per key) — this avoids mixing a

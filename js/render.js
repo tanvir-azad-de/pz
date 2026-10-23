@@ -13,6 +13,17 @@ const Render = (() => {
       .replace(/'/g, "&#39;");
   }
 
+  // Sheet booleans (games.has_cashback, games.has_limited_bonus, tasks.is_active) arrive as
+  // the string "TRUE"/"FALSE" from js/sheets.js — except gviz represents the FIRST boolean
+  // cell in a column as a real JS `true`/`false` and every subsequent one as the string
+  // "TRUE"/"FALSE" (a gviz quirk, confirmed on the tasks tab), so this must accept both a
+  // real boolean and its string form rather than assuming one shape. These columns are
+  // enum-like data, not translatable copy — they must never be localized in the sheet.
+  function boolTrue(v) {
+    if (typeof v === "boolean") return v;
+    return String(v).trim().toUpperCase() === "TRUE";
+  }
+
   // ---- Content lookup ----
   // Every user-visible string that isn't per-row sheet data (game names, task amounts, etc.)
   // comes from the `content` tab so copy can be changed without a deploy. initContent() is
@@ -46,54 +57,98 @@ const Render = (() => {
 
   // ---- Currency helpers ----
   // The sheet is the only source of currency symbols/formatting — amounts arrive pre-formatted
-  // (e.g. "$5.00", "$1,000.00") from js/sheets.js (which reads gviz's formatted cell.f, not the
-  // raw cell.v). Views interpolate those strings as-is and never hardcode a "$". The only place
-  // that still needs real arithmetic is summing a game's tasks, handled below.
+  // (e.g. "$5.00", "900,00€") from js/sheets.js (which reads gviz's formatted cell.f, not the
+  // raw cell.v). Views interpolate those strings as-is and never hardcode a symbol. The only
+  // place that still needs real arithmetic is summing a game's tasks, handled below — doing
+  // that arithmetic correctly requires knowing the locale's decimal/thousands separators, which
+  // is why initCurrency() below reads settings.currency_symbol / currency_position /
+  // number_locale rather than sniffing the format from a sample string.
 
-  // Pulls the numeric value out of a formatted amount string, e.g. "$1,000.00" -> 1000. Strips
-  // anything that isn't a digit, dot, or minus sign, then drops thousands separators. Returns 0
-  // for unparseable input (blank cell, etc.) so callers can sum safely.
+  // Locale config, set once by initCurrency() at boot. Defaults match the original pz-en
+  // behavior so the app still works before these 3 settings keys exist on a given sheet.
+  let _currencySymbol = "$";
+  let _currencyPosition = "prefix"; // "prefix" | "suffix"
+  let _numberLocale = "en-US";
+
+  // Derived from _numberLocale via Intl, so parseAmount/formatAmount don't hardcode which
+  // locales use "," vs "." for decimals/grouping (en-US: 1,000.00 — de-DE: 1.000,00).
+  function _separators() {
+    const parts = new Intl.NumberFormat(_numberLocale).formatToParts(1234.5);
+    const decimal = (parts.find((p) => p.type === "decimal") || {}).value || ".";
+    const group = (parts.find((p) => p.type === "group") || {}).value || ",";
+    return { decimal, group };
+  }
+
+  // Pulls the numeric value out of a formatted amount string, e.g. "$1,000.00" -> 1000 or
+  // "1.000,00€" -> 1000. Strips the configured currency symbol and whitespace, drops the
+  // locale's thousands separator, normalizes its decimal separator to ".", then parseFloats.
+  // Returns 0 for unparseable input (blank cell, etc.) so callers can sum safely.
   function parseAmount(v) {
     if (typeof v === "number") return v;
-    const cleaned = String(v || "").replace(/[^0-9.\-]/g, "");
+    const { decimal, group } = _separators();
+    let cleaned = String(v || "")
+      .replace(_currencySymbol, "")
+      .trim();
+    if (group) cleaned = cleaned.split(group).join("");
+    if (decimal !== ".") cleaned = cleaned.split(decimal).join(".");
+    cleaned = cleaned.replace(/[^0-9.\-]/g, "");
     const n = parseFloat(cleaned);
     return Number.isFinite(n) ? n : 0;
   }
 
-  // Splits a formatted amount into its leading symbol and the rest, e.g. "$1,000.00" ->
-  // { symbol: "$", rest: "1,000.00" }. Used by the handful of spots that tint the currency
-  // symbol a different color than the number (nav-bar wallet pill, game card footer) without
-  // the app hardcoding what that symbol is.
+  // Splits a formatted amount into its currency symbol and the rest, e.g. "$1,000.00" ->
+  // { symbol: "$", rest: "1,000.00", position: "prefix" } or "900,00€" ->
+  // { symbol: "€", rest: "900,00", position: "suffix" }. Used by the handful of spots that
+  // tint the currency symbol a different color than the number (nav-bar wallet pill, game
+  // card footer) without the app hardcoding what that symbol is or which side it's on.
   function splitAmount(v) {
     const str = String(v || "");
-    const match = str.match(/^([^\d\s]*)\s*(.*)$/);
-    return { symbol: match ? match[1] : "", rest: match ? match[2] : str };
+    const rest =
+      _currencyPosition === "suffix"
+        ? str.endsWith(_currencySymbol) ? str.slice(0, -_currencySymbol.length).trim() : str
+        : str.startsWith(_currencySymbol) ? str.slice(_currencySymbol.length).trim() : str;
+    const symbol = rest === str ? "" : _currencySymbol;
+    return { symbol, rest, position: _currencyPosition };
   }
 
-  // Remembers the currency symbol/format seen in real sheet data, so computedTotal() (which
-  // has to re-derive a number via arithmetic, not just pass a string through) can still render
-  // its sum dressed the same way as every other amount on screen. Falls back to a bare "$" if
-  // nothing with a symbol has loaded yet.
-  let _currencySymbol = "$";
+  // Reads the locale's currency contract from the settings tab (settings.currency_symbol /
+  // currency_position / number_locale). Falls back to sniffing a symbol out of real sheet data
+  // the old way (assuming a leading symbol) if those keys are missing — e.g. data/fallback.json
+  // predates them — so older/incomplete sheets degrade to the pre-i18n behavior instead of
+  // breaking.
   function initCurrency(data) {
+    const settings = (data && data.settings) || {};
+    if (settings.currency_symbol) {
+      _currencySymbol = String(settings.currency_symbol).trim();
+      _currencyPosition = settings.currency_position === "suffix" ? "suffix" : "prefix";
+      _numberLocale = settings.number_locale || "en-US";
+      return;
+    }
+
+    _currencySymbol = "$";
+    _currencyPosition = "prefix";
+    _numberLocale = "en-US";
     const candidates = [
-      data && data.settings && data.settings.balance,
+      settings.balance,
       data && data.games && data.games[0] && data.games[0].total_reward,
       data && data.tasks && data.tasks[0] && data.tasks[0].amount,
       data && data.rewards && data.rewards[0] && data.rewards[0].amount,
     ];
     for (const c of candidates) {
-      const symbol = splitAmount(c).symbol;
-      if (symbol) {
-        _currencySymbol = symbol;
+      const str = String(c || "");
+      const match = str.match(/^([^\d\s]*)\s*(.*)$/);
+      if (match && match[1]) {
+        _currencySymbol = match[1];
         return;
       }
     }
   }
 
-  // Formats a plain number back into the sheet's currency convention, e.g. 135 -> "$135.00".
+  // Formats a plain number back into the sheet's currency convention, e.g. 135 -> "$135.00"
+  // (en-US, prefix) or 135 -> "135,00€" (de-DE, suffix).
   function formatAmount(num) {
-    return `${_currencySymbol}${num.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    const formatted = num.toLocaleString(_numberLocale, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return _currencyPosition === "suffix" ? `${formatted}${_currencySymbol}` : `${_currencySymbol}${formatted}`;
   }
 
   function computedTotal(tasks) {
@@ -225,6 +280,7 @@ const Render = (() => {
 
   return {
     esc,
+    boolTrue,
     parseAmount,
     splitAmount,
     formatAmount,

@@ -10,7 +10,7 @@ function renderGameDetail(container, params, store) {
 
   const tasks = store.data.tasks.filter((t) => t.game_id === game.id);
   const total = Render.computedTotal(tasks);
-  const isActive = (t) => String(t.is_active).trim().toUpperCase() === "TRUE";
+  const isActive = (t) => Render.boolTrue(t.is_active);
 
   container.innerHTML = `
     <div class="screen-stack game-detail-stack" style="padding-bottom: 140px; ">

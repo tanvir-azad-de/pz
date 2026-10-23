@@ -152,11 +152,13 @@ const App = (() => {
   }
 
   // Splits the balance into its symbol + number so the symbol can keep its --color-primary
-  // tint (per the design) without the app hardcoding what that symbol is — it comes straight
-  // from the sheet-formatted settings.balance string (e.g. "$2.30").
+  // tint (per the design) without the app hardcoding what that symbol is or which side it's
+  // on — it comes straight from the sheet-formatted settings.balance string (e.g. "$2.30" or
+  // "2,30€").
   function walletBalanceHtml(balance) {
-    const { symbol, rest } = Render.splitAmount(balance);
-    return `<span style="color:var(--color-primary);">${Render.esc(symbol)}</span>${Render.esc(rest)}`;
+    const { symbol, rest, position } = Render.splitAmount(balance);
+    const symbolHtml = `<span style="color:var(--color-primary);">${Render.esc(symbol)}</span>`;
+    return position === "suffix" ? `${Render.esc(rest)}${symbolHtml}` : `${symbolHtml}${Render.esc(rest)}`;
   }
 
   function renderNavBar(routeKey, routeDef, params) {
@@ -294,6 +296,11 @@ const App = (() => {
       store = await Sheets.load();
       Render.initContent(store.data.content, store.data.fallbackContent);
       Render.initCurrency(store.data);
+      // settings.number_locale (e.g. "de-DE") drives <html lang>, so screen readers and
+      // browser features (spellcheck, font selection) match the active locale sheet. Falls
+      // back to "en" if the sheet predates this key (see Render.initCurrency's own fallback).
+      const numberLocale = (store.data.settings && store.data.settings.number_locale) || "en-US";
+      document.documentElement.lang = numberLocale.split("-")[0];
       if (store.failedTabs && store.failedTabs.length) {
         console.warn("Using fallback data for tabs:", store.failedTabs.join(", "));
       }
