@@ -17,7 +17,7 @@ function renderRewards(container, params, store) {
         </div>
       </div>
 
-      ${categories.map((cat) => categoryRowHtml(cat, rewards)).join("")}
+      ${categories.map((cat) => categoryRowHtml(cat, rewards, settings.balance)).join("")}
     </div>
   `;
 
@@ -28,7 +28,7 @@ function renderRewards(container, params, store) {
   });
 }
 
-function categoryRowHtml(category, rewards) {
+function categoryRowHtml(category, rewards, balance) {
   const items = rewards.filter((r) => r.category === category);
   if (items.length === 0) return "";
   return `
@@ -38,14 +38,25 @@ function categoryRowHtml(category, rewards) {
         <button class="btn btn-ghost" type="button">See All</button>
       </div>
       <div class="payout-row">
-        ${items.map(payoutCardHtml).join("")}
+        ${items.map((r) => payoutCardHtml(r, balance)).join("")}
       </div>
     </div>
   `;
 }
 
-function payoutCardHtml(reward) {
-  const pct = Math.max(0, Math.min(100, Number(reward.progress_pct) || 0));
+// Progress bar fill: how much of this reward's amount the user's current wallet balance
+// already covers, e.g. balance $2.30 against a $5.00 reward -> 46%. Clamped to 100% once the
+// balance meets or exceeds the reward amount; rounded to a whole percent for the inline width.
+function progressPct(balance, amount) {
+  const target = Render.parseAmount(amount);
+  if (!(target > 0)) return 0;
+  const raw = (Render.parseAmount(balance) / target) * 100;
+  return Math.round(Math.max(0, Math.min(100, raw)));
+}
+
+function payoutCardHtml(reward, balance) {
+  const pct = progressPct(balance, reward.amount);
+
   return `
     <button class="payout-card" type="button" data-reward-id="${Render.esc(reward.id)}">
       <div class="payout-card__body">

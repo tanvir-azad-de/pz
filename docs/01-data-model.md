@@ -98,7 +98,10 @@ Rows for a given `game_id` render in sheet order (top to bottom = display order)
 | `category` | string, one of `Cash`, `Amazon`, `Google Play`, `Apple` | drives which horizontal row the card appears in |
 | `brand` | string | logo label shown on the card, e.g. `PayPal`, `Zalando`, `Amazon` |
 | `amount` | string | e.g. `$5.00`, `$10.00` — pre-formatted by the sheet, shown verbatim |
-| `progress_pct` | number (0–100) | fill percentage of the progress bar under the amount |
+
+There's no `progress_pct` column. The progress bar under the amount on each payout card is
+derived client-side: `settings.balance / rewards.amount`, as a percentage, clamped to 100%
+(once the balance covers the reward) and rounded to a whole percent for the inline fill width.
 
 Brand logos (36px payout card + larger Reward Detail lockup) are NOT sourced from the sheet —
 they're resolved client-side from `brand` via `Render.brandLogo()` / `Render.brandLogoWide()`,
@@ -184,7 +187,8 @@ an error).
   parse used for `wallet`.
 - Trending game = row 2 of `games` (first data row), by convention. My Games = identical list
   to Discover's "All Games", rendered 2-column — no separate selection mechanism.
-- Reward Detail progress bars ARE rendered (`progress_pct` column kept and used).
+- Progress bars render on the Rewards payout cards (not on Reward Detail, which has none),
+  computed from `settings.balance` vs. each reward's `amount` rather than authored in the sheet.
 - Game Detail reuses `games.image_url` for both the wide hero and the small rounded icon —
   no separate `icon_url` column for games.
 - "How it works" / "Conditions" / disclaimer text on Reward Detail is shared across all reward

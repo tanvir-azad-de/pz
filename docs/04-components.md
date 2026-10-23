@@ -64,7 +64,8 @@ Small card, 141×108, used inside horizontally-scrollable rows:
 .payout-card__fill { height: 100%; border-radius: 100px; background: var(--purple-400); }
 ```
 
-Progress fill width = `rewards.progress_pct` as a percentage.
+Progress fill width = `settings.balance` as a percentage of `rewards.amount`, clamped to 100%
+(once balance covers the reward) and rounded to a whole percent.
 
 Tapping a payout card navigates to `#/reward/:id`.
 

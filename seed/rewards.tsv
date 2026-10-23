@@ -1,13 +1,13 @@
-id	category	brand	amount	progress_pct
-r1	Cash	PayPal	$5.00	35
-r2	Cash	PayPal	$10.00	20
-r3	Cash	PayPal	$20.00	10
-r4	Amazon	Amazon	$5.00	40
-r5	Amazon	Amazon	$15.00	15
-r6	Amazon	Amazon	$25.00	8
-r7	Google Play	Google Play	$5.00	50
-r8	Google Play	Google Play	$10.00	25
-r9	Google Play	Google Play	$20.00	12
-r10	Apple	Apple	$5.00	30
-r11	Apple	Apple	$15.00	18
-r12	Apple	Apple	$25.00	5
+id	category	brand	amount
+r1	Cash	PayPal	$5.00
+r2	Cash	PayPal	$10.00
+r3	Cash	PayPal	$20.00
+r4	Amazon	Amazon	$5.00
+r5	Amazon	Amazon	$15.00
+r6	Amazon	Amazon	$25.00
+r7	Google Play	Google Play	$5.00
+r8	Google Play	Google Play	$10.00
+r9	Google Play	Google Play	$20.00
+r10	Apple	Apple	$5.00
+r11	Apple	Apple	$15.00
+r12	Apple	Apple	$25.00
