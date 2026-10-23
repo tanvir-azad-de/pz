@@ -68,12 +68,20 @@ start at viewport `y: 0` to sit behind the nav bar — but `#view` is a scroll c
 `position: sticky`, which occupies 68px of real layout space ahead of `#view`. So this route
 flags `overlayNav: true` (`js/app.js` route table), and `renderNavBar` adds `.nav-bar--overlay`:
 `position: fixed`, transparent, no border — it floats over the hero with no backdrop of its
-own. A passive `scroll` listener (`js/app.js`, threshold `279 - 68 = 211px`) toggles
-`.is-scrolled`, which fades in an opaque `var(--color-bg)` background + border so the
-title/back-arrow/wallet-pill stay legible once the hero has scrolled out of view. The listener
-is torn down on every route change so it never runs on screens using the normal sticky nav bar.
-No scrim is applied over the hero image itself, so nav bar text legibility there depends on the
-art being dark near the top.
+own. A passive `scroll` listener toggles `.is-scrolled`, which fades in an opaque
+`var(--color-bg)` background + border so the title/back-arrow/wallet-pill stay legible once the
+hero has scrolled out of view. The listener is torn down on every route change so it never runs
+on screens using the normal sticky nav bar. No scrim is applied over the hero image itself, so
+nav bar text legibility there depends on the art being dark near the top.
+
+This mechanism is shared with Invite Friends. Rather than a hardcoded scroll threshold, the
+backdrop element is marked `data-nav-backdrop` and `setupNavOverlay` toggles `.is-scrolled`
+once `backdrop.getBoundingClientRect().bottom <= navEl.offsetHeight` — i.e. the moment the
+backdrop's bottom edge passes under the nav bar. Measuring the element is required because
+Invite's gradient has no fixed height (`min-height: 360px` plus content-driven growth), so no
+constant could be correct for both routes. The listener is attached in `route()` **after** the
+view renders, not inside `renderNavBar`, since the element it measures doesn't exist yet at
+nav-render time.
 
 ```
 Game Detail
@@ -156,20 +164,33 @@ Wallet
 
 Route `#/invite`. Back arrow + "Invite Friends" in nav bar. Sticky "Invite Friends" footer.
 
-1. **Gradient hero** — `background: linear-gradient(...)` (gradient fill per Figma; exact stops
-   not critical for a demo, approximate with `var(--purple-700)` → `var(--color-bg)`), `padding:
-   24px 20px 48px`, height ~345px. Content, centered: decorative illustration (166×145,
-   static), then title `content.invite_hero_title` (`.t-title-sm`, 20/700) + subtitle
-   `content.invite_hero_subtitle` (`.t-body-md`, 14/400).
+1. **Gradient hero** (`.invite-hero`) — `background: linear-gradient(180deg, rgba(124,113,224,0)
+   0%, #7C71E0 100%)` (transparent at the top fading to `--purple-400` at the bottom; the
+   `rgba(...,0)` form is used rather than the `transparent` keyword so the ramp can't pick up a
+   muddy dark midpoint from `transparent`'s `rgba(0,0,0,0)` definition), `min-height: 360px`,
+   `padding: 92px 20px 48px`. Doubles as the backdrop for the nav bar — see "Overlay nav bar"
+   under Game Detail; this route also flags `overlayNav: true` and the hero carries
+   `data-nav-backdrop`. `padding-top` is 92px = 68px nav height + the 24px of content inset,
+   since the overlay nav is `position: fixed` and occupies no layout space.
 
-2. **Referral panel** — `background: var(--color-surface)`, overlapping the hero by `-25px`
-   (negative margin-top on this section, achieved via `margin-top: -25px` on the panel wrapper
-   or an equivalent negative `gap` on the parent flex container — Figma's `gap: -25` on the
-   containing frame), `padding: 32px 16px 24px`:
+   `min-height` rather than a fixed `height`: the title and subtitle both wrap to 2 lines at
+   360px wide, so natural height is ~403px there — already clearing the 360px floor. Letting the
+   element grow with its content guarantees the referral panel's negative margin (below) always
+   lands on the hero's bottom padding instead of clipping the subtitle. Content, centered:
+   decorative illustration (`.invite-hero__art`, 166×145, static, **no gradient backing** — see
+   `04-components.md`), then title `content.invite_hero_title` (`.t-title-sm`, 20/700) +
+   subtitle `content.invite_hero_subtitle` (`.t-body-md`, 14/400).
 
-   a. **Referral balance card** — `border: 1px solid var(--purple-400)`, `border-radius: 20px`,
-      `padding: 16px 0`, centered text: "Your Referral Balance" (`.t-label-lg`, 16/800) above
-      `{settings.referral_balance}` (sheet-formatted, e.g. `$120.00`) (`.t-title-md`, 24/800, color `var(--color-primary)`).
+2. **Referral panel** (`.invite-panel`) — `background: var(--color-surface)` (`#181A44`),
+   covering the hero's bottom 30px via `margin-top: -30px`, plus `position: relative; z-index: 1`
+   so it paints above the hero regardless of source order. `padding: 32px 16px 24px`,
+   `border-radius: 16px 16px 0 0`. The overlap is what hides the gradient's hard bottom edge, so
+   the two sections read as one continuous surface.
+
+   a. **Referral balance card** (`.invite-balance-card`) — `border: 1px dashed var(--purple-400)`
+      (dashed, not solid), `border-radius: 20px`, `padding: 16px 0`, centered text: "Your
+      Referral Balance" (`.t-label-lg`, 16/800) above `{settings.referral_balance}`
+      (sheet-formatted, e.g. `$120.00`) (`.t-title-md`, 24/800, color `var(--color-primary)`).
 
    b. **Referral Rewards** — header "Referral Rewards" (`.t-title-md`, 24/800) + subcopy "Earn
       rewards when your friend:" (`.t-body-lg`, 14/400). Two reward rule cards
@@ -188,9 +209,9 @@ Route `#/invite`. Back arrow + "Invite Friends" in nav bar. Sticky "Invite Frien
 
 ```
 Invite Friends
-├─ Gradient hero (illustration, title, subtitle — content.invite_hero_*)
-├─ Referral panel (overlaps hero by -25px)
-│   ├─ Balance card (settings.referral_balance)
+├─ Gradient hero (illustration, title, subtitle — content.invite_hero_*) — nav bar backdrop
+├─ Referral panel (covers hero's bottom 30px)
+│   ├─ Balance card (settings.referral_balance, dashed outline)
 │   ├─ Referral Rewards (2 rule cards using settings.referral_first_task / referral_pct)
 │   └─ "How it works?" (4 bullets, content.invite_how_1..4)
 └─ Sticky "Invite Friends" button
@@ -204,17 +225,17 @@ Invite Friends
 - Game Detail's hero is `position: absolute` (not in-flow) specifically so it can extend behind
   the nav bar; this required a one-off `.nav-bar--overlay` fixed/transparent variant plus a
   scroll listener, since `#view`'s computed `overflow-y: auto` would otherwise clip it. Invite
-  Friends' similar-looking overlap (below) stays in-flow because it doesn't need to reach under
-  the nav bar.
+  Friends now reuses that same overlay nav (its gradient is also a nav backdrop), but keeps its
+  hero **in flow** — it doesn't need to escape `#view`'s box, since the gradient is a background
+  on a normally-flowed block rather than an absolutely-positioned layer. The shared piece is the
+  `[data-nav-backdrop]` marker both heroes carry, which `setupNavOverlay` measures.
 - Reward Detail's points-style number and "How it works"/"Conditions" text are shared across all
   reward categories, sourced once from `content`.
 - Wallet's filter chips are client-side only, reset on reload.
-- Invite Friends' negative-margin hero/panel overlap is implemented via CSS margin, not
-  absolute positioning, to stay responsive to content height.
+- Invite Friends' hero/panel overlap is implemented via CSS margin, not absolute positioning, to
+  stay responsive to content height.
 
 ## Open items
 
 - Decorative illustrations (game IAP promo image, invite hero illustration) remain static
   placeholder assets — not listed as Sheet-driven content.
-- Exact gradient stops for the Invite Friends hero are approximated; can be refined once/if the
-  user supplies exact Figma gradient values.

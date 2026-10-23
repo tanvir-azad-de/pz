@@ -14,7 +14,7 @@ function renderGameDetail(container, params, store) {
 
   container.innerHTML = `
     <div class="screen-stack game-detail-stack" style="padding-bottom: 140px; ">
-      <div class="game-hero" style="background-image:linear-gradient(to top, var(--color-bg) 0%, rgba(6,7,28,0.1) 100%), url('${Render.esc(game.image_url)}');"></div>
+      <div class="game-hero" data-nav-backdrop style="background-image:linear-gradient(to top, var(--color-bg) 0%, rgba(6,7,28,0.1) 100%), url('${Render.esc(game.image_url)}');"></div>
 
       <div class="game-hero__below padded-x flex-col gap-sm" style="align-items:center;text-align:center;">
         <div style="width:92px;height:92px;border-radius:var(--radius-xl);background-image:url('${Render.esc(game.image_url)}');background-size:cover;background-position:center;background-color:var(--purple-700);"></div>

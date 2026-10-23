@@ -27,7 +27,7 @@ const App = (() => {
     // No declared parent: #/invite is reached from both Discover's "Get Bonus" CTA and
     // Profile's bonus CTA, so there's no single correct "up" target — the back handler
     // below falls through to history.back() for this route specifically.
-    invite: { title: "Invite Friends", render: renderInvite, tab: false },
+    invite: { title: "Invite Friends", render: renderInvite, tab: false, overlayNav: true },
   };
 
   let store = null;
@@ -74,16 +74,22 @@ const App = (() => {
   // declared `parent` ignore this entirely and always go to that parent.
   let bootHistoryLength = 0;
 
-  // --- Overlay nav bar (full-bleed hero screens, e.g. Game Detail) -------
+  // --- Overlay nav bar (full-bleed hero screens: Game Detail, Invite) ----
   // The overlay variant is `position: fixed` + transparent so #view can start
-  // at viewport y:0 and a route's hero image can sit visibly behind it (see
-  // .game-hero / .nav-bar--overlay in components.css). We fade in an opaque
-  // backdrop once the hero has scrolled past, so text stays legible over
-  // whatever content follows.
-  const NAV_OVERLAY_THRESHOLD = 211; // hero height (279) - nav height (68)
+  // at viewport y:0 and a route's hero image/gradient can sit visibly behind it
+  // (see .game-hero / .invite-hero / .nav-bar--overlay in components.css). We
+  // fade in an opaque backdrop once that element has scrolled past, so text
+  // stays legible over whatever content follows.
+  //
+  // The threshold is measured off the [data-nav-backdrop] element rather than
+  // hardcoded, because Invite's gradient has no fixed height (min-height: 360px
+  // + content-driven growth as the title/subtitle wrap), so no constant can be
+  // correct for both routes.
   let navScrollHandler = null;
+  let pendingNavOverlayEl = null;
 
   function teardownNavOverlay() {
+    pendingNavOverlayEl = null;
     if (navScrollHandler) {
       window.removeEventListener("scroll", navScrollHandler);
       navScrollHandler = null;
@@ -91,7 +97,18 @@ const App = (() => {
   }
 
   function setupNavOverlay(navEl) {
-    const apply = () => navEl.classList.toggle("is-scrolled", window.scrollY > NAV_OVERLAY_THRESHOLD);
+    // Cached once: setup runs after the view has rendered (see route()), so the
+    // current screen's backdrop element is already in the DOM. The listener is
+    // torn down on every navigation, so this never outlives its element.
+    const backdrop = document.querySelector("[data-nav-backdrop]");
+
+    const apply = () => {
+      const scrolledPast = backdrop
+        ? backdrop.getBoundingClientRect().bottom <= navEl.offsetHeight
+        : false;
+      navEl.classList.toggle("is-scrolled", scrolledPast);
+    };
+
     apply();
     navScrollHandler = apply;
     window.addEventListener("scroll", navScrollHandler, { passive: true });
@@ -158,7 +175,9 @@ const App = (() => {
     `;
 
     if (routeDef.overlayNav) {
-      setupNavOverlay(navBar.querySelector(".nav-bar"));
+      // Deferred to route(), after the view has rendered: the
+      // [data-nav-backdrop] element the listener measures doesn't exist yet.
+      pendingNavOverlayEl = navBar.querySelector(".nav-bar");
     }
 
     const walletPillBtn = document.getElementById("wallet-pill-btn");
@@ -231,6 +250,14 @@ const App = (() => {
     const view = document.getElementById("view");
     view.innerHTML = "";
     routeDef.render(view, params, store);
+
+    // Overlay nav listener is attached here, not in renderNavBar, because it
+    // measures the view's [data-nav-backdrop] element, which only exists now.
+    if (pendingNavOverlayEl) {
+      const navEl = pendingNavOverlayEl;
+      pendingNavOverlayEl = null;
+      setupNavOverlay(navEl);
+    }
 
     // #view is not a scroll container (css/base.css — #app is min-height: 100dvh
     // and #view has no bounded height/overflow-y), so `view.scrollTop = 0` is a

@@ -191,9 +191,12 @@ fallback to a colored letter-circle for any unknown brand.
 
 Illustrations (decorative, non-interactive art) are plain `background-image`/`<img>` references.
 Most still carry a CSS gradient underneath as a fallback if the file 404s — **except
-`illus-cashback.png`**, which is removed of its gradient layer: the PNG has transparent
-(RGBA) pixels, so a gradient placed behind it bled through as an unwanted purple tint on the
-Game Detail cashback card. The other illustrations below are unaffected (not yet reported /
+`illus-cashback.png` and `illus-invite-hero.png`**, which have had their gradient layer removed:
+both PNGs have transparent (RGBA) pixels, so a gradient placed behind them bled through as an
+unwanted purple tint (on the Game Detail cashback card and the Invite Friends hero
+respectively). `illus-invite-hero.png` also had a `border-radius: 50%` ellipse clip removed
+along with its gradient — with no circular backing to match, the clip only cut real opaque
+pixels off the art's corners. The other illustrations below are unaffected (not yet reported /
 not in scope):
 
 | File | Size | Used in |

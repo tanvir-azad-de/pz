@@ -49,7 +49,7 @@ rewrite config, and on Vercel with zero config).
 | `#/game/:id` | `views/game-detail.js` | no | back arrow + game name + wallet pill | `#/discover` |
 | `#/reward/:id` | `views/reward-detail.js` | no | back arrow + brand name + wallet pill | `#/rewards` |
 | `#/wallet` | `views/wallet.js` | no | back arrow + "Wallet" + wallet pill | `#/profile` |
-| `#/invite` | `views/invite.js` | no | back arrow + "Invite Friends" + wallet pill | browser history (see below) |
+| `#/invite` | `views/invite.js` | no | back arrow + "Invite Friends" + wallet pill (overlay) | browser history (see below) |
 
 `#/wallet` and `#/invite` are reached from Profile's two CTAs, not from the tab bar — they are
 detail screens per the original brief ("two CTA: one to Wallet Page another to Invite a friend
@@ -84,7 +84,11 @@ history.back()-or-#/discover-fallback behavior instead.
 
 ## Nav bar anatomy
 
-Present on every screen, fixed height ~68px, bottom border `1px solid var(--purple-700)`:
+Present on every screen, fixed height ~68px. `position: sticky` with a `var(--color-bg)`
+background and a `1px solid var(--purple-700)` bottom border on most screens; on `#/game/:id`
+and `#/invite` it instead uses the `.nav-bar--overlay` variant (`position: fixed`, transparent,
+no border) so those screens' hero art/gradient shows through behind it, fading in the opaque
+background + border only once scrolled past — see `06-screens-detail.md`:
 
 - Left: either nothing (tab screens) or a back-arrow icon button (detail screens, navigates to
   the route's declared parent per the back-arrow note above) + screen title (`.t-title-sm`,

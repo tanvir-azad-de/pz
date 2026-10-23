@@ -26,13 +26,10 @@ function renderWallet(container, params, store) {
         </div>
       </div>
 
-      <div class="padded-x flex-col gap-md">
-        <div class="flex-row gap-xs"><span class="t-title-md">${Render.esc(settings.balance)}</span></div>
-        <div class="wallet-chips">
-          <button class="chip is-active" type="button" data-filter="all">All</button>
-          <button class="chip" type="button" data-filter="earned">Earned</button>
-          <button class="chip" type="button" data-filter="spent">Spent</button>
-        </div>
+      <div class="wallet-chips">
+        <button class="chip is-active" type="button" data-filter="all">All</button>
+        <button class="chip" type="button" data-filter="earned">Earned</button>
+        <button class="chip" type="button" data-filter="spent">Spent</button>
       </div>
 
       <div id="wallet-groups" class="flex-col" style="gap: 24px;">

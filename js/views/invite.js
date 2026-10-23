@@ -6,18 +6,16 @@ function renderInvite(container, params, store) {
 
   container.innerHTML = `
     <div class="flex-col" style="padding-bottom: 140px;">
-      <div style="padding:24px 20px 48px;background:linear-gradient(180deg, var(--purple-700), var(--color-bg));">
-        <div class="flex-col gap-md" style="align-items:center;text-align:center;">
-          <div style="width:166px;height:145px;border-radius:50%;background:url('assets/icons/illus-invite-hero.png') center / cover, radial-gradient(circle, var(--purple-400), var(--purple-200));"></div>
-          <div class="flex-col gap-sm">
-            <h1 class="t-title-sm" style="margin:0;">${Render.esc(content.invite_hero_title)}</h1>
-            <p class="t-body-md" style="margin:0;">${Render.esc(content.invite_hero_subtitle)}</p>
-          </div>
+      <div class="invite-hero flex-col gap-md" data-nav-backdrop style="align-items:center;text-align:center;">
+        <div class="invite-hero__art"></div>
+        <div class="flex-col gap-sm">
+          <h1 class="t-title-sm" style="margin:0;">${Render.esc(content.invite_hero_title)}</h1>
+          <p class="t-body-md" style="margin:0;">${Render.esc(content.invite_hero_subtitle)}</p>
         </div>
       </div>
 
-      <div class="flex-col" style="background:var(--color-surface);padding:32px 16px 24px;margin-top:-25px;border-radius:16px 16px 0 0;gap:24px;">
-        <div class="flex-col" style="border:1px solid var(--purple-400);border-radius:var(--radius-xl);padding:16px 0;align-items:center;gap:8px;">
+      <div class="invite-panel flex-col">
+        <div class="invite-balance-card flex-col">
           <span class="t-label-lg">Your Referral Balance</span>
           <span class="t-title-md" style="color:var(--color-primary);">${Render.esc(settings.referral_balance)}</span>
         </div>

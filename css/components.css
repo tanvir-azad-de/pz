@@ -34,12 +34,15 @@
   z-index: 10;
 }
 
-/* Overlay nav bar: used where a full-bleed hero doubles as the nav backdrop
-   (Game Detail). Fixed rather than sticky so #view starts at viewport y=0 and
-   the hero can sit behind it — #view is a scroll container (overflow-x:hidden
-   computes overflow-y to auto) and would otherwise clip a negatively-offset
-   hero. Transparent until scrolled past the hero, then fades in an opaque
-   backdrop so the title/back-arrow/wallet-pill stay legible over task cards. */
+/* Overlay nav bar: used where a full-bleed hero/gradient doubles as the nav
+   backdrop (Game Detail, Invite Friends). Fixed rather than sticky so #view
+   starts at viewport y=0 and the backdrop can sit behind it — #view is a scroll
+   container (overflow-x:hidden computes overflow-y to auto) and would otherwise
+   clip a negatively-offset hero. Transparent until the backdrop element has
+   scrolled past, then fades in an opaque background so the
+   title/back-arrow/wallet-pill stay legible over the content that follows. The
+   backdrop element is marked [data-nav-backdrop]; see setupNavOverlay in
+   js/app.js. */
 .nav-bar--overlay {
   position: fixed;
   top: 0;
@@ -171,7 +174,7 @@
 }
 
 .btn-small {
-  height: 36px;
+  height: 40px;
   border-radius: var(--radius-sm);
   background: var(--color-primary);
   color: var(--color-on-primary);
@@ -216,6 +219,7 @@
 
 .btn-outline-copy {
   height: 36px;
+  margin-left: auto;
   border-radius: var(--radius-sm);
   background: transparent;
   border: 1px solid var(--color-primary);
@@ -519,7 +523,7 @@
 .wallet-card__amount.is-spent { color: var(--color-on-bg); }
 
 .wallet-card__divider {
-  border-top: 1px solid var(--purple-400);
+  border-top: 1px dashed var(--purple-400);
 }
 
 .wallet-card__coupon-row {
@@ -536,7 +540,7 @@
   border-radius: var(--radius-sm);
   padding: 8px 12px;
   color: #fff;
-  flex: 1 1 auto;
+  flex: 0 0 auto;
 }
 
 .wallet-date-group {
@@ -558,6 +562,7 @@
 
 .wallet-chips {
   display: flex;
+  justify-content: center;
   gap: var(--space-md);
   padding: 0 var(--space-screen-x);
 }
@@ -676,4 +681,49 @@
   margin-top: 224px;   /* 279 - 55: overlaps the hero's bottom by 55px */
   position: relative;
   z-index: 1;           /* above .game-hero */
+}
+
+/* ---------- Invite Friends hero + panel ---------- */
+/* Gradient hero that doubles as the nav bar's backdrop (route flags
+   `overlayNav: true`, so the nav is fixed + transparent and this gradient shows
+   through behind it). padding-top is 92px = 68px nav height + the 24px the
+   content would otherwise have had, since the overlay nav occupies no layout
+   space. min-height (not height) because the title/subtitle wrap to 2 lines at
+   narrow widths: 360px is the floor, and the real height grows with
+   content so text can never collide with .invite-panel's negative margin. */
+.invite-hero {
+  min-height: 360px;
+  padding: 92px 20px 48px;
+  background: linear-gradient(180deg, rgba(124, 113, 224, 0) 0%, #7C71E0 100%);
+}
+
+/* No gradient behind the art: the PNG is RGBA with ~38% fully-transparent
+   pixels, so anything placed behind it bleeds through as an unwanted tint
+   (same fix as .illustration-card__art's cashback case — see
+   docs/04-components.md). No border-radius either; the art is already
+   composed with transparent corners and an ellipse clip cut real pixels. */
+.invite-hero__art {
+  width: 166px;
+  height: 145px;
+  background: url("../assets/icons/illus-invite-hero.png") center / cover;
+}
+
+/* Overlaps the hero's bottom 30px. position/z-index so it paints above the
+   hero regardless of source order. --color-surface is #181A44. */
+.invite-panel {
+  position: relative;
+  z-index: 1;
+  margin-top: -30px;
+  padding: 32px var(--space-screen-x) 24px;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  background: var(--color-surface);
+  gap: var(--space-section-gap);
+}
+
+.invite-balance-card {
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-lg) 0;
+  border: 1px dashed var(--purple-400);
+  border-radius: var(--radius-xl);
 }
