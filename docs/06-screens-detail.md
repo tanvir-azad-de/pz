@@ -183,9 +183,12 @@ Route `#/invite`. Back arrow + "Invite Friends" in nav bar. Sticky "Invite Frien
 
 2. **Referral panel** (`.invite-panel`) — `background: var(--color-surface)` (`#181A44`),
    covering the hero's bottom 30px via `margin-top: -30px`, plus `position: relative; z-index: 1`
-   so it paints above the hero regardless of source order. `padding: 32px 16px 24px`,
-   `border-radius: 16px 16px 0 0`. The overlap is what hides the gradient's hard bottom edge, so
-   the two sections read as one continuous surface.
+   so it paints above the hero regardless of source order. `padding: 32px 16px 140px` (not the
+   usual 24px bottom — the extra clearance for the sticky footer lives on the panel itself so its
+   dark surface extends all the way down; putting that padding on the outer wrapper instead left
+   a gap of the page's lighter background showing above the footer), `border-radius: 16px 16px 0
+   0`. The hero/panel overlap is what hides the gradient's hard bottom edge, so the two sections
+   read as one continuous surface.
 
    a. **Referral balance card** (`.invite-balance-card`) — `border: 1px dashed var(--purple-400)`
       (dashed, not solid), `border-radius: 20px`, `padding: 16px 0`, centered text: "Your

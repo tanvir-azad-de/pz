@@ -5,7 +5,7 @@ function renderInvite(container, params, store) {
   const settings = store.data.settings;
 
   container.innerHTML = `
-    <div class="flex-col" style="padding-bottom: 140px;">
+    <div class="flex-col">
       <div class="invite-hero flex-col gap-md" data-nav-backdrop style="align-items:center;text-align:center;">
         <div class="invite-hero__art"></div>
         <div class="flex-col gap-sm">

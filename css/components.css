@@ -709,12 +709,16 @@
 }
 
 /* Overlaps the hero's bottom 30px. position/z-index so it paints above the
-   hero regardless of source order. --color-surface is #181A44. */
+   hero regardless of source order. --color-surface is #181A44. Bottom padding
+   is 140px (not the usual 24px) so the panel's dark surface extends all the
+   way to the sticky footer's clearance zone — putting that padding on the
+   outer wrapper instead left a gap of the page's lighter background showing
+   above the footer. */
 .invite-panel {
   position: relative;
   z-index: 1;
   margin-top: -30px;
-  padding: 32px var(--space-screen-x) 24px;
+  padding: 32px var(--space-screen-x) 140px;
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   background: var(--color-surface);
   gap: var(--space-section-gap);
