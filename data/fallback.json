@@ -3,9 +3,9 @@
     {
       "id": "g1",
       "name": "Coin Master",
-      "image_url": "https://picsum.photos/seed/coinmaster/600/400",
+      "image_url": "https://honkwhvsrseozmll.public.blob.vercel-storage.com/game-coin-master.png",
       "description": "Spin, build, and raid your way to the top.",
-      "total_reward": "$1,000.00",
+      "total_reward": "$900.00",
       "max_per_task": "$75.00",
       "long_description": "Coin Master invites you to spin the slot machine, raid villages, and build your very own Viking empire. Collect coins from daily spins, attack other players' villages to steal their loot, and defend your own by placing powerful traps. Join clans, compete in events, and climb the leaderboards as you upgrade your village to its full glory.",
       "has_cashback": "TRUE",
@@ -14,7 +14,7 @@
     {
       "id": "g2",
       "name": "Royal Match",
-      "image_url": "https://picsum.photos/seed/royalmatch/600/400",
+      "image_url": "https://honkwhvsrseozmll.public.blob.vercel-storage.com/game-royal-match.png",
       "description": "Match tiles and restore the royal castle.",
       "total_reward": "$800.00",
       "max_per_task": "$60.00",
@@ -25,24 +25,189 @@
     {
       "id": "g3",
       "name": "Fishdom",
-      "image_url": "https://picsum.photos/seed/fishdom/600/400",
+      "image_url": "https://honkwhvsrseozmll.public.blob.vercel-storage.com/game-fishdom.png",
       "description": "Solve puzzles and design your dream aquarium.",
-      "total_reward": "$1,000.00",
+      "total_reward": "$670.00",
       "max_per_task": "$75.00",
       "long_description": "Dorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.",
-      "has_cashback": "FALSE",
+      "has_cashback": "TRUE",
       "has_limited_bonus": "TRUE"
     },
     {
       "id": "g4",
       "name": "Monopoly Go",
-      "image_url": "https://picsum.photos/seed/monopolygo/600/400",
+      "image_url": "https://honkwhvsrseozmll.public.blob.vercel-storage.com/game-monopolygo.png",
       "description": "Roll the dice and build your empire.",
       "total_reward": "$650.00",
       "max_per_task": "$45.00",
       "long_description": "Monopoly Go brings the classic board game to your pocket. Roll the dice, collect rent, build landmarks, and go head-to-head with friends and players around the world in fast, fun mini-events held every day.",
       "has_cashback": "TRUE",
       "has_limited_bonus": "FALSE"
+    },
+    {
+      "id": "g5",
+      "name": "Marble Run Ultimate Race ASMR",
+      "image_url": "https://honkwhvsrseozmll.public.blob.vercel-storage.com/game-marble-run.png",
+      "description": "Race, roll and win in Marble Run: Ultimate Race!",
+      "total_reward": "$900.00",
+      "max_per_task": "$65.00",
+      "long_description": "Jump into a fast-paced marble run racing game where speed, timing and precision decide the winner. Control your marble, race against others, and overcome exciting obstacles to reach the finish line first. If you love marble race games, rolling ball games, or simple marble games, this is the perfect challenge for you.",
+      "has_cashback": "TRUE",
+      "has_limited_bonus": "TRUE"
+    },
+    {
+      "id": "g6",
+      "name": "Animals & Coins",
+      "image_url": "https://honkwhvsrseozmll.public.blob.vercel-storage.com/game-animals-and-coins.png",
+      "description": "Spin, raid, and grow your animal village.",
+      "total_reward": "$950.00",
+      "max_per_task": "$70.00",
+      "long_description": "Animals & Coins is a spin-and-build adventure where every pull of the wheel brings coins, shields, or a chance to raid. Use your winnings to upgrade villages, unlock adorable animal companions, and complete card collections for big bonuses. Attack rival players, defend your own base, and join seasonal events for extra loot.",
+      "has_cashback": "TRUE",
+      "has_limited_bonus": "FALSE"
+    },
+    {
+      "id": "g7",
+      "name": "Blast It!",
+      "image_url": "https://honkwhvsrseozmll.public.blob.vercel-storage.com/game-blast-it.png",
+      "description": "Blast through blocks and clear every level.",
+      "total_reward": "$700.00",
+      "max_per_task": "$50.00",
+      "long_description": "Blast It! is a fast, satisfying puzzle game built around chain reactions and perfectly placed explosions. Tap to clear clusters of blocks, trigger combos, and unlock powerful boosters that wipe out whole sections of the board. Hundreds of levels ramp up the difficulty while daily challenges keep your streak alive.",
+      "has_cashback": "TRUE",
+      "has_limited_bonus": "TRUE"
+    },
+    {
+      "id": "g8",
+      "name": "Bubble Bus",
+      "image_url": "https://honkwhvsrseozmll.public.blob.vercel-storage.com/game-bubble-bus.png",
+      "description": "Sort the passengers and fill every bus.",
+      "total_reward": "$550.00",
+      "max_per_task": "$40.00",
+      "long_description": "Bubble Bus is a colorful sorting puzzle where your job is to get every passenger onto the right bus. Plan your moves carefully, use parking spots and boosters to untangle crowded queues, and clear each stage before the lanes fill up. Levels get trickier as new colors and obstacles are introduced.",
+      "has_cashback": "TRUE",
+      "has_limited_bonus": "FALSE"
+    },
+    {
+      "id": "g9",
+      "name": "Fish of Fortune",
+      "image_url": "https://honkwhvsrseozmll.public.blob.vercel-storage.com/game-fish-of-fortune.png",
+      "description": "Reel in big catches and bigger rewards.",
+      "total_reward": "$830.00",
+      "max_per_task": "$90.00",
+      "long_description": "Fish of Fortune takes you out on the water in search of rare catches and hidden treasure. Upgrade your gear, explore new fishing spots, and reel in trophy fish to fill your collection and multiply your rewards. Daily bonuses, tournaments, and jackpot events give you more ways to cash in every session.",
+      "has_cashback": "TRUE",
+      "has_limited_bonus": "TRUE"
+    },
+    {
+      "id": "g10",
+      "name": "Going Balls",
+      "image_url": "https://honkwhvsrseozmll.public.blob.vercel-storage.com/game-going-balls.png",
+      "description": "Roll, dodge, and race to the finish line.",
+      "total_reward": "$600.00",
+      "max_per_task": "$45.00",
+      "long_description": "Going Balls is a 3D rolling race through winding tracks packed with ramps, gaps, and moving obstacles. Tilt and steer your ball to stay on course, collect coins along the way, and unlock flashy new skins as you progress. Hundreds of increasingly tricky tracks will test your reflexes and your patience.",
+      "has_cashback": "TRUE",
+      "has_limited_bonus": "FALSE"
+    },
+    {
+      "id": "g11",
+      "name": "Goods Master 3D",
+      "image_url": "https://honkwhvsrseozmll.public.blob.vercel-storage.com/game-goods-master-3d.png",
+      "description": "Sort the shelves and clear the clutter.",
+      "total_reward": "$750.00",
+      "max_per_task": "$55.00",
+      "long_description": "Goods Master 3D turns tidying up into an oddly relaxing puzzle. Drag matching products onto the right shelves, clear every rack before you run out of space, and use boosters when the layout gets too crowded. Each level adds new items and tighter shelf limits to keep you thinking ahead.",
+      "has_cashback": "TRUE",
+      "has_limited_bonus": "TRUE"
+    },
+    {
+      "id": "g12",
+      "name": "Lords Mobile: Pacific Rim",
+      "image_url": "https://honkwhvsrseozmll.public.blob.vercel-storage.com/game-lords-mobile-pacific-rim.png",
+      "description": "Build an army and conquer the kingdom.",
+      "total_reward": "$490.00",
+      "max_per_task": "$110.00",
+      "long_description": "Lords Mobile: Pacific Rim is a real-time strategy MMO where you build a stronghold, train troops, and fight for control of the realm. Recruit powerful heroes, research upgrades, and send your army out to farm resources and crush rival territories. Join a guild to coordinate massive wars, defend your allies, and climb the kingdom rankings.",
+      "has_cashback": "TRUE",
+      "has_limited_bonus": "FALSE"
+    },
+    {
+      "id": "g13",
+      "name": "Merge Cooking",
+      "image_url": "https://honkwhvsrseozmll.public.blob.vercel-storage.com/game-merge-cooking.png",
+      "description": "Merge ingredients and run your own kitchen.",
+      "total_reward": "$850.00",
+      "max_per_task": "$60.00",
+      "long_description": "Merge Cooking blends merge puzzles with restaurant management into one addictive loop. Combine ingredients and appliances to unlock better recipes, serve hungry customers before they walk out, and reinvest your tips into a bigger, busier kitchen. Decorate your restaurant, hire staff, and work your way up from street cart to five-star dining.",
+      "has_cashback": "TRUE",
+      "has_limited_bonus": "TRUE"
+    },
+    {
+      "id": "g14",
+      "name": "Mob Control",
+      "image_url": "https://honkwhvsrseozmll.public.blob.vercel-storage.com/game-mob-control.png",
+      "description": "Grow your crowd and storm the tower.",
+      "total_reward": "$600.00",
+      "max_per_task": "$45.00",
+      "long_description": "Mob Control is a one-thumb strategy game about turning a trickle of stickmen into an unstoppable mob. Aim your spawner through multiplier gates, dodge the traps that cut your numbers down, and send your crowd crashing into the enemy tower. Upgrade your spawn rate and unlock new skins as the levels get wilder.",
+      "has_cashback": "TRUE",
+      "has_limited_bonus": "FALSE"
+    },
+    {
+      "id": "g15",
+      "name": "Pizza Ready!",
+      "image_url": "https://honkwhvsrseozmll.public.blob.vercel-storage.com/game-pizza-ready.png",
+      "description": "Bake, serve, and grow your pizzeria.",
+      "total_reward": "$800.00",
+      "max_per_task": "$60.00",
+      "long_description": "Pizza Ready! puts you behind the counter of your very own pizza shop. Stretch the dough, load the toppings, pull the pies out before they burn, and keep the line of customers moving. Reinvest your earnings to upgrade ovens, hire help, and expand from a tiny corner shop into a thriving pizza empire.",
+      "has_cashback": "TRUE",
+      "has_limited_bonus": "TRUE"
+    },
+    {
+      "id": "g16",
+      "name": "Snake Clash!",
+      "image_url": "https://honkwhvsrseozmll.public.blob.vercel-storage.com/game-snake-clash.png",
+      "description": "Grow the longest snake and crush rivals.",
+      "total_reward": "$700.00",
+      "max_per_task": "$50.00",
+      "long_description": "Snake Clash! is a chaotic arena brawler where length equals power. Slither around collecting orbs to grow your body, cut off smaller snakes to absorb them, and stay clear of anyone longer than you. Unlock skins and upgrades, then put your reflexes to the test in head-to-head boss battles.",
+      "has_cashback": "TRUE",
+      "has_limited_bonus": "FALSE"
+    },
+    {
+      "id": "g17",
+      "name": "Tap Shift",
+      "image_url": "https://honkwhvsrseozmll.public.blob.vercel-storage.com/game-tap-shift.png",
+      "description": "Shift the blocks and clear the jam.",
+      "total_reward": "$650.00",
+      "max_per_task": "$45.00",
+      "long_description": "Tap Shift is a sliding-block puzzler that rewards sharp planning over fast fingers. Tap to shift pieces into open lanes, untangle the gridlock, and clear the board in as few moves as possible. New mechanics and tighter layouts arrive as you climb through hundreds of handcrafted levels.",
+      "has_cashback": "TRUE",
+      "has_limited_bonus": "TRUE"
+    },
+    {
+      "id": "g18",
+      "name": "Thief Puzzle",
+      "image_url": "https://honkwhvsrseozmll.public.blob.vercel-storage.com/game-thief-puzzle.png",
+      "description": "Pull the pins and pull off the heist.",
+      "total_reward": "$550.00",
+      "max_per_task": "$40.00",
+      "long_description": "Thief Puzzle is a pull-the-pin brain teaser where one wrong move sets off the alarm. Study each scene, work out the right order to yank the pins, and guide your sticky-fingered hero past guards, lasers, and guard dogs to the loot. Clever traps and funny fail animations make every level worth retrying.",
+      "has_cashback": "TRUE",
+      "has_limited_bonus": "FALSE"
+    },
+    {
+      "id": "g19",
+      "name": "Yatzy",
+      "image_url": "https://honkwhvsrseozmll.public.blob.vercel-storage.com/game-yatzy-playvalve.webp",
+      "description": "Roll the dice and chase the perfect score.",
+      "total_reward": "$500.00",
+      "max_per_task": "$35.00",
+      "long_description": "Yatzy brings the classic dice game to your phone with quick matches and clean, easy-to-read scorecards. Roll, hold, and reroll to fill out combinations from pairs and straights all the way to a full Yatzy. Play solo to beat your high score or go head-to-head with friends and players online.",
+      "has_cashback": "TRUE",
+      "has_limited_bonus": "TRUE"
     }
   ],
   "tasks": [
@@ -86,13 +251,13 @@
       "game_id": "g2",
       "name": "Level 1",
       "amount": "$4.00",
-      "is_active": "FALSE"
+      "is_active": "TRUE"
     },
     {
       "game_id": "g2",
       "name": "Level 2",
       "amount": "$7.00",
-      "is_active": "TRUE"
+      "is_active": "FALSE"
     },
     {
       "game_id": "g2",
@@ -122,7 +287,7 @@
       "game_id": "g3",
       "name": "Level 1",
       "amount": "$5.00",
-      "is_active": "FALSE"
+      "is_active": "TRUE"
     },
     {
       "game_id": "g3",
@@ -146,7 +311,7 @@
       "game_id": "g3",
       "name": "Level 5",
       "amount": "$20.00",
-      "is_active": "TRUE"
+      "is_active": "FALSE"
     },
     {
       "game_id": "g3",
@@ -158,7 +323,7 @@
       "game_id": "g4",
       "name": "Level 1",
       "amount": "$3.00",
-      "is_active": "FALSE"
+      "is_active": "TRUE"
     },
     {
       "game_id": "g4",
@@ -176,7 +341,7 @@
       "game_id": "g4",
       "name": "Level 4",
       "amount": "$12.00",
-      "is_active": "TRUE"
+      "is_active": "FALSE"
     },
     {
       "game_id": "g4",
@@ -188,6 +353,546 @@
       "game_id": "g4",
       "name": "Level 10",
       "amount": "$45.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g5",
+      "name": "Level 1",
+      "amount": "$4.00",
+      "is_active": "TRUE"
+    },
+    {
+      "game_id": "g5",
+      "name": "Level 2",
+      "amount": "$7.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g5",
+      "name": "Level 3",
+      "amount": "$11.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g5",
+      "name": "Level 4",
+      "amount": "$15.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g5",
+      "name": "Level 5",
+      "amount": "$20.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g5",
+      "name": "Level 10",
+      "amount": "$65.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g6",
+      "name": "Level 1",
+      "amount": "$5.00",
+      "is_active": "TRUE"
+    },
+    {
+      "game_id": "g6",
+      "name": "Level 2",
+      "amount": "$8.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g6",
+      "name": "Level 3",
+      "amount": "$12.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g6",
+      "name": "Level 4",
+      "amount": "$16.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g6",
+      "name": "Level 5",
+      "amount": "$21.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g6",
+      "name": "Level 10",
+      "amount": "$70.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g7",
+      "name": "Level 1",
+      "amount": "$3.00",
+      "is_active": "TRUE"
+    },
+    {
+      "game_id": "g7",
+      "name": "Level 2",
+      "amount": "$6.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g7",
+      "name": "Level 3",
+      "amount": "$9.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g7",
+      "name": "Level 4",
+      "amount": "$13.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g7",
+      "name": "Level 5",
+      "amount": "$17.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g7",
+      "name": "Level 10",
+      "amount": "$50.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g8",
+      "name": "Level 1",
+      "amount": "$3.00",
+      "is_active": "TRUE"
+    },
+    {
+      "game_id": "g8",
+      "name": "Level 2",
+      "amount": "$5.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g8",
+      "name": "Level 3",
+      "amount": "$7.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g8",
+      "name": "Level 4",
+      "amount": "$9.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g8",
+      "name": "Level 5",
+      "amount": "$11.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g8",
+      "name": "Level 10",
+      "amount": "$40.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g9",
+      "name": "Level 1",
+      "amount": "$6.00",
+      "is_active": "TRUE"
+    },
+    {
+      "game_id": "g9",
+      "name": "Level 2",
+      "amount": "$10.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g9",
+      "name": "Level 3",
+      "amount": "$15.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g9",
+      "name": "Level 4",
+      "amount": "$20.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g9",
+      "name": "Level 5",
+      "amount": "$26.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g9",
+      "name": "Level 10",
+      "amount": "$90.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g10",
+      "name": "Level 1",
+      "amount": "$3.00",
+      "is_active": "TRUE"
+    },
+    {
+      "game_id": "g10",
+      "name": "Level 2",
+      "amount": "$6.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g10",
+      "name": "Level 3",
+      "amount": "$9.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g10",
+      "name": "Level 4",
+      "amount": "$12.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g10",
+      "name": "Level 5",
+      "amount": "$16.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g10",
+      "name": "Level 10",
+      "amount": "$45.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g11",
+      "name": "Level 1",
+      "amount": "$4.00",
+      "is_active": "TRUE"
+    },
+    {
+      "game_id": "g11",
+      "name": "Level 2",
+      "amount": "$7.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g11",
+      "name": "Level 3",
+      "amount": "$10.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g11",
+      "name": "Level 4",
+      "amount": "$13.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g11",
+      "name": "Level 5",
+      "amount": "$17.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g11",
+      "name": "Level 10",
+      "amount": "$55.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g12",
+      "name": "Level 1",
+      "amount": "$7.00",
+      "is_active": "TRUE"
+    },
+    {
+      "game_id": "g12",
+      "name": "Level 2",
+      "amount": "$12.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g12",
+      "name": "Level 3",
+      "amount": "$18.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g12",
+      "name": "Level 4",
+      "amount": "$24.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g12",
+      "name": "Level 5",
+      "amount": "$32.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g12",
+      "name": "Level 10",
+      "amount": "$110.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g13",
+      "name": "Level 1",
+      "amount": "$4.00",
+      "is_active": "TRUE"
+    },
+    {
+      "game_id": "g13",
+      "name": "Level 2",
+      "amount": "$7.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g13",
+      "name": "Level 3",
+      "amount": "$10.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g13",
+      "name": "Level 4",
+      "amount": "$14.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g13",
+      "name": "Level 5",
+      "amount": "$18.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g13",
+      "name": "Level 10",
+      "amount": "$60.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g14",
+      "name": "Level 1",
+      "amount": "$3.00",
+      "is_active": "TRUE"
+    },
+    {
+      "game_id": "g14",
+      "name": "Level 2",
+      "amount": "$6.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g14",
+      "name": "Level 3",
+      "amount": "$9.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g14",
+      "name": "Level 4",
+      "amount": "$12.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g14",
+      "name": "Level 5",
+      "amount": "$16.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g14",
+      "name": "Level 10",
+      "amount": "$45.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g15",
+      "name": "Level 1",
+      "amount": "$4.00",
+      "is_active": "TRUE"
+    },
+    {
+      "game_id": "g15",
+      "name": "Level 2",
+      "amount": "$7.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g15",
+      "name": "Level 3",
+      "amount": "$10.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g15",
+      "name": "Level 4",
+      "amount": "$14.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g15",
+      "name": "Level 5",
+      "amount": "$18.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g15",
+      "name": "Level 10",
+      "amount": "$60.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g16",
+      "name": "Level 1",
+      "amount": "$3.00",
+      "is_active": "TRUE"
+    },
+    {
+      "game_id": "g16",
+      "name": "Level 2",
+      "amount": "$6.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g16",
+      "name": "Level 3",
+      "amount": "$9.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g16",
+      "name": "Level 4",
+      "amount": "$13.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g16",
+      "name": "Level 5",
+      "amount": "$17.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g16",
+      "name": "Level 10",
+      "amount": "$50.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g17",
+      "name": "Level 1",
+      "amount": "$3.00",
+      "is_active": "TRUE"
+    },
+    {
+      "game_id": "g17",
+      "name": "Level 2",
+      "amount": "$6.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g17",
+      "name": "Level 3",
+      "amount": "$9.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g17",
+      "name": "Level 4",
+      "amount": "$12.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g17",
+      "name": "Level 5",
+      "amount": "$16.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g17",
+      "name": "Level 10",
+      "amount": "$45.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g18",
+      "name": "Level 1",
+      "amount": "$3.00",
+      "is_active": "TRUE"
+    },
+    {
+      "game_id": "g18",
+      "name": "Level 2",
+      "amount": "$5.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g18",
+      "name": "Level 3",
+      "amount": "$7.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g18",
+      "name": "Level 4",
+      "amount": "$9.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g18",
+      "name": "Level 5",
+      "amount": "$11.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g18",
+      "name": "Level 10",
+      "amount": "$40.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g19",
+      "name": "Level 1",
+      "amount": "$2.00",
+      "is_active": "TRUE"
+    },
+    {
+      "game_id": "g19",
+      "name": "Level 2",
+      "amount": "$4.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g19",
+      "name": "Level 3",
+      "amount": "$6.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g19",
+      "name": "Level 4",
+      "amount": "$8.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g19",
+      "name": "Level 5",
+      "amount": "$10.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g19",
+      "name": "Level 10",
+      "amount": "$35.00",
       "is_active": "FALSE"
     }
   ],
@@ -233,129 +938,129 @@
       "category": "Amazon",
       "brand": "Amazon",
       "amount": "$5.00",
-      "reward_detail_how_1": "Your Amazon gift card code will be delivered to your PlayZone wallet.",
-      "reward_detail_how_2": "Open the Wallet tab, tap the reward, and copy your code.",
-      "reward_detail_how_3": "Redeem the code at amazon.com/redeem or in the Amazon app under Gift cards.",
-      "reward_detail_conditions_1": "Gift card codes are issued for a single Amazon marketplace and cannot be changed after payout.",
-      "reward_detail_conditions_2": "If your code doesn't arrive within 7 business days, please contact our Customer Support.",
-      "reward_detail_disclaimer": "Amazon is not a sponsor of this promotion. Amazon gift cards are redeemable only for products sold on the Amazon marketplace they were issued for, subject to Amazon's gift card terms."
+      "reward_detail_how_1": "This payout will be sent directly to your Amazon account.",
+      "reward_detail_how_2": "If this is your first Amazon payout, you'll need to log in to your Amazon account or create a new one.",
+      "reward_detail_how_3": "If you've already used Amazon for payouts, simply tap the button below to receive your reward within minutes.",
+      "reward_detail_conditions_1": "Changing or editing your Amazon account for payouts is currently not possible.",
+      "reward_detail_conditions_2": "If you don't receive your payout within 7 business days, please contact our Customer Support.",
+      "reward_detail_disclaimer": "We DO NOT require nor collect your Amazon log in details. When you request a payout, you are redirected outside the PlayZone environment to the official Amazon website."
     },
     {
       "id": "r5",
       "category": "Amazon",
       "brand": "Amazon",
       "amount": "$15.00",
-      "reward_detail_how_1": "Your Amazon gift card code will be delivered to your PlayZone wallet.",
-      "reward_detail_how_2": "Open the Wallet tab, tap the reward, and copy your code.",
-      "reward_detail_how_3": "Redeem the code at amazon.com/redeem or in the Amazon app under Gift cards.",
-      "reward_detail_conditions_1": "Gift card codes are issued for a single Amazon marketplace and cannot be changed after payout.",
-      "reward_detail_conditions_2": "If your code doesn't arrive within 7 business days, please contact our Customer Support.",
-      "reward_detail_disclaimer": "Amazon is not a sponsor of this promotion. Amazon gift cards are redeemable only for products sold on the Amazon marketplace they were issued for, subject to Amazon's gift card terms."
+      "reward_detail_how_1": "This payout will be sent directly to your Amazon account.",
+      "reward_detail_how_2": "If this is your first Amazon payout, you'll need to log in to your Amazon account or create a new one.",
+      "reward_detail_how_3": "If you've already used Amazon for payouts, simply tap the button below to receive your reward within minutes.",
+      "reward_detail_conditions_1": "Changing or editing your Amazon account for payouts is currently not possible.",
+      "reward_detail_conditions_2": "If you don't receive your payout within 7 business days, please contact our Customer Support.",
+      "reward_detail_disclaimer": "We DO NOT require nor collect your Amazon log in details. When you request a payout, you are redirected outside the PlayZone environment to the official Amazon website."
     },
     {
       "id": "r6",
       "category": "Amazon",
       "brand": "Amazon",
       "amount": "$25.00",
-      "reward_detail_how_1": "Your Amazon gift card code will be delivered to your PlayZone wallet.",
-      "reward_detail_how_2": "Open the Wallet tab, tap the reward, and copy your code.",
-      "reward_detail_how_3": "Redeem the code at amazon.com/redeem or in the Amazon app under Gift cards.",
-      "reward_detail_conditions_1": "Gift card codes are issued for a single Amazon marketplace and cannot be changed after payout.",
-      "reward_detail_conditions_2": "If your code doesn't arrive within 7 business days, please contact our Customer Support.",
-      "reward_detail_disclaimer": "Amazon is not a sponsor of this promotion. Amazon gift cards are redeemable only for products sold on the Amazon marketplace they were issued for, subject to Amazon's gift card terms."
+      "reward_detail_how_1": "This payout will be sent directly to your Amazon account.",
+      "reward_detail_how_2": "If this is your first Amazon payout, you'll need to log in to your Amazon account or create a new one.",
+      "reward_detail_how_3": "If you've already used Amazon for payouts, simply tap the button below to receive your reward within minutes.",
+      "reward_detail_conditions_1": "Changing or editing your Amazon account for payouts is currently not possible.",
+      "reward_detail_conditions_2": "If you don't receive your payout within 7 business days, please contact our Customer Support.",
+      "reward_detail_disclaimer": "We DO NOT require nor collect your Amazon log in details. When you request a payout, you are redirected outside the PlayZone environment to the official Amazon website."
     },
     {
       "id": "r7",
       "category": "Google Play",
       "brand": "Google Play",
       "amount": "$5.00",
-      "reward_detail_how_1": "Your Google Play gift code will be delivered to your PlayZone wallet.",
-      "reward_detail_how_2": "Open the Wallet tab, tap the reward, and copy your code.",
-      "reward_detail_how_3": "Redeem it in the Google Play Store under Payments & subscriptions → Redeem code.",
-      "reward_detail_conditions_1": "Google Play codes are country-specific and can only be redeemed in the region they were issued for.",
-      "reward_detail_conditions_2": "If your code doesn't arrive within 7 business days, please contact our Customer Support.",
-      "reward_detail_disclaimer": "Google Play is a trademark of Google LLC and is not a sponsor of this promotion. Codes are subject to the Google Play gift code terms of service."
+      "reward_detail_how_1": "This payout will be sent directly to your Google Play account.",
+      "reward_detail_how_2": "If this is your first Google Play payout, you'll need to log in to your Google Play account or create a new one.",
+      "reward_detail_how_3": "If you've already used Google Play for payouts, simply tap the button below to receive your reward within minutes.",
+      "reward_detail_conditions_1": "Changing or editing your Google Play account for payouts is currently not possible.",
+      "reward_detail_conditions_2": "If you don't receive your payout within 7 business days, please contact our Customer Support.",
+      "reward_detail_disclaimer": "We DO NOT require nor collect your Google Play log in details. When you request a payout, you are redirected outside the PlayZone environment to the official Google Play website."
     },
     {
       "id": "r8",
       "category": "Google Play",
       "brand": "Google Play",
       "amount": "$10.00",
-      "reward_detail_how_1": "Your Google Play gift code will be delivered to your PlayZone wallet.",
-      "reward_detail_how_2": "Open the Wallet tab, tap the reward, and copy your code.",
-      "reward_detail_how_3": "Redeem it in the Google Play Store under Payments & subscriptions → Redeem code.",
-      "reward_detail_conditions_1": "Google Play codes are country-specific and can only be redeemed in the region they were issued for.",
-      "reward_detail_conditions_2": "If your code doesn't arrive within 7 business days, please contact our Customer Support.",
-      "reward_detail_disclaimer": "Google Play is a trademark of Google LLC and is not a sponsor of this promotion. Codes are subject to the Google Play gift code terms of service."
+      "reward_detail_how_1": "This payout will be sent directly to your Google Play account.",
+      "reward_detail_how_2": "If this is your first Google Play payout, you'll need to log in to your Google Play account or create a new one.",
+      "reward_detail_how_3": "If you've already used Google Play for payouts, simply tap the button below to receive your reward within minutes.",
+      "reward_detail_conditions_1": "Changing or editing your Google Play account for payouts is currently not possible.",
+      "reward_detail_conditions_2": "If you don't receive your payout within 7 business days, please contact our Customer Support.",
+      "reward_detail_disclaimer": "We DO NOT require nor collect your Google Play log in details. When you request a payout, you are redirected outside the PlayZone environment to the official Google Play website."
     },
     {
       "id": "r9",
       "category": "Google Play",
       "brand": "Google Play",
       "amount": "$20.00",
-      "reward_detail_how_1": "Your Google Play gift code will be delivered to your PlayZone wallet.",
-      "reward_detail_how_2": "Open the Wallet tab, tap the reward, and copy your code.",
-      "reward_detail_how_3": "Redeem it in the Google Play Store under Payments & subscriptions → Redeem code.",
-      "reward_detail_conditions_1": "Google Play codes are country-specific and can only be redeemed in the region they were issued for.",
-      "reward_detail_conditions_2": "If your code doesn't arrive within 7 business days, please contact our Customer Support.",
-      "reward_detail_disclaimer": "Google Play is a trademark of Google LLC and is not a sponsor of this promotion. Codes are subject to the Google Play gift code terms of service."
+      "reward_detail_how_1": "This payout will be sent directly to your Google Play account.",
+      "reward_detail_how_2": "If this is your first Google Play payout, you'll need to log in to your Google Play account or create a new one.",
+      "reward_detail_how_3": "If you've already used Google Play for payouts, simply tap the button below to receive your reward within minutes.",
+      "reward_detail_conditions_1": "Changing or editing your Google Play account for payouts is currently not possible.",
+      "reward_detail_conditions_2": "If you don't receive your payout within 7 business days, please contact our Customer Support.",
+      "reward_detail_disclaimer": "We DO NOT require nor collect your Google Play log in details. When you request a payout, you are redirected outside the PlayZone environment to the official Google Play website."
     },
     {
       "id": "r10",
       "category": "Apple",
       "brand": "Apple",
       "amount": "$5.00",
-      "reward_detail_how_1": "Your Apple Gift Card code will be delivered to your PlayZone wallet.",
-      "reward_detail_how_2": "Open the Wallet tab, tap the reward, and copy your code.",
-      "reward_detail_how_3": "Redeem it in the App Store under your account → Redeem Gift Card or Code.",
-      "reward_detail_conditions_1": "Apple Gift Cards are country-specific and can only be redeemed with the Apple account region they were issued for.",
-      "reward_detail_conditions_2": "If your code doesn't arrive within 7 business days, please contact our Customer Support.",
-      "reward_detail_disclaimer": "Apple is not a participant in or sponsor of this promotion. Apple Gift Cards are redeemable only for products and services from Apple, subject to Apple's gift card terms."
+      "reward_detail_how_1": "This payout will be sent directly to your Apple account.",
+      "reward_detail_how_2": "If this is your first Apple payout, you'll need to log in to your Apple account or create a new one.",
+      "reward_detail_how_3": "If you've already used Apple for payouts, simply tap the button below to receive your reward within minutes.",
+      "reward_detail_conditions_1": "Changing or editing your Apple account for payouts is currently not possible.",
+      "reward_detail_conditions_2": "If you don't receive your payout within 7 business days, please contact our Customer Support.",
+      "reward_detail_disclaimer": "We DO NOT require nor collect your Apple log in details. When you request a payout, you are redirected outside the PlayZone environment to the official Apple website."
     },
     {
       "id": "r11",
       "category": "Apple",
       "brand": "Apple",
       "amount": "$15.00",
-      "reward_detail_how_1": "Your Apple Gift Card code will be delivered to your PlayZone wallet.",
-      "reward_detail_how_2": "Open the Wallet tab, tap the reward, and copy your code.",
-      "reward_detail_how_3": "Redeem it in the App Store under your account → Redeem Gift Card or Code.",
-      "reward_detail_conditions_1": "Apple Gift Cards are country-specific and can only be redeemed with the Apple account region they were issued for.",
-      "reward_detail_conditions_2": "If your code doesn't arrive within 7 business days, please contact our Customer Support.",
-      "reward_detail_disclaimer": "Apple is not a participant in or sponsor of this promotion. Apple Gift Cards are redeemable only for products and services from Apple, subject to Apple's gift card terms."
+      "reward_detail_how_1": "This payout will be sent directly to your Apple account.",
+      "reward_detail_how_2": "If this is your first Apple payout, you'll need to log in to your Apple account or create a new one.",
+      "reward_detail_how_3": "If you've already used Apple for payouts, simply tap the button below to receive your reward within minutes.",
+      "reward_detail_conditions_1": "Changing or editing your Apple account for payouts is currently not possible.",
+      "reward_detail_conditions_2": "If you don't receive your payout within 7 business days, please contact our Customer Support.",
+      "reward_detail_disclaimer": "We DO NOT require nor collect your Apple log in details. When you request a payout, you are redirected outside the PlayZone environment to the official Apple website."
     },
     {
       "id": "r12",
       "category": "Apple",
       "brand": "Apple",
       "amount": "$25.00",
-      "reward_detail_how_1": "Your Apple Gift Card code will be delivered to your PlayZone wallet.",
-      "reward_detail_how_2": "Open the Wallet tab, tap the reward, and copy your code.",
-      "reward_detail_how_3": "Redeem it in the App Store under your account → Redeem Gift Card or Code.",
-      "reward_detail_conditions_1": "Apple Gift Cards are country-specific and can only be redeemed with the Apple account region they were issued for.",
-      "reward_detail_conditions_2": "If your code doesn't arrive within 7 business days, please contact our Customer Support.",
-      "reward_detail_disclaimer": "Apple is not a participant in or sponsor of this promotion. Apple Gift Cards are redeemable only for products and services from Apple, subject to Apple's gift card terms."
+      "reward_detail_how_1": "This payout will be sent directly to your Apple account.",
+      "reward_detail_how_2": "If this is your first Apple payout, you'll need to log in to your Apple account or create a new one.",
+      "reward_detail_how_3": "If you've already used Apple for payouts, simply tap the button below to receive your reward within minutes.",
+      "reward_detail_conditions_1": "Changing or editing your Apple account for payouts is currently not possible.",
+      "reward_detail_conditions_2": "If you don't receive your payout within 7 business days, please contact our Customer Support.",
+      "reward_detail_disclaimer": "We DO NOT require nor collect your Apple log in details. When you request a payout, you are redirected outside the PlayZone environment to the official Apple website."
     }
   ],
   "wallet": [
     {
       "date": "October 8th",
       "type": "earned",
-      "name": "Fishdom",
-      "subtitle": "Level 10",
+      "name": "Fish and Fortune",
+      "subtitle": "Level 2 Complete",
       "amount": "$75.00",
       "status": "Pending",
-      "icon_url": "https://picsum.photos/seed/fishdom/80/80",
+      "icon_url": "https://honkwhvsrseozmll.public.blob.vercel-storage.com/game-fish-of-fortune.png",
       "coupon_code": ""
     },
     {
       "date": "October 8th",
       "type": "earned",
-      "name": "Survey",
-      "subtitle": "Opinion Rewards",
+      "name": "Monopoly Go",
+      "subtitle": "Level 1 Complete",
       "amount": "$12.00",
       "status": "",
-      "icon_url": "https://picsum.photos/seed/survey/80/80",
+      "icon_url": "https://honkwhvsrseozmll.public.blob.vercel-storage.com/game-monopolygo.png",
       "coupon_code": ""
     },
     {
@@ -365,17 +1070,17 @@
       "subtitle": "10% off storewide",
       "amount": "$20.00",
       "status": "",
-      "icon_url": "https://picsum.photos/seed/zalando/80/80",
-      "coupon_code": "AUDU10"
+      "icon_url": "https://honkwhvsrseozmll.public.blob.vercel-storage.com/brand-zalando.png",
+      "coupon_code": "ZAL10"
     },
     {
       "date": "September 29th",
       "type": "earned",
       "name": "Coin Master",
-      "subtitle": "Level 5",
+      "subtitle": "Level 5 Complete",
       "amount": "$20.00",
       "status": "",
-      "icon_url": "https://picsum.photos/seed/coinmaster/80/80",
+      "icon_url": "https://honkwhvsrseozmll.public.blob.vercel-storage.com/game-coin-master.png",
       "coupon_code": ""
     },
     {
@@ -385,17 +1090,47 @@
       "subtitle": "$5.00",
       "amount": "$5.00",
       "status": "",
-      "icon_url": "https://picsum.photos/seed/amazon1/80/80",
+      "icon_url": "https://honkwhvsrseozmll.public.blob.vercel-storage.com/brand-amazon.png",
       "coupon_code": ""
     },
     {
-      "date": "September 29th",
-      "type": "earned",
-      "name": "Survey",
-      "subtitle": "Quick Poll",
-      "amount": "$8.00",
-      "status": "Pending",
-      "icon_url": "https://picsum.photos/seed/survey2/80/80",
+      "date": "August 16th",
+      "type": "spent",
+      "name": "PayPal",
+      "subtitle": "$12.00",
+      "amount": "$12.00",
+      "status": "",
+      "icon_url": "https://honkwhvsrseozmll.public.blob.vercel-storage.com/brand-paypal.png",
+      "coupon_code": ""
+    },
+    {
+      "date": "August 16th",
+      "type": "spent",
+      "name": "PayPal",
+      "subtitle": "$20.00",
+      "amount": "$20.00",
+      "status": "",
+      "icon_url": "https://honkwhvsrseozmll.public.blob.vercel-storage.com/brand-paypal.png",
+      "coupon_code": ""
+    },
+    {
+      "date": "August 16th",
+      "type": "spent",
+      "name": "PayPal",
+      "subtitle": "$5.00",
+      "amount": "$5.00",
+      "status": "",
+      "icon_url": "https://honkwhvsrseozmll.public.blob.vercel-storage.com/brand-paypal.png",
+      "coupon_code": ""
+    },
+    {
+      "date": "August 16th",
+      "type": "spent",
+      "name": "PayPal",
+      "subtitle": "$75.00",
+      "amount": "$75.00",
+      "status": "",
+      "icon_url": "https://honkwhvsrseozmll.public.blob.vercel-storage.com/brand-paypal.png",
       "coupon_code": ""
     }
   ],
@@ -403,10 +1138,13 @@
     "balance": "$2.30",
     "referral_balance": "$120.00",
     "referral_first_task": "$5.00",
-    "referral_pct": "10"
+    "referral_pct": "10",
+    "currency_symbol": "$",
+    "currency_position": "prefix",
+    "number_locale": "en-US"
   },
   "content": {
-    "email": "demo@example.com",
+    "email": "tanvir@example.com",
     "invite_card_discover_text": "Invite your friends and earn up to $50 bonus",
     "bonus_1_title": "Invite your friends and earn up to $50 bonus",
     "bonus_1_cta": "Get Bonus",

@@ -212,6 +212,8 @@ the `TABS` map to match the new sheet's actual gids.
   `TABS` map in `js/sheets.js` accordingly (see `seed/README.md`). Since all locale sheets are
   expected to be duplicates of one another, this should be done by duplicating the sheet with
   the gid already fixed, not recreating tabs independently per locale.
-- `data/fallback.json` predates the `currency_symbol`/`currency_position`/`number_locale`
-  settings keys and the sheet's current row counts (4 games vs. 19 live) — it still works via
-  `Render.initCurrency()`'s legacy sniffing fallback, but is stale as a demo dataset.
+- `data/fallback.json` and `seed/*.tsv` are regenerated from the live pz-en sheet as a pair
+  (see `docs/01-data-model.md`) and include the `currency_symbol`/`currency_position`/
+  `number_locale` settings keys. If pz-en changes meaningfully, regenerate both again rather
+  than hand-editing either — hand-editing breaks the invariant that they're identical to each
+  other and to the live sheet.

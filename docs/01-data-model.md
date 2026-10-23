@@ -36,10 +36,10 @@ locale's spreadsheet ID. No code change, no deploy.
 - Sheet ID: `1M70ITzDuJapNMhcd9H_HEPUyuOWHkJIMyrFBb4cSubU`
 - Sharing: must be public ("Anyone with the link can view") for the gviz endpoint to work
   unauthenticated.
-- **Status as of 2026-10-22: all 6 tabs exist with header rows in place, but no data rows yet.**
-  `settings` and `content` were initially built as wide single-row tables and have since been
-  corrected to vertical `key`/`value` layout (see seed files below). The app ships with
-  `data/fallback.json` and `seed/*.tsv` so it renders fully and can be populated by paste.
+- **Status as of 2026-10-23: all 6 tabs are fully populated** — 19 games, 114 tasks (6 per
+  game), 12 rewards, 9 wallet transactions, 7 settings keys, 73 content keys. `data/fallback.json`
+  and `seed/*.tsv` are regenerated directly from this live sheet (see `seed/README.md`), so all
+  three stay in lockstep — there is no longer a smaller/stale demo dataset.
 
 ## Fetch mechanism: gviz JSON endpoint
 
@@ -314,10 +314,11 @@ A handful of strings are intentionally NOT sheet-driven and remain hardcoded in 
 
 ## Open items
 
-- All 6 tabs exist with correct header rows. Data rows are pasted in via `seed/*.tsv`
-  (see `seed/README.md`) — same demo content as `data/fallback.json`, generated from a single
-  source so the two never drift: Coin Master, Royal Match, Fishdom, Monopoly Go; Level 1–10
-  tasks; PayPal/Amazon/Google Play/Apple categories; wallet transactions across two date groups;
-  Invite Friends and Reward Detail paragraphs.
-- `data/fallback.json` mirrors this schema exactly and is what the app renders from until the
-  seed data is pasted into the live sheet (or any time the live fetch fails).
+- `seed/*.tsv` and `data/fallback.json` are both generated directly from the live pz-en sheet
+  (all 19 games, 114 tasks, 12 rewards, 9 wallet rows, 7 settings keys, 73 content keys) and
+  are kept byte-identical to it and to each other. If the live sheet changes, regenerate both
+  rather than hand-editing — a script fetches all 6 tabs via the same gviz normalization logic
+  as `js/sheets.js` and writes both outputs from one pass, so they can't drift from each other.
+- `data/fallback.json` is what the app renders from on live fetch failure (per-tab or total).
+  `seed/*.tsv` is a paste-ready snapshot of the same data, useful for resetting a sheet or
+  seeding pz-de before translation.
