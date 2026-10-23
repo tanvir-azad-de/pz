@@ -45,7 +45,7 @@ Route `#/game/:id`. Back arrow + game name in nav bar. No tab bar; sticky "Play 
        `justify-content: space-between`
      - Left: `tasks.name` (`.t-body-lg` 16/800); if `tasks.is_active`, a green "Active task"
        pill badge (`.badge--success`) rendered below the name
-     - Right: `$ {tasks.amount}` (`.t-title-sm`, 20/700)
+     - Right: `{tasks.amount}` (sheet-formatted, e.g. `$5.00`) (`.t-title-sm`, 20/700)
 
 6. **Description card** — `background: var(--color-surface)`, `border-radius: 8px`, `padding:
    12px`: "Description" label (`.t-body-md` 14/800) + `games.long_description` (`.t-body-sm`
@@ -149,12 +149,12 @@ Route `#/invite`. Back arrow + "Invite Friends" in nav bar. Sticky "Invite Frien
 
    a. **Referral balance card** — `border: 1px solid var(--purple-400)`, `border-radius: 20px`,
       `padding: 16px 0`, centered text: "Your Referral Balance" (`.t-label-lg`, 16/800) above
-      `$ {settings.referral_balance}` (`.t-title-md`, 24/800, color `var(--color-primary)`).
+      `{settings.referral_balance}` (sheet-formatted, e.g. `$120.00`) (`.t-title-md`, 24/800, color `var(--color-primary)`).
 
    b. **Referral Rewards** — header "Referral Rewards" (`.t-title-md`, 24/800) + subcopy "Earn
       rewards when your friend:" (`.t-body-lg`, 14/400). Two reward rule cards
       (`background: var(--color-bg)`, `border-radius: 8px`, `padding: 12px`):
-      - "Completes the first task" + `$ {settings.referral_first_task}` (`.t-title-sm`,
+      - "Completes the first task" + `{settings.referral_first_task}` (sheet-formatted, e.g. `$5.00`) (`.t-title-sm`,
         20/700, `var(--color-primary)`)
       - "Earns game rewards from tasks" + `{settings.referral_pct}%` (same style) + "of their
         reward" caption, plus a footer line with an info icon: "You'll get
@@ -170,7 +170,7 @@ Route `#/invite`. Back arrow + "Invite Friends" in nav bar. Sticky "Invite Frien
 Invite Friends
 ├─ Gradient hero (illustration, title, subtitle — content.invite_hero_*)
 ├─ Referral panel (overlaps hero by -25px)
-│   ├─ Balance card ($ settings.referral_balance)
+│   ├─ Balance card (settings.referral_balance)
 │   ├─ Referral Rewards (2 rule cards using settings.referral_first_task / referral_pct)
 │   └─ "How it works?" (4 bullets, content.invite_how_1..4)
 └─ Sticky "Invite Friends" button

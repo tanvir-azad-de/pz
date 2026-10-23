@@ -13,17 +13,61 @@ const Render = (() => {
       .replace(/'/g, "&#39;");
   }
 
-  function computedTotal(tasks) {
-    const sum = tasks.reduce((acc, t) => acc + (Number(t.amount) || 0), 0);
-    return `$ ${sum}`;
+  // ---- Currency helpers ----
+  // The sheet is the only source of currency symbols/formatting — amounts arrive pre-formatted
+  // (e.g. "$5.00", "$1,000.00") from js/sheets.js (which reads gviz's formatted cell.f, not the
+  // raw cell.v). Views interpolate those strings as-is and never hardcode a "$". The only place
+  // that still needs real arithmetic is summing a game's tasks, handled below.
+
+  // Pulls the numeric value out of a formatted amount string, e.g. "$1,000.00" -> 1000. Strips
+  // anything that isn't a digit, dot, or minus sign, then drops thousands separators. Returns 0
+  // for unparseable input (blank cell, etc.) so callers can sum safely.
+  function parseAmount(v) {
+    if (typeof v === "number") return v;
+    const cleaned = String(v || "").replace(/[^0-9.\-]/g, "");
+    const n = parseFloat(cleaned);
+    return Number.isFinite(n) ? n : 0;
   }
 
-  // Same sum as computedTotal() but without the leading "$ ", so callers that want to style
-  // the currency sign separately (e.g. in --color-primary on the game card) can do so without
-  // re-implementing the reduce. computedTotal() stays as-is since Game Detail renders it as a
-  // single plain string.
-  function computedTotalAmount(tasks) {
-    return tasks.reduce((acc, t) => acc + (Number(t.amount) || 0), 0);
+  // Splits a formatted amount into its leading symbol and the rest, e.g. "$1,000.00" ->
+  // { symbol: "$", rest: "1,000.00" }. Used by the handful of spots that tint the currency
+  // symbol a different color than the number (nav-bar wallet pill, game card footer) without
+  // the app hardcoding what that symbol is.
+  function splitAmount(v) {
+    const str = String(v || "");
+    const match = str.match(/^([^\d\s]*)\s*(.*)$/);
+    return { symbol: match ? match[1] : "", rest: match ? match[2] : str };
+  }
+
+  // Remembers the currency symbol/format seen in real sheet data, so computedTotal() (which
+  // has to re-derive a number via arithmetic, not just pass a string through) can still render
+  // its sum dressed the same way as every other amount on screen. Falls back to a bare "$" if
+  // nothing with a symbol has loaded yet.
+  let _currencySymbol = "$";
+  function initCurrency(data) {
+    const candidates = [
+      data && data.settings && data.settings.balance,
+      data && data.games && data.games[0] && data.games[0].total_reward,
+      data && data.tasks && data.tasks[0] && data.tasks[0].amount,
+      data && data.rewards && data.rewards[0] && data.rewards[0].amount,
+    ];
+    for (const c of candidates) {
+      const symbol = splitAmount(c).symbol;
+      if (symbol) {
+        _currencySymbol = symbol;
+        return;
+      }
+    }
+  }
+
+  // Formats a plain number back into the sheet's currency convention, e.g. 135 -> "$135.00".
+  function formatAmount(num) {
+    return `${_currencySymbol}${num.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  }
+
+  function computedTotal(tasks) {
+    const sum = tasks.reduce((acc, t) => acc + parseAmount(t.amount), 0);
+    return formatAmount(sum);
   }
 
   function skeletonBlock(height, extraClass) {
@@ -150,8 +194,11 @@ const Render = (() => {
 
   return {
     esc,
+    parseAmount,
+    splitAmount,
+    formatAmount,
+    initCurrency,
     computedTotal,
-    computedTotalAmount,
     skeletonBlock,
     icon,
     brandLogo,

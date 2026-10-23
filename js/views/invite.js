@@ -19,7 +19,7 @@ function renderInvite(container, params, store) {
       <div class="flex-col" style="background:var(--color-surface);padding:32px 16px 24px;margin-top:-25px;border-radius:16px 16px 0 0;gap:24px;">
         <div class="flex-col" style="border:1px solid var(--purple-400);border-radius:var(--radius-xl);padding:16px 0;align-items:center;gap:8px;">
           <span class="t-label-lg">Your Referral Balance</span>
-          <span class="t-title-md" style="color:var(--color-primary);">$ ${Render.esc(settings.referral_balance)}</span>
+          <span class="t-title-md" style="color:var(--color-primary);">${Render.esc(settings.referral_balance)}</span>
         </div>
 
         <div class="flex-col gap-md">
@@ -28,7 +28,7 @@ function renderInvite(container, params, store) {
           <div class="flex-col gap-xs">
             <div class="surface-card flex-row gap-md" style="background:var(--color-bg);justify-content:space-between;">
               <span class="t-body-lg">Completes the first task</span>
-              <span class="t-title-sm" style="color:var(--color-primary);">$ ${Render.esc(settings.referral_first_task)}</span>
+              <span class="t-title-sm" style="color:var(--color-primary);">${Render.esc(settings.referral_first_task)}</span>
             </div>
             <div class="surface-card flex-col gap-sm" style="background:var(--color-bg);">
               <div class="flex-row gap-md" style="justify-content:space-between;">

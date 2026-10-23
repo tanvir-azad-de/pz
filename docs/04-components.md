@@ -25,8 +25,8 @@ cover`), padding 12px, content bottom-aligned:
 
 **Footer section** — 60px tall, `background: var(--color-surface)`, `border-radius: 0 0 20px
 20px`, padding 12px, `display:flex; justify-content:space-between; align-items:center`:
-- Left: computed total `$ {sum of tasks.amount}` — `.t-title-sm` (20/700)
-  white
+- Left: `games.total_reward`, shown verbatim (not computed) — `.t-title-sm` (20/700), currency
+  symbol tinted `var(--color-primary)` (via `Render.splitAmount()`), rest white
 - Right: "Play" button — pill, `background: var(--color-primary)`, `padding: 13px 20px`,
   `border-radius: 8px`, text `.t-body-md` 800, color `var(--color-on-primary)`. Visual only —
   navigates to `#/game/:id` on tap (the whole card is tappable, not just the button).
@@ -85,9 +85,10 @@ All variants share a base: `background: var(--color-surface)`, `border-radius: 1
 
 **Variant A — simple (game reward, survey):** height 74px.
 ```
-[50×50 icon, r8]  [name .t-body-lg / subtitle .t-caption]     [+$/-$ amount  Pending?]
+[50×50 icon, r8]  [name .t-body-lg / subtitle .t-caption]     [+/- amount  Pending?]
 ```
-Amount row: `±$ {amount}` `.t-label-lg` (16/800), color
+Amount row: `±{amount}` (sheet-formatted, e.g. `+$75.00` / `-$20.00`) `.t-label-lg` (16/800),
+color
 `var(--color-primary)` if `type === 'earned'`, `var(--color-on-bg)` if `spent`. If `status ===
 'Pending'`, a pill badge below the amount: `background: var(--purple-400)`, text "Pending"
 `.t-caption` white.

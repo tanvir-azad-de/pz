@@ -22,7 +22,7 @@ function renderDiscover(container, params, store) {
       <div class="flex-col gap-md">
         <h2 class="t-title-md padded-x" style="margin:0;">Trending Game</h2>
         <div class="padded-x">
-          ${trending ? gameCardHtml(trending, store) : ""}
+          ${trending ? gameCardHtml(trending) : ""}
         </div>
       </div>
 
@@ -32,7 +32,7 @@ function renderDiscover(container, params, store) {
           <button class="btn btn-ghost" type="button">See All</button>
         </div>
         <div class="padded-x flex-col gap-md">
-          ${all.map((g) => gameCardHtml(g, store)).join("")}
+          ${all.map((g) => gameCardHtml(g)).join("")}
         </div>
       </div>
     </div>
@@ -52,10 +52,14 @@ function renderDiscover(container, params, store) {
   }
 }
 
-function gameCardHtml(game, store) {
-  const totalAmount = Render.computedTotalAmount(
-    store.data.tasks.filter((t) => t.game_id === game.id)
-  );
+// Card footer shows games.total_reward verbatim (sheet-formatted, e.g. "$1000.00") — NOT a
+// computed sum of that game's tasks. Those two numbers are intentionally different: total_reward
+// is the game's overall promo figure, while the per-task amounts (summed on Game Detail's
+// "Tasks ... total" badge via Render.computedTotal()) are what the player actually earns per
+// task. Splitting the symbol out (Render.splitAmount) keeps the green-symbol/white-number
+// treatment without the app hardcoding what that symbol is.
+function gameCardHtml(game) {
+  const { symbol, rest } = Render.splitAmount(game.total_reward);
   const isTrue = (v) => String(v).trim().toUpperCase() === "TRUE";
 
   return `
@@ -71,8 +75,8 @@ function gameCardHtml(game, store) {
       </div>
       <div class="game-card__footer">
         <div class="game-card__amount">
-          <span class="t-title-sm" style="color:var(--color-primary);">$</span>
-          <span class="t-title-sm">${Render.esc(totalAmount)}</span>
+          <span class="t-title-sm" style="color:var(--color-primary);">${Render.esc(symbol)}</span>
+          <span class="t-title-sm">${Render.esc(rest)}</span>
         </div>
         <span class="btn btn-play">Play</span>
       </div>

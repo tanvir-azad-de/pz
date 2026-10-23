@@ -20,14 +20,14 @@ function renderWallet(container, params, store) {
           <div class="balance-card__icon">${Render.icon.wallet()}</div>
           <div class="balance-card__text">
             <span class="t-label-tiny">Your Balance</span>
-            <span class="t-label-lg">$ ${Render.esc(settings.balance)}</span>
+            <span class="t-label-lg">${Render.esc(settings.balance)}</span>
           </div>
           <button class="btn btn-small" type="button">Payout Now</button>
         </div>
       </div>
 
       <div class="padded-x flex-col gap-md">
-        <div class="flex-row gap-xs"><span class="t-title-md">$ ${Render.esc(settings.balance)}</span></div>
+        <div class="flex-row gap-xs"><span class="t-title-md">${Render.esc(settings.balance)}</span></div>
         <div class="wallet-chips">
           <button class="chip is-active" type="button" data-filter="all">All</button>
           <button class="chip" type="button" data-filter="earned">Earned</button>
@@ -89,7 +89,7 @@ function walletCardHtml(row) {
       </div>
       <div class="wallet-card__amount-block">
         <div class="wallet-card__amount ${amountClass}">
-          <span class="t-label-lg">${sign}$ ${Render.esc(row.amount)}</span>
+          <span class="t-label-lg">${sign}${Render.esc(row.amount)}</span>
         </div>
         ${row.status ? `<span class="badge badge--pending">${Render.esc(row.status)}</span>` : ""}
       </div>

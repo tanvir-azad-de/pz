@@ -11,7 +11,7 @@ function renderRewards(container, params, store) {
           <div class="balance-card__icon">${Render.icon.wallet()}</div>
           <div class="balance-card__text">
             <span class="t-label-tiny">Your Balance</span>
-            <span class="t-label-lg">$ ${Render.esc(settings.balance)}</span>
+            <span class="t-label-lg">${Render.esc(settings.balance)}</span>
           </div>
           <button class="btn btn-small" type="button">Payout Now</button>
         </div>

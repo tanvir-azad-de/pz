@@ -65,7 +65,10 @@ screen").
    per-navigation).
 4. Toggle tab bar visibility and nav bar content (title/back-arrow) based on the route table
    above.
-5. Scroll `#view` to top on every navigation.
+5. Scroll the window to top on every navigation, after the new view has rendered (`#view` has no
+   bounded height/`overflow-y`, so it is not itself a scroll container — the window is the real
+   scroller, and it must be reset after render so the new content's height exists and the browser
+   can't clamp the offset back to a stale position).
 6. Unknown hash → redirect to `#/discover`.
 
 No history-stack management beyond the browser's native hash history — back/forward buttons
@@ -78,8 +81,9 @@ Present on every screen, fixed height ~68px, bottom border `1px solid var(--purp
 - Left: either nothing (tab screens) or a back-arrow icon button (detail screens) + screen
   title (`.t-title-sm`, 20/700, white).
 - Right: the green wallet pill — `padding: 8px 12px`, `border: 1px solid var(--color-primary)`,
-  `border-radius: 8px`, content `$ {balance}` from `settings.balance`, text size 18px 800; the
-  `$` is colored `var(--color-primary)`, the amount is white.
+  `border-radius: 8px`, content `{balance}` from `settings.balance` (sheet-formatted, e.g.
+  `$2.30`), text size 18px 800; the leading currency symbol (split out via
+  `Render.splitAmount()`, not hardcoded) is colored `var(--color-primary)`, the rest is white.
 
 The wallet pill is rendered by `app.js` itself (not per-view), since it reads the same
 `settings.balance` value regardless of screen.

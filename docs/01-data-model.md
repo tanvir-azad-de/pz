@@ -61,8 +61,8 @@ list for that gid before trusting the data. If it doesn't match, treat it as a f
 | `name` | string | e.g. `Coin Master` |
 | `image_url` | string (URL) | used as both the 201h hero/card art AND the 92px rounded Game Detail icon (same image, cropped via CSS) |
 | `description` | string | one short line, shown under the name on the card (Figma: "Description max 1 line of text...") |
-| `total_reward` | string | e.g. `$ 1000` — shown as "total reward" stat on Game Detail |
-| `max_per_task` | string | e.g. `$ 75` — shown as "max per task" stat on Game Detail |
+| `total_reward` | string | e.g. `$1,000.00` — pre-formatted by the sheet, shown verbatim as the game card footer amount AND the "total reward" stat on Game Detail |
+| `max_per_task` | string | e.g. `$75.00` — pre-formatted by the sheet, shown verbatim as "max per task" stat on Game Detail |
 | `long_description` | string | paragraph, shown in the Game Detail "Description" card with "...See More" truncation |
 | `has_cashback` | boolean (`TRUE`/`FALSE`) | shows the "Cashback" badge (dollar icon) on the card |
 | `has_limited_bonus` | boolean (`TRUE`/`FALSE`) | shows the "Limited Bonus" badge (stopwatch icon) on the card |
@@ -71,8 +71,13 @@ list for that gid before trusting the data. If it doesn't match, treat it as a f
 render in both Discover → "All Games" and My Games (My Games shows the identical list as
 Discover, 2-column, per product decision — no filtering).
 
-The footer coin amount shown on every game card (`$ xx xxx`) and the "Tasks ... total" on Game
-Detail are **computed**, not stored: `SUM(tasks.amount WHERE tasks.game_id == games.id)`.
+The footer amount shown on every game card is `games.total_reward`, shown verbatim (not
+computed) — the symbol is split out via `Render.splitAmount()` so it can be tinted
+`var(--color-primary)` without the app hardcoding what that symbol is. This is a different
+number from the "Tasks ... total" badge on Game Detail, which IS computed:
+`SUM(tasks.amount WHERE tasks.game_id == games.id)`, formatted via `Render.computedTotal()`
+using the currency symbol detected from the sheet data (see "Currency formatting" below) — the
+app never hardcodes a `$`.
 
 ### `tasks`
 
@@ -80,7 +85,7 @@ Detail are **computed**, not stored: `SUM(tasks.amount WHERE tasks.game_id == ga
 |---|---|---|
 | `game_id` | string | foreign key → `games.id` |
 | `name` | string | e.g. `Level 10` |
-| `amount` | number | e.g. `50` (rendered as `$ 50`) |
+| `amount` | string | e.g. `$5.00` — pre-formatted by the sheet, shown verbatim; never hardcode a `$` in code |
 | `is_active` | boolean (`TRUE`/`FALSE`) | at most one `TRUE` row per `game_id`; renders the green "Active task" pill badge |
 
 Rows for a given `game_id` render in sheet order (top to bottom = display order).
@@ -92,7 +97,7 @@ Rows for a given `game_id` render in sheet order (top to bottom = display order)
 | `id` | string | e.g. `r1` |
 | `category` | string, one of `Cash`, `Amazon`, `Google Play`, `Apple` | drives which horizontal row the card appears in |
 | `brand` | string | logo label shown on the card, e.g. `PayPal`, `Zalando`, `Amazon` |
-| `amount` | string | e.g. `$5`, `$10`, `xxx` |
+| `amount` | string | e.g. `$5.00`, `$10.00` — pre-formatted by the sheet, shown verbatim |
 | `progress_pct` | number (0–100) | fill percentage of the progress bar under the amount |
 
 Brand logos (36px payout card + larger Reward Detail lockup) are NOT sourced from the sheet —
@@ -111,10 +116,10 @@ been removed.
 | Column | Type | Notes |
 |---|---|---|
 | `date` | string | e.g. `October 8th` — used verbatim as the group header text (not parsed as a real date) |
-| `type` | string, one of `earned`, `spent` | drives `+$`/`-$` sign, and the Earned/Spent filter chip |
+| `type` | string, one of `earned`, `spent` | drives `+`/`-` sign (prepended to the sheet-formatted amount), and the Earned/Spent filter chip |
 | `name` | string | e.g. `Fishdom`, `Survey`, coupon title |
 | `subtitle` | string | e.g. `Level 10`, or coupon subtitle |
-| `amount` | number | absolute value; sign applied from `type` |
+| `amount` | string | e.g. `$75.00` — pre-formatted by the sheet; absolute value, sign applied from `type` |
 | `status` | string, blank or `Pending` | renders the purple "Pending" badge when non-blank |
 | `icon_url` | string (URL) | 50px art/icon for the row |
 | `coupon_code` | string, optional | when non-empty, renders the taller coupon card variant with the code box and "Copy & Shop" button |
@@ -123,12 +128,17 @@ Rows group by `date` in sheet order; within a date group, sheet order = display 
 
 ### `settings` (key/value — single scalars only)
 
-| `key` | Example `value` | Used by |
+These cells are numbers with a currency *display format* applied in the sheet (not text), so
+gviz returns both a raw value (`v`, e.g. `2.3`) and a formatted string (`f`, e.g. `$2.30`). The
+data layer (`js/sheets.js`) reads `f` for every cell so these values arrive pre-formatted just
+like every other amount column, with no `$` hardcoded in the app.
+
+| `key` | Example `value` (as read by the app) | Used by |
 |---|---|---|
-| `balance` | `2.30` | wallet pill in every nav bar (`$ x.xx`), Rewards balance card, Wallet balance card |
-| `referral_balance` | `120` | Invite Friends "Your Referral Balance" |
-| `referral_first_task` | `5` | Invite Friends reward rule, "$ xx" for completing first task |
-| `referral_pct` | `10` | Invite Friends "xx%" of game rewards |
+| `balance` | `$2.30` | wallet pill in every nav bar, Rewards balance card, Wallet balance card |
+| `referral_balance` | `$120.00` | Invite Friends "Your Referral Balance" |
+| `referral_first_task` | `$5.00` | Invite Friends reward rule, for completing first task |
+| `referral_pct` | `10` | Invite Friends "xx%" of game rewards — percent-formatted, not currency |
 
 ### `content` (key/value — all static screen text)
 
@@ -136,13 +146,14 @@ Flat key/value table. Keys used by the app (exact strings expected by the render
 
 ```
 email
-invite_card_discover_text        # "Invite your friends and earn up to $xx bonus" (Discover)
+invite_card_discover_text        # "Invite your friends and earn up to $50 bonus" (Discover) — amount is
+                                  # part of the prose string, authored directly in the sheet
 bonus_1_title / bonus_1_cta / bonus_1_icon
 bonus_2_title / bonus_2_cta / bonus_2_icon
 reward_detail_how_1 / reward_detail_how_2 / reward_detail_how_3
 reward_detail_conditions_1 / reward_detail_conditions_2
 reward_detail_disclaimer
-invite_hero_title                # "Earn up to $xxx for every friend invited!"
+invite_hero_title                # "Earn up to $100 for every friend invited!"
 invite_hero_subtitle             # "Just share your link and start earning. Works on iOS & Android"
 invite_how_1 / invite_how_2 / invite_how_3 / invite_how_4
 ```
@@ -155,6 +166,17 @@ an error).
 
 ## Decisions
 
+- **Currency formatting is owned entirely by the sheet, never by app code.** Every amount
+  column (`games.total_reward`/`max_per_task`, `tasks.amount`, `rewards.amount`,
+  `wallet.amount`, `settings.balance`/`referral_balance`/`referral_first_task`) is read and
+  rendered verbatim from the sheet's *formatted* cell value — `js/sheets.js` reads gviz's `f`
+  (not `v`), so a cell showing `$5.00` in the sheet UI renders as `$5.00` in the app, with no
+  symbol concatenated in JS. `js/render.js` exposes `splitAmount()` for the few spots that tint
+  the symbol a different color than the number (nav-bar wallet pill, game card total), and
+  `parseAmount()`/`formatAmount()` for the one place that must do arithmetic — summing a game's
+  task amounts (`Render.computedTotal()`) — which re-applies whatever symbol the sheet data
+  used. Changing currency (symbol, decimal places, grouping) is a sheet-formatting change only,
+  never a code change.
 - 6 tabs total: `games`, `tasks`, `rewards`, `wallet`, `settings`, `content`. No separate
   `profile`/`bonuses`/`referral` tabs — those values live in `settings`/`content`.
 - `settings` holds ONLY single scalars (key/value, one row per key) — this avoids mixing a

@@ -56,7 +56,7 @@ rows:
 1. **Balance card** — full-width, `padding: 0 16px` wrapper around an inner card:
    `background: var(--color-surface)`, no border, `border-radius: 16px`,
    `padding: 12px 16px`. Content: wallet icon (24×24) + text block ("Your Balance" `.t-label-tiny`
-   800 + `$ {settings.balance}` `.t-label-lg` 800) + "Payout Now" button (`.btn-small`) right-
+   800 + `{settings.balance}` (sheet-formatted, e.g. `$2.30`) `.t-label-lg` 800) + "Payout Now" button (`.btn-small`) right-
    aligned. "Payout Now" is visual only (no target screen specified — Reward Detail requires
    picking a specific reward first).
 
@@ -70,7 +70,7 @@ rows:
 
 ```
 Rewards
-├─ Balance card ($ settings.balance, Payout Now)
+├─ Balance card (settings.balance, Payout Now)
 ├─ "Cash" + See All  → h-scroll of rewards[category=Cash]
 ├─ "Amazon" + See All → h-scroll of rewards[category=Amazon]
 ├─ "Google Play" + See All → h-scroll of rewards[category=Google Play]

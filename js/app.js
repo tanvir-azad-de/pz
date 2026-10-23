@@ -29,6 +29,40 @@ const App = (() => {
 
   let store = null;
 
+  // --- Momentum-proof scroll reset ---------------------------------------
+  // A touch fling keeps emitting compositor scroll deltas for ~100-300ms
+  // AFTER the tap that triggers navigation. A single `window.scrollTo(0, 0)`
+  // in route() gets overwritten a few frames later by that residual
+  // momentum, so the new screen opens mid-page instead of at the top. To fix
+  // this we re-assert scrollTo(0, 0) on every animation frame for a short
+  // window, and abort immediately if the user starts a genuine new scroll
+  // gesture so we never fight a deliberate scroll.
+  let scrollResetRaf = null;
+  let scrollResetUntil = 0;
+
+  function resetScrollToTop() {
+    scrollResetUntil = performance.now() + 300;
+    if (scrollResetRaf !== null) return;
+
+    const tick = () => {
+      window.scrollTo(0, 0);
+      if (performance.now() < scrollResetUntil) {
+        scrollResetRaf = requestAnimationFrame(tick);
+      } else {
+        scrollResetRaf = null;
+      }
+    };
+    scrollResetRaf = requestAnimationFrame(tick);
+  }
+
+  function cancelScrollReset() {
+    scrollResetUntil = 0;
+    if (scrollResetRaf !== null) {
+      cancelAnimationFrame(scrollResetRaf);
+      scrollResetRaf = null;
+    }
+  }
+
   // Baseline history.length captured at boot. Used by the back-arrow handler below to decide
   // between history.back() (return to wherever the user actually came from, e.g. Profile when
   // they tapped a bonus CTA into #/invite) and a hard fallback to #/discover (when there's no
@@ -67,11 +101,19 @@ const App = (() => {
     });
   }
 
+  // Splits the balance into its symbol + number so the symbol can keep its --color-primary
+  // tint (per the design) without the app hardcoding what that symbol is — it comes straight
+  // from the sheet-formatted settings.balance string (e.g. "$2.30").
+  function walletBalanceHtml(balance) {
+    const { symbol, rest } = Render.splitAmount(balance);
+    return `<span style="color:var(--color-primary);">${Render.esc(symbol)}</span>${Render.esc(rest)}`;
+  }
+
   function renderNavBar(routeKey, routeDef, params) {
     const navBar = document.getElementById("nav-bar");
     const isTab = routeDef.tab;
     const title = routeDef.title || (routeDef.titleFrom ? routeDef.titleFrom(params, store) : "");
-    const balance = store && store.data.settings ? store.data.settings.balance : "0.00";
+    const balance = store && store.data.settings ? store.data.settings.balance : "";
 
     navBar.innerHTML = `
       <div class="nav-bar">
@@ -80,7 +122,7 @@ const App = (() => {
           <span class="t-title-sm nav-bar__title">${Render.esc(title)}</span>
         </div>
         <div class="wallet-pill">
-          <span class="t-label-lg" style="font-size:18px;"><span style="color:var(--color-primary);">$</span> ${Render.esc(balance)}</span>
+          <span class="t-label-lg" style="font-size:18px;">${walletBalanceHtml(balance)}</span>
         </div>
       </div>
     `;
@@ -138,18 +180,38 @@ const App = (() => {
     renderNavBar(resolvedKey, routeDef, params);
 
     const view = document.getElementById("view");
-    view.scrollTop = 0;
     view.innerHTML = "";
     routeDef.render(view, params, store);
+
+    // #view is not a scroll container (css/base.css — #app is min-height: 100dvh
+    // and #view has no bounded height/overflow-y), so `view.scrollTop = 0` is a
+    // no-op; the window is the real scroller. Reset AFTER render so the new
+    // content's height already exists and the browser can't clamp/anchor us
+    // back to a stale offset. The reset is held across several frames (see
+    // resetScrollToTop above) to survive residual fling momentum from the tap
+    // that triggered this navigation.
+    resetScrollToTop();
   }
 
   async function boot() {
+    // Prevent the browser from re-applying a remembered window scroll offset
+    // on reload/back-forward, which would fight the explicit reset in route().
+    if ("scrollRestoration" in history) {
+      history.scrollRestoration = "manual";
+    }
+
+    // A deliberate scroll from the user always wins over the momentum-proof
+    // reset in resetScrollToTop() above.
+    window.addEventListener("touchstart", cancelScrollReset, { passive: true });
+    window.addEventListener("wheel", cancelScrollReset, { passive: true });
+
     renderShell();
     renderSkeleton();
     bootHistoryLength = history.length;
 
     try {
       store = await Sheets.load();
+      Render.initCurrency(store.data);
       if (store.failedTabs && store.failedTabs.length) {
         console.warn("Using fallback data for tabs:", store.failedTabs.join(", "));
       }

@@ -5,8 +5,8 @@
       "name": "Coin Master",
       "image_url": "https://picsum.photos/seed/coinmaster/600/400",
       "description": "Spin, build, and raid your way to the top.",
-      "total_reward": "$ 1000",
-      "max_per_task": "$ 75",
+      "total_reward": "$1,000.00",
+      "max_per_task": "$75.00",
       "long_description": "Coin Master invites you to spin the slot machine, raid villages, and build your very own Viking empire. Collect coins from daily spins, attack other players' villages to steal their loot, and defend your own by placing powerful traps. Join clans, compete in events, and climb the leaderboards as you upgrade your village to its full glory.",
       "has_cashback": "TRUE",
       "has_limited_bonus": "TRUE"
@@ -16,8 +16,8 @@
       "name": "Royal Match",
       "image_url": "https://picsum.photos/seed/royalmatch/600/400",
       "description": "Match tiles and restore the royal castle.",
-      "total_reward": "$ 800",
-      "max_per_task": "$ 60",
+      "total_reward": "$800.00",
+      "max_per_task": "$60.00",
       "long_description": "Royal Match is a match-3 puzzle adventure where every level you complete helps restore a different room in King Robert's castle. Solve clever puzzles, collect boosters, and decorate rooms with the coins and stars you earn. New challenges and events are added every week to keep the kingdom growing.",
       "has_cashback": "TRUE",
       "has_limited_bonus": "FALSE"
@@ -27,8 +27,8 @@
       "name": "Fishdom",
       "image_url": "https://picsum.photos/seed/fishdom/600/400",
       "description": "Solve puzzles and design your dream aquarium.",
-      "total_reward": "$ 1000",
-      "max_per_task": "$ 75",
+      "total_reward": "$1,000.00",
+      "max_per_task": "$75.00",
       "long_description": "Dorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.",
       "has_cashback": "FALSE",
       "has_limited_bonus": "TRUE"
@@ -38,71 +38,311 @@
       "name": "Monopoly Go",
       "image_url": "https://picsum.photos/seed/monopolygo/600/400",
       "description": "Roll the dice and build your empire.",
-      "total_reward": "$ 650",
-      "max_per_task": "$ 45",
+      "total_reward": "$650.00",
+      "max_per_task": "$45.00",
       "long_description": "Monopoly Go brings the classic board game to your pocket. Roll the dice, collect rent, build landmarks, and go head-to-head with friends and players around the world in fast, fun mini-events held every day.",
       "has_cashback": "TRUE",
       "has_limited_bonus": "FALSE"
     }
   ],
   "tasks": [
-    { "game_id": "g1", "name": "Level 1",  "amount": "5",  "is_active": "TRUE" },
-    { "game_id": "g1", "name": "Level 2",  "amount": "8",  "is_active": "FALSE" },
-    { "game_id": "g1", "name": "Level 3",  "amount": "12", "is_active": "FALSE" },
-    { "game_id": "g1", "name": "Level 4",  "amount": "15", "is_active": "FALSE" },
-    { "game_id": "g1", "name": "Level 5",  "amount": "20", "is_active": "FALSE" },
-    { "game_id": "g1", "name": "Level 10", "amount": "75", "is_active": "FALSE" },
-
-    { "game_id": "g2", "name": "Level 1", "amount": "4",  "is_active": "FALSE" },
-    { "game_id": "g2", "name": "Level 2", "amount": "7",  "is_active": "TRUE" },
-    { "game_id": "g2", "name": "Level 3", "amount": "10", "is_active": "FALSE" },
-    { "game_id": "g2", "name": "Level 4", "amount": "14", "is_active": "FALSE" },
-    { "game_id": "g2", "name": "Level 5", "amount": "18", "is_active": "FALSE" },
-    { "game_id": "g2", "name": "Level 10","amount": "60", "is_active": "FALSE" },
-
-    { "game_id": "g3", "name": "Level 1",  "amount": "5",  "is_active": "FALSE" },
-    { "game_id": "g3", "name": "Level 2",  "amount": "8",  "is_active": "FALSE" },
-    { "game_id": "g3", "name": "Level 3",  "amount": "12", "is_active": "FALSE" },
-    { "game_id": "g3", "name": "Level 4",  "amount": "15", "is_active": "FALSE" },
-    { "game_id": "g3", "name": "Level 5",  "amount": "20", "is_active": "TRUE" },
-    { "game_id": "g3", "name": "Level 10", "amount": "75", "is_active": "FALSE" },
-
-    { "game_id": "g4", "name": "Level 1", "amount": "3",  "is_active": "FALSE" },
-    { "game_id": "g4", "name": "Level 2", "amount": "6",  "is_active": "FALSE" },
-    { "game_id": "g4", "name": "Level 3", "amount": "9",  "is_active": "FALSE" },
-    { "game_id": "g4", "name": "Level 4", "amount": "12", "is_active": "TRUE" },
-    { "game_id": "g4", "name": "Level 5", "amount": "16", "is_active": "FALSE" },
-    { "game_id": "g4", "name": "Level 10","amount": "45", "is_active": "FALSE" }
+    {
+      "game_id": "g1",
+      "name": "Level 1",
+      "amount": "$5.00",
+      "is_active": "TRUE"
+    },
+    {
+      "game_id": "g1",
+      "name": "Level 2",
+      "amount": "$8.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g1",
+      "name": "Level 3",
+      "amount": "$12.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g1",
+      "name": "Level 4",
+      "amount": "$15.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g1",
+      "name": "Level 5",
+      "amount": "$20.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g1",
+      "name": "Level 10",
+      "amount": "$75.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g2",
+      "name": "Level 1",
+      "amount": "$4.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g2",
+      "name": "Level 2",
+      "amount": "$7.00",
+      "is_active": "TRUE"
+    },
+    {
+      "game_id": "g2",
+      "name": "Level 3",
+      "amount": "$10.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g2",
+      "name": "Level 4",
+      "amount": "$14.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g2",
+      "name": "Level 5",
+      "amount": "$18.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g2",
+      "name": "Level 10",
+      "amount": "$60.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g3",
+      "name": "Level 1",
+      "amount": "$5.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g3",
+      "name": "Level 2",
+      "amount": "$8.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g3",
+      "name": "Level 3",
+      "amount": "$12.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g3",
+      "name": "Level 4",
+      "amount": "$15.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g3",
+      "name": "Level 5",
+      "amount": "$20.00",
+      "is_active": "TRUE"
+    },
+    {
+      "game_id": "g3",
+      "name": "Level 10",
+      "amount": "$75.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g4",
+      "name": "Level 1",
+      "amount": "$3.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g4",
+      "name": "Level 2",
+      "amount": "$6.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g4",
+      "name": "Level 3",
+      "amount": "$9.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g4",
+      "name": "Level 4",
+      "amount": "$12.00",
+      "is_active": "TRUE"
+    },
+    {
+      "game_id": "g4",
+      "name": "Level 5",
+      "amount": "$16.00",
+      "is_active": "FALSE"
+    },
+    {
+      "game_id": "g4",
+      "name": "Level 10",
+      "amount": "$45.00",
+      "is_active": "FALSE"
+    }
   ],
   "rewards": [
-    { "id": "r1", "category": "Cash", "brand": "PayPal", "amount": "$5",  "progress_pct": "35" },
-    { "id": "r2", "category": "Cash", "brand": "PayPal", "amount": "$10", "progress_pct": "20" },
-    { "id": "r3", "category": "Cash", "brand": "PayPal", "amount": "$20", "progress_pct": "10" },
-
-    { "id": "r4", "category": "Amazon", "brand": "Amazon", "amount": "$5",  "progress_pct": "40" },
-    { "id": "r5", "category": "Amazon", "brand": "Amazon", "amount": "$15", "progress_pct": "15" },
-    { "id": "r6", "category": "Amazon", "brand": "Amazon", "amount": "$25", "progress_pct": "8" },
-
-    { "id": "r7", "category": "Google Play", "brand": "Google Play", "amount": "$5",  "progress_pct": "50" },
-    { "id": "r8", "category": "Google Play", "brand": "Google Play", "amount": "$10", "progress_pct": "25" },
-    { "id": "r9", "category": "Google Play", "brand": "Google Play", "amount": "$20", "progress_pct": "12" },
-
-    { "id": "r10", "category": "Apple", "brand": "Apple", "amount": "$5",  "progress_pct": "30" },
-    { "id": "r11", "category": "Apple", "brand": "Apple", "amount": "$15", "progress_pct": "18" },
-    { "id": "r12", "category": "Apple", "brand": "Apple", "amount": "$25", "progress_pct": "5" }
+    {
+      "id": "r1",
+      "category": "Cash",
+      "brand": "PayPal",
+      "amount": "$5.00",
+      "progress_pct": "35"
+    },
+    {
+      "id": "r2",
+      "category": "Cash",
+      "brand": "PayPal",
+      "amount": "$10.00",
+      "progress_pct": "20"
+    },
+    {
+      "id": "r3",
+      "category": "Cash",
+      "brand": "PayPal",
+      "amount": "$20.00",
+      "progress_pct": "10"
+    },
+    {
+      "id": "r4",
+      "category": "Amazon",
+      "brand": "Amazon",
+      "amount": "$5.00",
+      "progress_pct": "40"
+    },
+    {
+      "id": "r5",
+      "category": "Amazon",
+      "brand": "Amazon",
+      "amount": "$15.00",
+      "progress_pct": "15"
+    },
+    {
+      "id": "r6",
+      "category": "Amazon",
+      "brand": "Amazon",
+      "amount": "$25.00",
+      "progress_pct": "8"
+    },
+    {
+      "id": "r7",
+      "category": "Google Play",
+      "brand": "Google Play",
+      "amount": "$5.00",
+      "progress_pct": "50"
+    },
+    {
+      "id": "r8",
+      "category": "Google Play",
+      "brand": "Google Play",
+      "amount": "$10.00",
+      "progress_pct": "25"
+    },
+    {
+      "id": "r9",
+      "category": "Google Play",
+      "brand": "Google Play",
+      "amount": "$20.00",
+      "progress_pct": "12"
+    },
+    {
+      "id": "r10",
+      "category": "Apple",
+      "brand": "Apple",
+      "amount": "$5.00",
+      "progress_pct": "30"
+    },
+    {
+      "id": "r11",
+      "category": "Apple",
+      "brand": "Apple",
+      "amount": "$15.00",
+      "progress_pct": "18"
+    },
+    {
+      "id": "r12",
+      "category": "Apple",
+      "brand": "Apple",
+      "amount": "$25.00",
+      "progress_pct": "5"
+    }
   ],
   "wallet": [
-    { "date": "October 8th",   "type": "earned", "name": "Fishdom",        "subtitle": "Level 10",         "amount": "75", "status": "Pending", "icon_url": "https://picsum.photos/seed/fishdom/80/80",    "coupon_code": "" },
-    { "date": "October 8th",   "type": "earned", "name": "Survey",         "subtitle": "Opinion Rewards",  "amount": "12", "status": "",        "icon_url": "https://picsum.photos/seed/survey/80/80",     "coupon_code": "" },
-    { "date": "October 8th",   "type": "spent",  "name": "Zalando Coupon", "subtitle": "10% off storewide","amount": "20", "status": "",        "icon_url": "https://picsum.photos/seed/zalando/80/80",    "coupon_code": "AUDU10" },
-    { "date": "September 29th","type": "earned", "name": "Coin Master",    "subtitle": "Level 5",          "amount": "20", "status": "",        "icon_url": "https://picsum.photos/seed/coinmaster/80/80", "coupon_code": "" },
-    { "date": "September 29th","type": "spent",  "name": "Amazon Voucher", "subtitle": "$5",                "amount": "5",  "status": "",        "icon_url": "https://picsum.photos/seed/amazon1/80/80",    "coupon_code": "" },
-    { "date": "September 29th","type": "earned", "name": "Survey",         "subtitle": "Quick Poll",       "amount": "8",  "status": "Pending", "icon_url": "https://picsum.photos/seed/survey2/80/80",    "coupon_code": "" }
+    {
+      "date": "October 8th",
+      "type": "earned",
+      "name": "Fishdom",
+      "subtitle": "Level 10",
+      "amount": "$75.00",
+      "status": "Pending",
+      "icon_url": "https://picsum.photos/seed/fishdom/80/80",
+      "coupon_code": ""
+    },
+    {
+      "date": "October 8th",
+      "type": "earned",
+      "name": "Survey",
+      "subtitle": "Opinion Rewards",
+      "amount": "$12.00",
+      "status": "",
+      "icon_url": "https://picsum.photos/seed/survey/80/80",
+      "coupon_code": ""
+    },
+    {
+      "date": "October 8th",
+      "type": "spent",
+      "name": "Zalando Coupon",
+      "subtitle": "10% off storewide",
+      "amount": "$20.00",
+      "status": "",
+      "icon_url": "https://picsum.photos/seed/zalando/80/80",
+      "coupon_code": "AUDU10"
+    },
+    {
+      "date": "September 29th",
+      "type": "earned",
+      "name": "Coin Master",
+      "subtitle": "Level 5",
+      "amount": "$20.00",
+      "status": "",
+      "icon_url": "https://picsum.photos/seed/coinmaster/80/80",
+      "coupon_code": ""
+    },
+    {
+      "date": "September 29th",
+      "type": "spent",
+      "name": "Amazon Voucher",
+      "subtitle": "$5.00",
+      "amount": "$5.00",
+      "status": "",
+      "icon_url": "https://picsum.photos/seed/amazon1/80/80",
+      "coupon_code": ""
+    },
+    {
+      "date": "September 29th",
+      "type": "earned",
+      "name": "Survey",
+      "subtitle": "Quick Poll",
+      "amount": "$8.00",
+      "status": "Pending",
+      "icon_url": "https://picsum.photos/seed/survey2/80/80",
+      "coupon_code": ""
+    }
   ],
   "settings": {
-    "balance": "2.30",
-    "referral_balance": "120",
-    "referral_first_task": "5",
+    "balance": "$2.30",
+    "referral_balance": "$120.00",
+    "referral_first_task": "$5.00",
     "referral_pct": "10"
   },
   "content": {

@@ -355,7 +355,7 @@
 .game-card__amount {
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
+  gap: 0;
   color: #fff;
 }
 

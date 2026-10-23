@@ -92,7 +92,7 @@ function taskRowHtml(task, active) {
         <span class="t-body-lg">${Render.esc(task.name)}</span>
         ${active ? `<span class="badge badge--success" style="align-self:flex-start;">Active task</span>` : ""}
       </div>
-      <div class="flex-row gap-xs"><span class="t-title-sm">$ ${Render.esc(task.amount)}</span></div>
+      <div class="flex-row gap-xs"><span class="t-title-sm">${Render.esc(task.amount)}</span></div>
     </div>
   `;
 }

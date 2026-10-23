@@ -64,7 +64,15 @@ const Sheets = (() => {
       const obj = {};
       headers.forEach((key, i) => {
         const cell = row.c[i];
-        obj[key] = cell && cell.v != null ? cell.v : "";
+        // Prefer the formatted value (cell.f) over the raw value (cell.v). This matters for
+        // currency/number-formatted cells: a sheet cell showing "$2.30" is stored as the raw
+        // number 2.3 with a display format, so v=2.3 but f="$2.30". Reading f means every
+        // amount — whether the sheet cell is plain text ("$5.00") or a formatted number
+        // (balance, referral_balance, etc.) — arrives pre-formatted exactly as authored in the
+        // sheet, so the app never needs to hardcode a currency symbol. Booleans/plain numbers
+        // still come through fine via f ("TRUE"/"35"), and f is absent for ordinary text cells
+        // so this falls back to v unchanged.
+        obj[key] = cell ? (cell.f != null ? cell.f : cell.v != null ? cell.v : "") : "";
       });
       return obj;
     });
