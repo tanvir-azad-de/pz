@@ -15,15 +15,18 @@ const App = (() => {
     "my-games": { title: "My Games", render: renderMyGames, tab: true },
     rewards: { title: "Rewards", render: renderRewards, tab: true },
     profile: { title: "Profile", render: renderProfile, tab: true },
-    game: { title: null, render: renderGameDetail, tab: false, titleFrom: (p, store) => {
+    game: { title: null, render: renderGameDetail, tab: false, overlayNav: true, parent: "discover", titleFrom: (p, store) => {
       const g = store.data.games.find((x) => x.id === p.id);
       return g ? g.name : "Game";
     } },
-    reward: { title: null, render: renderRewardDetail, tab: false, titleFrom: (p, store) => {
+    reward: { title: null, render: renderRewardDetail, tab: false, parent: "rewards", titleFrom: (p, store) => {
       const r = store.data.rewards.find((x) => x.id === p.id);
       return r ? r.brand : "Reward";
     } },
-    wallet: { title: "Wallet", render: renderWallet, tab: false },
+    wallet: { title: "Wallet", render: renderWallet, tab: false, parent: "profile" },
+    // No declared parent: #/invite is reached from both Discover's "Get Bonus" CTA and
+    // Profile's bonus CTA, so there's no single correct "up" target — the back handler
+    // below falls through to history.back() for this route specifically.
     invite: { title: "Invite Friends", render: renderInvite, tab: false },
   };
 
@@ -63,11 +66,36 @@ const App = (() => {
     }
   }
 
-  // Baseline history.length captured at boot. Used by the back-arrow handler below to decide
-  // between history.back() (return to wherever the user actually came from, e.g. Profile when
-  // they tapped a bonus CTA into #/invite) and a hard fallback to #/discover (when there's no
-  // in-app history to go back to, e.g. a cold load straight to a detail URL via bookmark/share).
+  // Baseline history.length captured at boot. Only used by the back-arrow handler below for
+  // routes with no declared `parent` (currently just #/invite, reachable from both Profile
+  // and Discover — see ROUTES above) to decide between history.back() (return to wherever the
+  // user actually came from) and a hard fallback to #/discover (when there's no in-app history
+  // to go back to, e.g. a cold load straight to #/invite via bookmark/share). Routes WITH a
+  // declared `parent` ignore this entirely and always go to that parent.
   let bootHistoryLength = 0;
+
+  // --- Overlay nav bar (full-bleed hero screens, e.g. Game Detail) -------
+  // The overlay variant is `position: fixed` + transparent so #view can start
+  // at viewport y:0 and a route's hero image can sit visibly behind it (see
+  // .game-hero / .nav-bar--overlay in components.css). We fade in an opaque
+  // backdrop once the hero has scrolled past, so text stays legible over
+  // whatever content follows.
+  const NAV_OVERLAY_THRESHOLD = 211; // hero height (279) - nav height (68)
+  let navScrollHandler = null;
+
+  function teardownNavOverlay() {
+    if (navScrollHandler) {
+      window.removeEventListener("scroll", navScrollHandler);
+      navScrollHandler = null;
+    }
+  }
+
+  function setupNavOverlay(navEl) {
+    const apply = () => navEl.classList.toggle("is-scrolled", window.scrollY > NAV_OVERLAY_THRESHOLD);
+    apply();
+    navScrollHandler = apply;
+    window.addEventListener("scroll", navScrollHandler, { passive: true });
+  }
 
   function parseHash() {
     const hash = (location.hash || "#/discover").replace(/^#\//, "");
@@ -110,27 +138,48 @@ const App = (() => {
   }
 
   function renderNavBar(routeKey, routeDef, params) {
+    teardownNavOverlay();
+
     const navBar = document.getElementById("nav-bar");
     const isTab = routeDef.tab;
     const title = routeDef.title || (routeDef.titleFrom ? routeDef.titleFrom(params, store) : "");
     const balance = store && store.data.settings ? store.data.settings.balance : "";
 
     navBar.innerHTML = `
-      <div class="nav-bar">
+      <div class="nav-bar${routeDef.overlayNav ? " nav-bar--overlay" : ""}">
         <div class="nav-bar__left">
           ${isTab ? "" : `<button class="nav-bar__back" type="button" id="back-btn">${Render.icon.back()}</button>`}
           <span class="t-title-sm nav-bar__title">${Render.esc(title)}</span>
         </div>
-        <div class="wallet-pill">
+        <button class="wallet-pill" type="button" id="wallet-pill-btn">
           <span class="t-label-lg" style="font-size:18px;">${walletBalanceHtml(balance)}</span>
-        </div>
+        </button>
       </div>
     `;
+
+    if (routeDef.overlayNav) {
+      setupNavOverlay(navBar.querySelector(".nav-bar"));
+    }
+
+    const walletPillBtn = document.getElementById("wallet-pill-btn");
+    if (walletPillBtn) {
+      walletPillBtn.addEventListener("click", () => {
+        location.hash = "#/wallet";
+      });
+    }
 
     const backBtn = document.getElementById("back-btn");
     if (backBtn) {
       backBtn.addEventListener("click", () => {
-        if (history.length > bootHistoryLength) {
+        // The nav-bar arrow is an "up" affordance, not browser-back: it goes to the
+        // route's declared logical parent regardless of how the user actually got here
+        // (fixes cold-load/reload on a detail URL landing on #/discover instead of the
+        // real parent, e.g. #/reward/:id -> #/rewards). Routes with no declared parent
+        // (#/invite, reachable from both Profile and Discover) keep the older
+        // history-first behavior, since neither entry point is the single correct parent.
+        if (routeDef.parent) {
+          location.hash = `#/${routeDef.parent}`;
+        } else if (history.length > bootHistoryLength) {
           history.back();
         } else {
           location.hash = "#/discover";

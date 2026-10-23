@@ -196,73 +196,145 @@
       "id": "r1",
       "category": "Cash",
       "brand": "PayPal",
-      "amount": "$5.00"
+      "amount": "$5.00",
+      "reward_detail_how_1": "This payout will be sent directly to your PayPal account.",
+      "reward_detail_how_2": "If this is your first PayPal payout, you'll need to log in to your PayPal account or create a new one.",
+      "reward_detail_how_3": "If you've already used PayPal for payouts, simply tap the button below to receive your reward within minutes.",
+      "reward_detail_conditions_1": "Changing or editing your PayPal account for payouts is currently not possible.",
+      "reward_detail_conditions_2": "If you don't receive your payout within 7 business days, please contact our Customer Support.",
+      "reward_detail_disclaimer": "We DO NOT require nor collect your PayPal log in details. When you request a payout, you are redirected outside the PlayZone environment to the official PayPal or Hyperwallet website."
     },
     {
       "id": "r2",
       "category": "Cash",
       "brand": "PayPal",
-      "amount": "$10.00"
+      "amount": "$10.00",
+      "reward_detail_how_1": "This payout will be sent directly to your PayPal account.",
+      "reward_detail_how_2": "If this is your first PayPal payout, you'll need to log in to your PayPal account or create a new one.",
+      "reward_detail_how_3": "If you've already used PayPal for payouts, simply tap the button below to receive your reward within minutes.",
+      "reward_detail_conditions_1": "Changing or editing your PayPal account for payouts is currently not possible.",
+      "reward_detail_conditions_2": "If you don't receive your payout within 7 business days, please contact our Customer Support.",
+      "reward_detail_disclaimer": "We DO NOT require nor collect your PayPal log in details. When you request a payout, you are redirected outside the PlayZone environment to the official PayPal or Hyperwallet website."
     },
     {
       "id": "r3",
       "category": "Cash",
       "brand": "PayPal",
-      "amount": "$20.00"
+      "amount": "$20.00",
+      "reward_detail_how_1": "This payout will be sent directly to your PayPal account.",
+      "reward_detail_how_2": "If this is your first PayPal payout, you'll need to log in to your PayPal account or create a new one.",
+      "reward_detail_how_3": "If you've already used PayPal for payouts, simply tap the button below to receive your reward within minutes.",
+      "reward_detail_conditions_1": "Changing or editing your PayPal account for payouts is currently not possible.",
+      "reward_detail_conditions_2": "If you don't receive your payout within 7 business days, please contact our Customer Support.",
+      "reward_detail_disclaimer": "We DO NOT require nor collect your PayPal log in details. When you request a payout, you are redirected outside the PlayZone environment to the official PayPal or Hyperwallet website."
     },
     {
       "id": "r4",
       "category": "Amazon",
       "brand": "Amazon",
-      "amount": "$5.00"
+      "amount": "$5.00",
+      "reward_detail_how_1": "Your Amazon gift card code will be delivered to your PlayZone wallet.",
+      "reward_detail_how_2": "Open the Wallet tab, tap the reward, and copy your code.",
+      "reward_detail_how_3": "Redeem the code at amazon.com/redeem or in the Amazon app under Gift cards.",
+      "reward_detail_conditions_1": "Gift card codes are issued for a single Amazon marketplace and cannot be changed after payout.",
+      "reward_detail_conditions_2": "If your code doesn't arrive within 7 business days, please contact our Customer Support.",
+      "reward_detail_disclaimer": "Amazon is not a sponsor of this promotion. Amazon gift cards are redeemable only for products sold on the Amazon marketplace they were issued for, subject to Amazon's gift card terms."
     },
     {
       "id": "r5",
       "category": "Amazon",
       "brand": "Amazon",
-      "amount": "$15.00"
+      "amount": "$15.00",
+      "reward_detail_how_1": "Your Amazon gift card code will be delivered to your PlayZone wallet.",
+      "reward_detail_how_2": "Open the Wallet tab, tap the reward, and copy your code.",
+      "reward_detail_how_3": "Redeem the code at amazon.com/redeem or in the Amazon app under Gift cards.",
+      "reward_detail_conditions_1": "Gift card codes are issued for a single Amazon marketplace and cannot be changed after payout.",
+      "reward_detail_conditions_2": "If your code doesn't arrive within 7 business days, please contact our Customer Support.",
+      "reward_detail_disclaimer": "Amazon is not a sponsor of this promotion. Amazon gift cards are redeemable only for products sold on the Amazon marketplace they were issued for, subject to Amazon's gift card terms."
     },
     {
       "id": "r6",
       "category": "Amazon",
       "brand": "Amazon",
-      "amount": "$25.00"
+      "amount": "$25.00",
+      "reward_detail_how_1": "Your Amazon gift card code will be delivered to your PlayZone wallet.",
+      "reward_detail_how_2": "Open the Wallet tab, tap the reward, and copy your code.",
+      "reward_detail_how_3": "Redeem the code at amazon.com/redeem or in the Amazon app under Gift cards.",
+      "reward_detail_conditions_1": "Gift card codes are issued for a single Amazon marketplace and cannot be changed after payout.",
+      "reward_detail_conditions_2": "If your code doesn't arrive within 7 business days, please contact our Customer Support.",
+      "reward_detail_disclaimer": "Amazon is not a sponsor of this promotion. Amazon gift cards are redeemable only for products sold on the Amazon marketplace they were issued for, subject to Amazon's gift card terms."
     },
     {
       "id": "r7",
       "category": "Google Play",
       "brand": "Google Play",
-      "amount": "$5.00"
+      "amount": "$5.00",
+      "reward_detail_how_1": "Your Google Play gift code will be delivered to your PlayZone wallet.",
+      "reward_detail_how_2": "Open the Wallet tab, tap the reward, and copy your code.",
+      "reward_detail_how_3": "Redeem it in the Google Play Store under Payments & subscriptions → Redeem code.",
+      "reward_detail_conditions_1": "Google Play codes are country-specific and can only be redeemed in the region they were issued for.",
+      "reward_detail_conditions_2": "If your code doesn't arrive within 7 business days, please contact our Customer Support.",
+      "reward_detail_disclaimer": "Google Play is a trademark of Google LLC and is not a sponsor of this promotion. Codes are subject to the Google Play gift code terms of service."
     },
     {
       "id": "r8",
       "category": "Google Play",
       "brand": "Google Play",
-      "amount": "$10.00"
+      "amount": "$10.00",
+      "reward_detail_how_1": "Your Google Play gift code will be delivered to your PlayZone wallet.",
+      "reward_detail_how_2": "Open the Wallet tab, tap the reward, and copy your code.",
+      "reward_detail_how_3": "Redeem it in the Google Play Store under Payments & subscriptions → Redeem code.",
+      "reward_detail_conditions_1": "Google Play codes are country-specific and can only be redeemed in the region they were issued for.",
+      "reward_detail_conditions_2": "If your code doesn't arrive within 7 business days, please contact our Customer Support.",
+      "reward_detail_disclaimer": "Google Play is a trademark of Google LLC and is not a sponsor of this promotion. Codes are subject to the Google Play gift code terms of service."
     },
     {
       "id": "r9",
       "category": "Google Play",
       "brand": "Google Play",
-      "amount": "$20.00"
+      "amount": "$20.00",
+      "reward_detail_how_1": "Your Google Play gift code will be delivered to your PlayZone wallet.",
+      "reward_detail_how_2": "Open the Wallet tab, tap the reward, and copy your code.",
+      "reward_detail_how_3": "Redeem it in the Google Play Store under Payments & subscriptions → Redeem code.",
+      "reward_detail_conditions_1": "Google Play codes are country-specific and can only be redeemed in the region they were issued for.",
+      "reward_detail_conditions_2": "If your code doesn't arrive within 7 business days, please contact our Customer Support.",
+      "reward_detail_disclaimer": "Google Play is a trademark of Google LLC and is not a sponsor of this promotion. Codes are subject to the Google Play gift code terms of service."
     },
     {
       "id": "r10",
       "category": "Apple",
       "brand": "Apple",
-      "amount": "$5.00"
+      "amount": "$5.00",
+      "reward_detail_how_1": "Your Apple Gift Card code will be delivered to your PlayZone wallet.",
+      "reward_detail_how_2": "Open the Wallet tab, tap the reward, and copy your code.",
+      "reward_detail_how_3": "Redeem it in the App Store under your account → Redeem Gift Card or Code.",
+      "reward_detail_conditions_1": "Apple Gift Cards are country-specific and can only be redeemed with the Apple account region they were issued for.",
+      "reward_detail_conditions_2": "If your code doesn't arrive within 7 business days, please contact our Customer Support.",
+      "reward_detail_disclaimer": "Apple is not a participant in or sponsor of this promotion. Apple Gift Cards are redeemable only for products and services from Apple, subject to Apple's gift card terms."
     },
     {
       "id": "r11",
       "category": "Apple",
       "brand": "Apple",
-      "amount": "$15.00"
+      "amount": "$15.00",
+      "reward_detail_how_1": "Your Apple Gift Card code will be delivered to your PlayZone wallet.",
+      "reward_detail_how_2": "Open the Wallet tab, tap the reward, and copy your code.",
+      "reward_detail_how_3": "Redeem it in the App Store under your account → Redeem Gift Card or Code.",
+      "reward_detail_conditions_1": "Apple Gift Cards are country-specific and can only be redeemed with the Apple account region they were issued for.",
+      "reward_detail_conditions_2": "If your code doesn't arrive within 7 business days, please contact our Customer Support.",
+      "reward_detail_disclaimer": "Apple is not a participant in or sponsor of this promotion. Apple Gift Cards are redeemable only for products and services from Apple, subject to Apple's gift card terms."
     },
     {
       "id": "r12",
       "category": "Apple",
       "brand": "Apple",
-      "amount": "$25.00"
+      "amount": "$25.00",
+      "reward_detail_how_1": "Your Apple Gift Card code will be delivered to your PlayZone wallet.",
+      "reward_detail_how_2": "Open the Wallet tab, tap the reward, and copy your code.",
+      "reward_detail_how_3": "Redeem it in the App Store under your account → Redeem Gift Card or Code.",
+      "reward_detail_conditions_1": "Apple Gift Cards are country-specific and can only be redeemed with the Apple account region they were issued for.",
+      "reward_detail_conditions_2": "If your code doesn't arrive within 7 business days, please contact our Customer Support.",
+      "reward_detail_disclaimer": "Apple is not a participant in or sponsor of this promotion. Apple Gift Cards are redeemable only for products and services from Apple, subject to Apple's gift card terms."
     }
   ],
   "wallet": [
@@ -342,17 +414,11 @@
     "bonus_2_title": "Follow Us on Instagram and earn $5 bonus",
     "bonus_2_cta": "Follow and earn $5",
     "bonus_2_icon": "",
-    "reward_detail_how_1": "This payout will be sent directly to your PayPal account.",
-    "reward_detail_how_2": "If this is your first PayPal payout, you'll need to log in to your PayPal account or create a new one.",
-    "reward_detail_how_3": "If you've already used PayPal for payouts, simply tap the button below to receive your reward within minutes.",
-    "reward_detail_conditions_1": "Changing or editing your PayPal account for payouts is currently not possible.",
-    "reward_detail_conditions_2": "If you don't receive your payout within 7 business days, please contact our Customer Support.",
-    "reward_detail_disclaimer": "We DO NOT require nor collect your PayPal log in details. When you request a payout, you are redirected outside the PlayZone environment to the official PayPal or Hyperwallet website.",
     "invite_hero_title": "Earn up to $100 for every friend invited!",
     "invite_hero_subtitle": "Just share your link and start earning. Works on iOS & Android",
     "invite_how_1": "Share your referral link with friends on Android or iOS.",
     "invite_how_2": "You can earn referral bonuses for up to 5 friends who join and start playing.",
     "invite_how_3": "When your friend completes their first game task, you'll receive a one-time bonus of $5.",
-    "invite_how_4": "After that, you'll earn 10% of every game reward they earn\u2014up to $20."
+    "invite_how_4": "After that, you'll earn 10% of every game reward they earn—up to $20."
   }
 }

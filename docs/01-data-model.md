@@ -98,6 +98,12 @@ Rows for a given `game_id` render in sheet order (top to bottom = display order)
 | `category` | string, one of `Cash`, `Amazon`, `Google Play`, `Apple` | drives which horizontal row the card appears in |
 | `brand` | string | logo label shown on the card, e.g. `PayPal`, `Zalando`, `Amazon` |
 | `amount` | string | e.g. `$5.00`, `$10.00` — pre-formatted by the sheet, shown verbatim |
+| `reward_detail_how_1` | string | Reward Detail "How it works" bullet 1 |
+| `reward_detail_how_2` | string | Reward Detail "How it works" bullet 2 |
+| `reward_detail_how_3` | string | Reward Detail "How it works" bullet 3 |
+| `reward_detail_conditions_1` | string | Reward Detail "Conditions" bullet 1 |
+| `reward_detail_conditions_2` | string | Reward Detail "Conditions" bullet 2 |
+| `reward_detail_disclaimer` | string | Reward Detail disclaimer box text |
 
 There's no `progress_pct` column. The progress bar under the amount on each payout card is
 derived client-side: `settings.balance / rewards.amount`, as a percentage, clamped to 100%
@@ -109,10 +115,12 @@ which map known brand names to local PNGs in `assets/icons/` (falls back to a co
 circle for unknown brands). The sheet previously had `icon_url`/`detail_image_url` columns for
 this, but they were never read by the app and have been removed.
 
-Reward Detail screen (tap any payout card) shows that single reward's `amount`. The deprecated
-coin icon and its decorative `1 000`-style points number (previously static `content` tab copy),
-plus the later `Render.progressAmount()` derived currency figure that replaced it, have both
-been removed.
+Reward Detail screen (tap any payout card) shows that single reward's `amount`, plus its own
+`reward_detail_how_1/2/3`, `reward_detail_conditions_1/2`, and `reward_detail_disclaimer` —
+each reward's copy is independent, letting Cash/Amazon/Google Play/Apple rewards carry
+brand-appropriate redemption instructions. The deprecated coin icon and its decorative
+`1 000`-style points number (previously static `content` tab copy), plus the later
+`Render.progressAmount()` derived currency figure that replaced it, have both been removed.
 
 ### `wallet`
 
@@ -153,9 +161,6 @@ invite_card_discover_text        # "Invite your friends and earn up to $50 bonus
                                   # part of the prose string, authored directly in the sheet
 bonus_1_title / bonus_1_cta / bonus_1_icon
 bonus_2_title / bonus_2_cta / bonus_2_icon
-reward_detail_how_1 / reward_detail_how_2 / reward_detail_how_3
-reward_detail_conditions_1 / reward_detail_conditions_2
-reward_detail_disclaimer
 invite_hero_title                # "Earn up to $100 for every friend invited!"
 invite_hero_subtitle             # "Just share your link and start earning. Works on iOS & Android"
 invite_how_1 / invite_how_2 / invite_how_3 / invite_how_4
@@ -191,8 +196,9 @@ an error).
   computed from `settings.balance` vs. each reward's `amount` rather than authored in the sheet.
 - Game Detail reuses `games.image_url` for both the wide hero and the small rounded icon —
   no separate `icon_url` column for games.
-- "How it works" / "Conditions" / disclaimer text on Reward Detail is shared across all reward
-  categories (not per-category), stored once in `content`.
+- "How it works" / "Conditions" / disclaimer text on Reward Detail is per-reward (stored as
+  `reward_detail_*` columns on the `rewards` tab, not in `content`), so each Cash/Amazon/Google
+  Play/Apple reward can carry its own redemption copy.
 
 ## Open items
 

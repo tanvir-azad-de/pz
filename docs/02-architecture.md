@@ -40,20 +40,21 @@ HTML/CSS/JS, deployable as-is to GitHub Pages or any static host.
 Single-page app using hash-based routing (works identically on GitHub Pages with no server
 rewrite config, and on Vercel with zero config).
 
-| Route | View module | Tab bar visible? | Nav bar |
-|---|---|---|---|
-| `#/discover` (default) | `views/discover.js` | yes, Discover active | title "Discover" + wallet pill |
-| `#/my-games` | `views/my-games.js` | yes, My Games active | title "My Games" + wallet pill |
-| `#/rewards` | `views/rewards.js` | yes, Rewards active | title "Rewards" + wallet pill |
-| `#/profile` | `views/profile.js` | yes, Profile active | title "Profile" + wallet pill |
-| `#/game/:id` | `views/game-detail.js` | no | back arrow + game name + wallet pill |
-| `#/reward/:id` | `views/reward-detail.js` | no | back arrow + brand name + wallet pill |
-| `#/wallet` | `views/wallet.js` | no | back arrow + "Wallet" + wallet pill |
-| `#/invite` | `views/invite.js` | no | back arrow + "Invite Friends" + wallet pill |
+| Route | View module | Tab bar visible? | Nav bar | Back arrow goes to |
+|---|---|---|---|---|
+| `#/discover` (default) | `views/discover.js` | yes, Discover active | title "Discover" + wallet pill | — |
+| `#/my-games` | `views/my-games.js` | yes, My Games active | title "My Games" + wallet pill | — |
+| `#/rewards` | `views/rewards.js` | yes, Rewards active | title "Rewards" + wallet pill | — |
+| `#/profile` | `views/profile.js` | yes, Profile active | title "Profile" + wallet pill | — |
+| `#/game/:id` | `views/game-detail.js` | no | back arrow + game name + wallet pill | `#/discover` |
+| `#/reward/:id` | `views/reward-detail.js` | no | back arrow + brand name + wallet pill | `#/rewards` |
+| `#/wallet` | `views/wallet.js` | no | back arrow + "Wallet" + wallet pill | `#/profile` |
+| `#/invite` | `views/invite.js` | no | back arrow + "Invite Friends" + wallet pill | browser history (see below) |
 
 `#/wallet` and `#/invite` are reached from Profile's two CTAs, not from the tab bar — they are
 detail screens per the original brief ("two CTA: one to Wallet Page another to Invite a friend
-screen").
+screen"). `#/invite` is also reachable from Discover's "Get Bonus" CTA, so unlike the other
+detail routes it has no single correct "up" target — see the back-arrow note below.
 
 ### Router lifecycle (`app.js`)
 
@@ -71,22 +72,31 @@ screen").
    can't clamp the offset back to a stale position).
 6. Unknown hash → redirect to `#/discover`.
 
-No history-stack management beyond the browser's native hash history — back/forward buttons
-work for free because each navigation is a real hash change.
+Browser/OS back and forward buttons work natively — no history-stack manipulation, each
+navigation is a real hash change. The nav-bar back **arrow**, however, is a separate "up"
+affordance, not browser-back: each detail route in `ROUTES` (`app.js`) declares a `parent`
+key, and the arrow always navigates straight there (`location.hash = "#/" + routeDef.parent`),
+regardless of how the user actually arrived — this is what makes a cold load or reload of e.g.
+`#/reward/r5` return to `#/rewards` instead of falling back to `#/discover`. `#/invite` is the
+one route with no declared `parent` (it has two legitimate entry points, Profile and Discover,
+with no single correct "up" target), so its back arrow falls through to the older
+history.back()-or-#/discover-fallback behavior instead.
 
 ## Nav bar anatomy
 
 Present on every screen, fixed height ~68px, bottom border `1px solid var(--purple-700)`:
 
-- Left: either nothing (tab screens) or a back-arrow icon button (detail screens) + screen
-  title (`.t-title-sm`, 20/700, white).
+- Left: either nothing (tab screens) or a back-arrow icon button (detail screens, navigates to
+  the route's declared parent per the back-arrow note above) + screen title (`.t-title-sm`,
+  20/700, white).
 - Right: the green wallet pill — `padding: 8px 12px`, `border: 1px solid var(--color-primary)`,
   `border-radius: 8px`, content `{balance}` from `settings.balance` (sheet-formatted, e.g.
   `$2.30`), text size 18px 800; the leading currency symbol (split out via
   `Render.splitAmount()`, not hardcoded) is colored `var(--color-primary)`, the rest is white.
 
 The wallet pill is rendered by `app.js` itself (not per-view), since it reads the same
-`settings.balance` value regardless of screen.
+`settings.balance` value regardless of screen. It's a `<button>` that navigates to `#/wallet`
+on tap from any screen, including when the screen already is `#/wallet`.
 
 ## Tab bar anatomy
 

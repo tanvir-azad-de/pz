@@ -34,6 +34,27 @@
   z-index: 10;
 }
 
+/* Overlay nav bar: used where a full-bleed hero doubles as the nav backdrop
+   (Game Detail). Fixed rather than sticky so #view starts at viewport y=0 and
+   the hero can sit behind it — #view is a scroll container (overflow-x:hidden
+   computes overflow-y to auto) and would otherwise clip a negatively-offset
+   hero. Transparent until scrolled past the hero, then fades in an opaque
+   backdrop so the title/back-arrow/wallet-pill stay legible over task cards. */
+.nav-bar--overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: transparent;
+  border-bottom-color: transparent;
+  transition: background-color 180ms ease, border-bottom-color 180ms ease;
+}
+
+.nav-bar--overlay.is-scrolled {
+  background: var(--color-bg);
+  border-bottom-color: var(--purple-700);
+}
+
 .nav-bar__left {
   display: flex;
   align-items: center;
@@ -628,3 +649,31 @@
 .gap-xs { gap: var(--space-xs); }
 .gap-sm { gap: var(--space-sm); }
 .gap-md { gap: var(--space-md); }
+
+/* ---------- Game Detail hero ---------- */
+/* Full-bleed hero (360×279 per Figma; fluid-width since this app has no fixed
+   mobile frame) that doubles as the backdrop for the overlay nav bar. The
+   icon + title block below overlaps it by 55px. See docs/06-screens-detail.md. */
+.game-detail-stack {
+  position: relative;   /* containing block for .game-hero's absolute positioning */
+  padding-top: 0;       /* override .screen-stack's 16px — hero must start at y:0 */
+}
+
+.game-hero {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 279px;
+  z-index: 0;
+  background-color: var(--purple-700);   /* fallback while/if art 404s */
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.game-hero__below {
+  margin-top: 224px;   /* 279 - 55: overlaps the hero's bottom by 55px */
+  position: relative;
+  z-index: 1;           /* above .game-hero */
+}

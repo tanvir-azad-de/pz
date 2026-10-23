@@ -8,13 +8,20 @@ minus the status bar/prompt/search chrome dropped globally.
 
 Route `#/game/:id`. Back arrow + game name in nav bar. No tab bar; sticky "Play Now" footer.
 
-1. **Hero image** — 200px tall, `border-radius: 20px`, `background-image: games.image_url`,
-   `background-size: cover`, full width minus 16px screen padding, `margin: 0 16px`.
+1. **Hero image** (`.game-hero`) — full-bleed, 360×279 per Figma (fluid width: this app has no
+   fixed mobile frame, so it's `left:0; right:0` rather than a literal `360px`), `position:
+   absolute; top: 0` inside a `position: relative` `.game-detail-stack` wrapper,
+   `background-image: games.image_url`, `background-size: cover`, no border-radius (edge to
+   edge). Overlaid with `linear-gradient(to top, var(--color-bg) 0%, transparent 100%)` stacked
+   above the image in the same `background-image` property. Doubles as the backdrop for the nav
+   bar — see "Overlay nav bar" below.
 
-2. **Icon + title block** — 92×92 rounded icon (`border-radius: 20px`, reusing
-   `games.image_url`, cropped via `object-fit: cover` / `background-size: cover`) stacked above
-   the game name (`.t-title-sm`, 20/700), `gap: 8px`, `padding: 0 16px`, horizontally centered
-   (`align-items: center; text-align: center`).
+2. **Icon + title block** (`.game-hero__below`) — 92×92 rounded icon (`border-radius: 20px`,
+   reusing `games.image_url`, cropped via `background-size: cover`) stacked above the game name
+   (`.t-title-sm`, 20/700), `gap: 8px`, `padding: 0 16px`, horizontally centered
+   (`align-items: center; text-align: center`). Positioned with `margin-top: 224px` (279 − 55),
+   so it overlaps the hero's bottom edge by 55px; `position: relative; z-index: 1` keeps it
+   above `.game-hero` (`z-index: 0`).
 
 3. **Stats row** — `display:flex; gap:12px; padding:0 16px`, two equal-width stat blocks
    separated by a vertical `1px solid var(--purple-600)` divider, each centered
@@ -55,10 +62,23 @@ Route `#/game/:id`. Back arrow + game name in nav bar. No tab bar; sticky "Play 
 7. **Sticky footer** — "Play Now" (`.btn-primary`, full width, 58px), visual only (no real game
    launch).
 
+**Overlay nav bar.** Because the hero is `position: absolute; top: 0`, it needs `#view` to
+start at viewport `y: 0` to sit behind the nav bar — but `#view` is a scroll container
+(`overflow-x: hidden` computes `overflow-y` to `auto` per spec) and the normal `.nav-bar` is
+`position: sticky`, which occupies 68px of real layout space ahead of `#view`. So this route
+flags `overlayNav: true` (`js/app.js` route table), and `renderNavBar` adds `.nav-bar--overlay`:
+`position: fixed`, transparent, no border — it floats over the hero with no backdrop of its
+own. A passive `scroll` listener (`js/app.js`, threshold `279 - 68 = 211px`) toggles
+`.is-scrolled`, which fades in an opaque `var(--color-bg)` background + border so the
+title/back-arrow/wallet-pill stay legible once the hero has scrolled out of view. The listener
+is torn down on every route change so it never runs on screens using the normal sticky nav bar.
+No scrim is applied over the hero image itself, so nav bar text legibility there depends on the
+art being dark near the top.
+
 ```
 Game Detail
-├─ Hero image (games.image_url)
-├─ Icon + name
+├─ Hero image (games.image_url, absolute, 360×279, gradient overlay) — nav bar backdrop
+├─ Icon + name (overlaps hero by 55px)
 ├─ Stats: total reward | max per task
 ├─ IAP cashback card (static copy)
 ├─ Tasks card (header total = SUM(tasks.amount), N task rows, active badge)
@@ -78,15 +98,15 @@ Route `#/reward/:id`. Back arrow + `rewards.brand` in nav bar. Sticky "Confirm P
    32/800). Deprecated coin icon removed; no secondary derived currency figure.
 
 3. **How it works** — "How it works" header (`.t-title-sm`, 20/700) + 3 bullet lines
-   (`content.reward_detail_how_1/2/3`, `.t-body-sm` 12/300).
+   (`reward.reward_detail_how_1/2/3`, `.t-body-sm` 12/300).
 
 4. **Divider** — `1px solid var(--purple-700)`.
 
-5. **Conditions** — "Conditions" header + 2 bullet lines (`content.reward_detail_conditions_1/2`,
+5. **Conditions** — "Conditions" header + 2 bullet lines (`reward.reward_detail_conditions_1/2`,
    same style).
 
 6. **Disclaimer box** — `background: var(--color-surface)`, `border-radius: 8px`, `padding:
-   10px 8px`, text `content.reward_detail_disclaimer` (`.t-body-sm` 12/300).
+   10px 8px`, text `reward.reward_detail_disclaimer` (`.t-body-sm` 12/300).
 
 7. **Sticky footer** — "Confirm Payout" (`.btn-primary`), visual only.
 
@@ -94,9 +114,9 @@ Route `#/reward/:id`. Back arrow + `rewards.brand` in nav bar. Sticky "Confirm P
 Reward Detail
 ├─ White offer card (brand logo via Render.brandLogoWide)
 ├─ Amount + points pill
-├─ "How it works" (3 bullets, shared content)
+├─ "How it works" (3 bullets, per-reward)
 ├─ divider
-├─ "Conditions" (2 bullets, shared content)
+├─ "Conditions" (2 bullets, per-reward)
 ├─ Disclaimer box
 └─ Sticky "Confirm Payout"
 ```
@@ -181,6 +201,11 @@ Invite Friends
 - All 4 detail screens built at full Figma fidelity (per explicit product decision), minus the
   globally-dropped status bar/prompt/search chrome.
 - Game Detail's IAP cashback card text is static/hardcoded (fixed promo unit), not Sheet-driven.
+- Game Detail's hero is `position: absolute` (not in-flow) specifically so it can extend behind
+  the nav bar; this required a one-off `.nav-bar--overlay` fixed/transparent variant plus a
+  scroll listener, since `#view`'s computed `overflow-y: auto` would otherwise clip it. Invite
+  Friends' similar-looking overlap (below) stays in-flow because it doesn't need to reach under
+  the nav bar.
 - Reward Detail's points-style number and "How it works"/"Conditions" text are shared across all
   reward categories, sourced once from `content`.
 - Wallet's filter chips are client-side only, reset on reload.

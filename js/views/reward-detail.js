@@ -2,7 +2,6 @@
 
 function renderRewardDetail(container, params, store) {
   const reward = store.data.rewards.find((r) => r.id === params.id);
-  const content = store.data.content;
 
   if (!reward) {
     container.innerHTML = `<div class="state-message"><p class="t-body-md">Reward not found.</p></div>`;
@@ -23,9 +22,9 @@ function renderRewardDetail(container, params, store) {
 
       <div class="padded-x flex-col gap-sm">
         <h2 class="t-title-sm" style="margin:0;">How it works</h2>
-        <p class="t-body-sm" style="margin:0;">${Render.esc(content.reward_detail_how_1)}</p>
-        <p class="t-body-sm" style="margin:0;">${Render.esc(content.reward_detail_how_2)}</p>
-        <p class="t-body-sm" style="margin:0;">${Render.esc(content.reward_detail_how_3)}</p>
+        <p class="t-body-sm" style="margin:0;">${Render.esc(reward.reward_detail_how_1)}</p>
+        <p class="t-body-sm" style="margin:0;">${Render.esc(reward.reward_detail_how_2)}</p>
+        <p class="t-body-sm" style="margin:0;">${Render.esc(reward.reward_detail_how_3)}</p>
       </div>
 
       <div class="padded-x">
@@ -34,13 +33,13 @@ function renderRewardDetail(container, params, store) {
 
       <div class="padded-x flex-col gap-sm">
         <h2 class="t-title-sm" style="margin:0;">Conditions</h2>
-        <p class="t-body-sm" style="margin:0;">${Render.esc(content.reward_detail_conditions_1)}</p>
-        <p class="t-body-sm" style="margin:0;">${Render.esc(content.reward_detail_conditions_2)}</p>
+        <p class="t-body-sm" style="margin:0;">${Render.esc(reward.reward_detail_conditions_1)}</p>
+        <p class="t-body-sm" style="margin:0;">${Render.esc(reward.reward_detail_conditions_2)}</p>
       </div>
 
       <div class="padded-x">
         <div class="surface-card">
-          <p class="t-body-sm" style="margin:0;">${Render.esc(content.reward_detail_disclaimer)}</p>
+          <p class="t-body-sm" style="margin:0;">${Render.esc(reward.reward_detail_disclaimer)}</p>
         </div>
       </div>
     </div>
