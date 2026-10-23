@@ -13,6 +13,37 @@ const Render = (() => {
       .replace(/'/g, "&#39;");
   }
 
+  // ---- Content lookup ----
+  // Every user-visible string that isn't per-row sheet data (game names, task amounts, etc.)
+  // comes from the `content` tab so copy can be changed without a deploy. initContent() is
+  // called once at boot with both the live content object and the bundled data/fallback.json
+  // content object (see js/app.js). t() prefers the live value, falls back to the bundled one
+  // if the key is missing from the live sheet (e.g. a key added here before it's pasted into
+  // the Sheet), and finally warns + renders empty rather than "undefined" if neither has it.
+  let _liveContent = {};
+  let _fallbackContent = {};
+  function initContent(live, fallback) {
+    _liveContent = live || {};
+    _fallbackContent = fallback || {};
+  }
+
+  function t(key) {
+    return esc(tRaw(key));
+  }
+
+  // Unescaped lookup — only needed where the caller does its own single-point escaping
+  // alongside other raw strings (e.g. js/app.js's nav title, which mixes a content-tab
+  // fallback with game/reward names pulled straight off the sheet).
+  function tRaw(key) {
+    let v = _liveContent[key];
+    if (v === undefined || v === null || v === "") v = _fallbackContent[key];
+    if (v === undefined || v === null) {
+      console.warn(`Render.t: missing content key "${key}"`);
+      return "";
+    }
+    return v;
+  }
+
   // ---- Currency helpers ----
   // The sheet is the only source of currency symbols/formatting — amounts arrive pre-formatted
   // (e.g. "$5.00", "$1,000.00") from js/sheets.js (which reads gviz's formatted cell.f, not the
@@ -205,5 +236,8 @@ const Render = (() => {
     brandLogoWide,
     _iconImgFallback,
     _brandLogoFallback,
+    initContent,
+    t,
+    tRaw,
   };
 })();

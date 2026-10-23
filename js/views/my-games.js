@@ -5,8 +5,8 @@ function renderMyGames(container) {
   container.innerHTML = `
     <div class="screen-stack">
       <div class="state-message">
-        <p class="t-body-lg">No games yet</p>
-        <p class="t-body-md">Games you start playing will appear here.</p>
+        <p class="t-body-lg">${Render.t("my_games_empty_title")}</p>
+        <p class="t-body-md">${Render.t("my_games_empty_body")}</p>
       </div>
     </div>
   `;

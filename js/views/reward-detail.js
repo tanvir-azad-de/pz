@@ -4,7 +4,7 @@ function renderRewardDetail(container, params, store) {
   const reward = store.data.rewards.find((r) => r.id === params.id);
 
   if (!reward) {
-    container.innerHTML = `<div class="state-message"><p class="t-body-md">Reward not found.</p></div>`;
+    container.innerHTML = `<div class="state-message"><p class="t-body-md">${Render.t("reward_detail_not_found")}</p></div>`;
     return;
   }
 
@@ -21,7 +21,7 @@ function renderRewardDetail(container, params, store) {
       </div>
 
       <div class="padded-x flex-col gap-sm">
-        <h2 class="t-title-sm" style="margin:0;">How it works</h2>
+        <h2 class="t-title-sm" style="margin:0;">${Render.t("reward_detail_how_title")}</h2>
         <p class="t-body-sm" style="margin:0;">${Render.esc(reward.reward_detail_how_1)}</p>
         <p class="t-body-sm" style="margin:0;">${Render.esc(reward.reward_detail_how_2)}</p>
         <p class="t-body-sm" style="margin:0;">${Render.esc(reward.reward_detail_how_3)}</p>
@@ -32,7 +32,7 @@ function renderRewardDetail(container, params, store) {
       </div>
 
       <div class="padded-x flex-col gap-sm">
-        <h2 class="t-title-sm" style="margin:0;">Conditions</h2>
+        <h2 class="t-title-sm" style="margin:0;">${Render.t("reward_detail_conditions_title")}</h2>
         <p class="t-body-sm" style="margin:0;">${Render.esc(reward.reward_detail_conditions_1)}</p>
         <p class="t-body-sm" style="margin:0;">${Render.esc(reward.reward_detail_conditions_2)}</p>
       </div>
@@ -45,7 +45,7 @@ function renderRewardDetail(container, params, store) {
     </div>
 
     <div class="sticky-footer">
-      <button class="btn btn-primary" type="button">Confirm Payout</button>
+      <button class="btn btn-primary" type="button">${Render.t("reward_detail_confirm_cta")}</button>
     </div>
   `;
 }

@@ -120,6 +120,9 @@ const Sheets = (() => {
     const bonuses = [];
     // Only 2 bonus cards ship on Profile (bonus_3 removed per product decision — the Sheet
     // may still carry bonus_3_* columns harmlessly, they're just not read here).
+    // Illustration art is NOT sourced from the Sheet (bonus_N_icon doesn't exist as a content
+    // key) — it's a fixed image path, not editable copy. See PROFILE_BONUS_ILLUSTRATIONS in
+    // js/views/profile.js.
     for (let i = 1; i <= 2; i++) {
       const title = content[`bonus_${i}_title`];
       if (title === undefined) continue;
@@ -127,7 +130,6 @@ const Sheets = (() => {
         slot: i,
         title: title || "",
         cta: content[`bonus_${i}_cta`] || "",
-        icon: content[`bonus_${i}_icon`] || "",
       });
     }
     return bonuses;
@@ -158,6 +160,11 @@ const Sheets = (() => {
     data.content = Array.isArray(data.content) ? toKeyValue(data.content) : data.content;
     data.content.bonuses = collectBonuses(data.content);
 
+    // Bundled offline content, exposed alongside the live content so Render.t() (js/render.js)
+    // can fall back to it per-key when a key exists here but hasn't been pasted into the live
+    // Sheet yet, without waiting for a total-failure fallback.
+    data.fallbackContent = fallback.content;
+
     return { data, failedTabs };
   }
 
@@ -177,6 +184,7 @@ const Sheets = (() => {
       // Total failure (e.g. offline): fall back entirely.
       const fallback = await loadFallback();
       fallback.content.bonuses = collectBonuses(fallback.content);
+      fallback.fallbackContent = fallback.content;
       _cache = { data: fallback, failedTabs: Object.keys(TABS), error: err };
     }
     return _cache;

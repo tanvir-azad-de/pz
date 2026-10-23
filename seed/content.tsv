@@ -3,13 +3,72 @@ email	demo@example.com
 invite_card_discover_text	Invite your friends and earn up to $50 bonus
 bonus_1_title	Invite your friends and earn up to $50 bonus
 bonus_1_cta	Get Bonus
-bonus_1_icon	
 bonus_2_title	Follow Us on Instagram and earn $5 bonus
 bonus_2_cta	Follow and earn $5
-bonus_2_icon	
 invite_hero_title	Earn up to $100 for every friend invited!
 invite_hero_subtitle	Just share your link and start earning. Works on iOS & Android
 invite_how_1	Share your referral link with friends on Android or iOS.
 invite_how_2	You can earn referral bonuses for up to 5 friends who join and start playing.
 invite_how_3	When your friend completes their first game task, you'll receive a one-time bonus of $5.
 invite_how_4	After that, you'll earn 10% of every game reward they earn—up to $20.
+tab_label_discover	Discover
+tab_label_my_games	My Games
+tab_label_rewards	Rewards
+tab_label_profile	Profile
+nav_title_discover	Discover
+nav_title_my_games	My Games
+nav_title_rewards	Rewards
+nav_title_profile	Profile
+nav_title_wallet	Wallet
+nav_title_invite	Invite Friends
+nav_title_game_fallback	Game
+nav_title_reward_fallback	Reward
+common_see_all	See All
+common_balance_label	Your Balance
+common_payout_cta	Payout Now
+discover_invite_cta	Get Bonus
+discover_trending_title	Trending Game
+discover_all_games_title	All Games
+game_card_badge_cashback	Cashback
+game_card_badge_limited_bonus	Limited Bonus
+game_card_play_cta	Play
+my_games_empty_title	No games yet
+my_games_empty_body	Games you start playing will appear here.
+game_detail_not_found	Game not found.
+game_detail_total_reward_label	total reward
+game_detail_max_per_task_label	max per task
+game_detail_cashback_title	Earn up to $50 cashback
+game_detail_cashback_subtitle	Earn 50% cashback every time you make a purchase
+game_detail_cashback_cta	How it works?
+game_detail_tasks_title	Tasks
+game_detail_tasks_total_suffix	total
+game_detail_tasks_subtitle	Complete the tasks below and receive rewards for each of them.
+game_detail_description_title	Description
+game_detail_see_more_cta	...See More
+game_detail_play_cta	Play Now
+game_detail_task_active_badge	Active task
+reward_detail_not_found	Reward not found.
+reward_detail_how_title	How it works
+reward_detail_conditions_title	Conditions
+reward_detail_confirm_cta	Confirm Payout
+wallet_filter_all	All
+wallet_filter_earned	Earned
+wallet_filter_spent	Spent
+wallet_copy_shop_cta	Copy & Shop
+profile_wallet_row_label	Your Wallet
+profile_bonuses_title	Bonuses
+profile_email_label	Email
+profile_menu_help	Help&Info
+profile_menu_terms	Terms of Use
+profile_menu_imprint	Imprint
+profile_menu_privacy	Privacy
+profile_delete_account_cta	Delete account
+invite_referral_balance_label	Your Referral Balance
+invite_rewards_title	Referral Rewards
+invite_rewards_intro	Earn rewards when your friend:
+invite_reward_first_task_label	Completes the first task
+invite_reward_pct_label	Earns game rewards from tasks
+invite_reward_pct_caption	of their reward
+invite_referral_pct_note	You'll get 10% of their game rewards
+invite_how_title	How it works?
+invite_cta	Invite Friends

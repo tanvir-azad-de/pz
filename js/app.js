@@ -4,30 +4,30 @@ const App = (() => {
   const TAB_ROUTES = ["discover", "my-games", "rewards", "profile"];
 
   const TABS_CONFIG = [
-    { key: "discover", label: "Discover", icon: Render.icon.tabDiscover },
-    { key: "my-games", label: "My Games", icon: Render.icon.tabMyGames },
-    { key: "rewards", label: "Rewards", icon: Render.icon.tabRewards },
-    { key: "profile", label: "Profile", icon: Render.icon.tabProfile },
+    { key: "discover", labelKey: "tab_label_discover", icon: Render.icon.tabDiscover },
+    { key: "my-games", labelKey: "tab_label_my_games", icon: Render.icon.tabMyGames },
+    { key: "rewards", labelKey: "tab_label_rewards", icon: Render.icon.tabRewards },
+    { key: "profile", labelKey: "tab_label_profile", icon: Render.icon.tabProfile },
   ];
 
   const ROUTES = {
-    discover: { title: "Discover", render: renderDiscover, tab: true },
-    "my-games": { title: "My Games", render: renderMyGames, tab: true },
-    rewards: { title: "Rewards", render: renderRewards, tab: true },
-    profile: { title: "Profile", render: renderProfile, tab: true },
-    game: { title: null, render: renderGameDetail, tab: false, overlayNav: true, parent: "discover", titleFrom: (p, store) => {
+    discover: { titleKey: "nav_title_discover", render: renderDiscover, tab: true },
+    "my-games": { titleKey: "nav_title_my_games", render: renderMyGames, tab: true },
+    rewards: { titleKey: "nav_title_rewards", render: renderRewards, tab: true },
+    profile: { titleKey: "nav_title_profile", render: renderProfile, tab: true },
+    game: { titleKey: null, render: renderGameDetail, tab: false, overlayNav: true, parent: "discover", titleFrom: (p, store) => {
       const g = store.data.games.find((x) => x.id === p.id);
-      return g ? g.name : "Game";
+      return g ? g.name : Render.t("nav_title_game_fallback");
     } },
-    reward: { title: null, render: renderRewardDetail, tab: false, parent: "rewards", titleFrom: (p, store) => {
+    reward: { titleKey: null, render: renderRewardDetail, tab: false, parent: "rewards", titleFrom: (p, store) => {
       const r = store.data.rewards.find((x) => x.id === p.id);
-      return r ? r.brand : "Reward";
+      return r ? r.brand : Render.t("nav_title_reward_fallback");
     } },
-    wallet: { title: "Wallet", render: renderWallet, tab: false, parent: "profile" },
+    wallet: { titleKey: "nav_title_wallet", render: renderWallet, tab: false, parent: "profile" },
     // No declared parent: #/invite is reached from both Discover's "Get Bonus" CTA and
     // Profile's bonus CTA, so there's no single correct "up" target — the back handler
     // below falls through to history.back() for this route specifically.
-    invite: { title: "Invite Friends", render: renderInvite, tab: false, overlayNav: true },
+    invite: { titleKey: "nav_title_invite", render: renderInvite, tab: false, overlayNav: true },
   };
 
   let store = null;
@@ -130,12 +130,17 @@ const App = (() => {
     renderTabBar();
   }
 
+  // Tab bar labels come from the content tab, so they can't paint until Sheets.load()
+  // resolves (see boot()). Rendered twice: once during the loading skeleton with a
+  // non-breaking-space placeholder in place of the label (preserving the 12px label line box
+  // from .tab-bar__label in css/components.css, so icons don't shift when real labels arrive),
+  // then again after boot() has called Render.initContent().
   function renderTabBar() {
     const tabBar = document.getElementById("tab-bar");
     tabBar.innerHTML = TABS_CONFIG.map((t) => `
       <button class="tab-bar__item" type="button" data-route="${t.key}">
         ${t.icon()}
-        <span class="tab-bar__label">${t.label}</span>
+        <span class="tab-bar__label">${store ? Render.t(t.labelKey) : "&nbsp;"}</span>
       </button>
     `).join("");
 
@@ -159,7 +164,7 @@ const App = (() => {
 
     const navBar = document.getElementById("nav-bar");
     const isTab = routeDef.tab;
-    const title = routeDef.title || (routeDef.titleFrom ? routeDef.titleFrom(params, store) : "");
+    const title = routeDef.titleKey ? Render.tRaw(routeDef.titleKey) : (routeDef.titleFrom ? routeDef.titleFrom(params, store) : "");
     const balance = store && store.data.settings ? store.data.settings.balance : "";
 
     navBar.innerHTML = `
@@ -287,10 +292,12 @@ const App = (() => {
 
     try {
       store = await Sheets.load();
+      Render.initContent(store.data.content, store.data.fallbackContent);
       Render.initCurrency(store.data);
       if (store.failedTabs && store.failedTabs.length) {
         console.warn("Using fallback data for tabs:", store.failedTabs.join(", "));
       }
+      renderTabBar();
       route();
       window.addEventListener("hashchange", route);
     } catch (err) {

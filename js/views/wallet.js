@@ -19,17 +19,17 @@ function renderWallet(container, params, store) {
         <div class="balance-card__inner">
           <div class="balance-card__icon">${Render.icon.wallet()}</div>
           <div class="balance-card__text">
-            <span class="t-label-tiny">Your Balance</span>
+            <span class="t-label-tiny">${Render.t("common_balance_label")}</span>
             <span class="t-label-lg">${Render.esc(settings.balance)}</span>
           </div>
-          <button class="btn btn-small" type="button">Payout Now</button>
+          <button class="btn btn-small" type="button">${Render.t("common_payout_cta")}</button>
         </div>
       </div>
 
       <div class="wallet-chips">
-        <button class="chip is-active" type="button" data-filter="all">All</button>
-        <button class="chip" type="button" data-filter="earned">Earned</button>
-        <button class="chip" type="button" data-filter="spent">Spent</button>
+        <button class="chip is-active" type="button" data-filter="all">${Render.t("wallet_filter_all")}</button>
+        <button class="chip" type="button" data-filter="earned">${Render.t("wallet_filter_earned")}</button>
+        <button class="chip" type="button" data-filter="spent">${Render.t("wallet_filter_spent")}</button>
       </div>
 
       <div id="wallet-groups" class="flex-col" style="gap: 24px;">
@@ -106,7 +106,7 @@ function walletCardHtml(row) {
           <span class="t-body-lg">${Render.esc(row.coupon_code)}</span>
           ${Render.icon.copy()}
         </div>
-        <button class="btn btn-outline-copy" type="button">Copy & Shop</button>
+        <button class="btn btn-outline-copy" type="button">${Render.t("wallet_copy_shop_cta")}</button>
       </div>
     </div>
   `;

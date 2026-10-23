@@ -153,24 +153,79 @@ like every other amount column, with no `$` hardcoded in the app.
 
 ### `content` (key/value — all static screen text)
 
-Flat key/value table. Keys used by the app (exact strings expected by the renderer):
+Flat key/value table. Every user-visible string that isn't per-row sheet data (game names,
+task amounts, brand names, etc.) lives here, so copy can be changed without a deploy. Looked
+up via `Render.t(key)` / `Render.tRaw(key)` (`js/render.js`), which falls through live sheet →
+bundled `data/fallback.json` → console warning + empty string.
 
 ```
 email
 invite_card_discover_text        # "Invite your friends and earn up to $50 bonus" (Discover) — amount is
                                   # part of the prose string, authored directly in the sheet
-bonus_1_title / bonus_1_cta / bonus_1_icon
-bonus_2_title / bonus_2_cta / bonus_2_icon
+bonus_1_title / bonus_1_cta
+bonus_2_title / bonus_2_cta
 invite_hero_title                # "Earn up to $100 for every friend invited!"
 invite_hero_subtitle             # "Just share your link and start earning. Works on iOS & Android"
 invite_how_1 / invite_how_2 / invite_how_3 / invite_how_4
+
+# Shell: tab bar labels + nav bar titles
+tab_label_discover / tab_label_my_games / tab_label_rewards / tab_label_profile
+nav_title_discover / nav_title_my_games / nav_title_rewards / nav_title_profile
+nav_title_wallet / nav_title_invite
+nav_title_game_fallback / nav_title_reward_fallback   # shown if a #/game/:id or #/reward/:id has no match
+
+# Shared across screens
+common_see_all / common_balance_label / common_payout_cta
+
+# Discover
+discover_invite_cta / discover_trending_title / discover_all_games_title
+game_card_badge_cashback / game_card_badge_limited_bonus / game_card_play_cta
+
+# My Games
+my_games_empty_title / my_games_empty_body
+
+# Game Detail
+game_detail_not_found / game_detail_total_reward_label / game_detail_max_per_task_label
+game_detail_cashback_title / game_detail_cashback_subtitle / game_detail_cashback_cta
+game_detail_tasks_title / game_detail_tasks_total_suffix / game_detail_tasks_subtitle
+game_detail_description_title / game_detail_see_more_cta / game_detail_play_cta
+game_detail_task_active_badge
+
+# Reward Detail (headings/CTA only — per-reward body text stays on the `rewards` tab)
+reward_detail_not_found / reward_detail_how_title / reward_detail_conditions_title
+reward_detail_confirm_cta
+
+# Wallet
+wallet_filter_all / wallet_filter_earned / wallet_filter_spent / wallet_copy_shop_cta
+
+# Profile
+profile_wallet_row_label / profile_bonuses_title / profile_email_label
+profile_menu_help / profile_menu_terms / profile_menu_imprint / profile_menu_privacy
+profile_delete_account_cta
+
+# Invite
+invite_referral_balance_label / invite_rewards_title / invite_rewards_intro
+invite_reward_first_task_label / invite_reward_pct_label / invite_reward_pct_caption
+invite_referral_pct_note / invite_how_title / invite_cta
 ```
 
 Bonuses are stored as indexed keys (`bonus_1_*`, `bonus_2_*`) rather than a separate
 tab, per product decision. The loader (`js/sheets.js`) collects these into an array of 2 objects
-`{title, cta, icon}` after fetching (a third "bonus_3" card existed earlier but was removed per
+`{slot, title, cta}` after fetching (a third "bonus_3" card existed earlier but was removed per
 product decision — any leftover `bonus_3_*` columns in the live Sheet are simply ignored, not
-an error).
+an error). Bonus card illustrations are NOT sheet-driven — there is no `bonus_N_icon` content
+key. An image path isn't user-visible copy, so the art stays a fixed asset in
+`PROFILE_BONUS_ILLUSTRATIONS` (`js/views/profile.js`).
+
+A handful of strings are intentionally NOT sheet-driven and remain hardcoded in app code:
+- `<title>PlayZone</title>` (`index.html`) — parsed before any JS runs.
+- The "Couldn't load data" / "Check your connection and try again." / "Retry" error state
+  (`js/app.js` `renderErrorState`) — only reachable when the live sheet fetch AND the bundled
+  `data/fallback.json` both fail, so no content source is available by definition.
+- The `+` / `-` sign on Wallet amounts — derived from `wallet.type`, not copy (making it
+  editable would let the data contradict itself: an "earned" row showing a minus sign).
+- The `%` after `settings.referral_pct` on Invite — a unit glyph on a numeric setting, same
+  category as the wallet sign.
 
 ## Decisions
 

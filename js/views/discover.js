@@ -14,13 +14,13 @@ function renderDiscover(container, params, store) {
           <div class="illustration-card__art" style="background-image:url('assets/icons/illus-invite-card.png');"></div>
           <div class="illustration-card__body">
             <p class="t-body-sm illustration-card__title">${Render.esc(content.invite_card_discover_text)}</p>
-            <button class="btn btn-pill-outline" type="button" id="get-bonus-btn">Get Bonus ${Render.icon.arrowRight()}</button>
+            <button class="btn btn-pill-outline" type="button" id="get-bonus-btn">${Render.t("discover_invite_cta")} ${Render.icon.arrowRight()}</button>
           </div>
         </div>
       </div>
 
       <div class="flex-col gap-md">
-        <h2 class="t-title-md padded-x" style="margin:0;">Trending Game</h2>
+        <h2 class="t-title-md padded-x" style="margin:0;">${Render.t("discover_trending_title")}</h2>
         <div class="padded-x">
           ${trending ? gameCardHtml(trending) : ""}
         </div>
@@ -28,8 +28,8 @@ function renderDiscover(container, params, store) {
 
       <div class="flex-col gap-md">
         <div class="section-header">
-          <h2 class="t-title-md" style="margin:0;">All Games</h2>
-          <button class="btn btn-ghost" type="button">See All</button>
+          <h2 class="t-title-md" style="margin:0;">${Render.t("discover_all_games_title")}</h2>
+          <button class="btn btn-ghost" type="button">${Render.t("common_see_all")}</button>
         </div>
         <div class="padded-x flex-col gap-md">
           ${all.map((g) => gameCardHtml(g)).join("")}
@@ -69,8 +69,8 @@ function gameCardHtml(game) {
           <p class="t-title-sm game-card__name" style="margin:0;">${Render.esc(game.name)}</p>
         </div>
         <div class="game-card__badges">
-          ${isTrue(game.has_cashback) ? `<span class="badge badge--surface">${Render.icon.dollar()} Cashback</span>` : ""}
-          ${isTrue(game.has_limited_bonus) ? `<span class="badge badge--surface">${Render.icon.stopwatch()} Limited Bonus</span>` : ""}
+          ${isTrue(game.has_cashback) ? `<span class="badge badge--surface">${Render.icon.dollar()} ${Render.t("game_card_badge_cashback")}</span>` : ""}
+          ${isTrue(game.has_limited_bonus) ? `<span class="badge badge--surface">${Render.icon.stopwatch()} ${Render.t("game_card_badge_limited_bonus")}</span>` : ""}
         </div>
       </div>
       <div class="game-card__footer">
@@ -78,7 +78,7 @@ function gameCardHtml(game) {
           <span class="t-title-sm" style="color:var(--color-primary);">${Render.esc(symbol)}</span>
           <span class="t-title-sm">${Render.esc(rest)}</span>
         </div>
-        <span class="btn btn-play">Play</span>
+        <span class="btn btn-play">${Render.t("game_card_play_cta")}</span>
       </div>
     </button>
   `;

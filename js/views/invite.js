@@ -16,36 +16,36 @@ function renderInvite(container, params, store) {
 
       <div class="invite-panel flex-col">
         <div class="invite-balance-card flex-col">
-          <span class="t-label-lg">Your Referral Balance</span>
+          <span class="t-label-lg">${Render.t("invite_referral_balance_label")}</span>
           <span class="t-title-md" style="color:var(--color-primary);">${Render.esc(settings.referral_balance)}</span>
         </div>
 
         <div class="flex-col gap-md">
-          <h2 class="t-title-md" style="margin:0;">Referral Rewards</h2>
-          <p class="t-body-lg" style="margin:0;">Earn rewards when your friend:</p>
+          <h2 class="t-title-md" style="margin:0;">${Render.t("invite_rewards_title")}</h2>
+          <p class="t-body-lg" style="margin:0;">${Render.t("invite_rewards_intro")}</p>
           <div class="flex-col gap-xs">
             <div class="surface-card flex-row gap-md" style="background:var(--color-bg);justify-content:space-between;">
-              <span class="t-body-lg">Completes the first task</span>
+              <span class="t-body-lg">${Render.t("invite_reward_first_task_label")}</span>
               <span class="t-title-sm" style="color:var(--color-primary);">${Render.esc(settings.referral_first_task)}</span>
             </div>
             <div class="surface-card flex-col gap-sm" style="background:var(--color-bg);">
               <div class="flex-row gap-md" style="justify-content:space-between;">
-                <span class="t-body-lg">Earns game rewards from tasks</span>
+                <span class="t-body-lg">${Render.t("invite_reward_pct_label")}</span>
                 <div class="flex-col" style="align-items:flex-end;">
                   <span class="t-title-sm" style="color:var(--color-primary);">${Render.esc(settings.referral_pct)}%</span>
-                  <span class="t-body-sm">of their reward</span>
+                  <span class="t-body-sm">${Render.t("invite_reward_pct_caption")}</span>
                 </div>
               </div>
               <div class="flex-row gap-sm">
                 ${Render.icon.info()}
-                <span class="t-body-sm">You'll get ${Render.esc(settings.referral_pct)}% of their game rewards</span>
+                <span class="t-body-sm">${Render.t("invite_referral_pct_note")}</span>
               </div>
             </div>
           </div>
         </div>
 
         <div class="flex-col gap-md">
-          <h2 class="t-title-md" style="margin:0;">How it works?</h2>
+          <h2 class="t-title-md" style="margin:0;">${Render.t("invite_how_title")}</h2>
           <p class="t-body-sm" style="margin:0;">${Render.esc(content.invite_how_1)}</p>
           <p class="t-body-sm" style="margin:0;">${Render.esc(content.invite_how_2)}</p>
           <p class="t-body-sm" style="margin:0;">${Render.esc(content.invite_how_3)}</p>
@@ -55,7 +55,7 @@ function renderInvite(container, params, store) {
     </div>
 
     <div class="sticky-footer">
-      <button class="btn btn-primary" type="button">Invite Friends</button>
+      <button class="btn btn-primary" type="button">${Render.t("invite_cta")}</button>
     </div>
   `;
 }

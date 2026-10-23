@@ -2,7 +2,12 @@
 
 function renderRewards(container, params, store) {
   const { rewards, settings } = store.data;
-  const categories = ["Cash", "Amazon", "Google Play", "Apple"];
+  // Categories come from the rewards tab's own `category` column, in row order, rather than
+  // a hardcoded list — reordering/renaming categories is then a sheet-only change.
+  const categories = [];
+  rewards.forEach((r) => {
+    if (r.category && !categories.includes(r.category)) categories.push(r.category);
+  });
 
   container.innerHTML = `
     <div class="screen-stack">
@@ -10,10 +15,10 @@ function renderRewards(container, params, store) {
         <div class="balance-card__inner">
           <div class="balance-card__icon">${Render.icon.wallet()}</div>
           <div class="balance-card__text">
-            <span class="t-label-tiny">Your Balance</span>
+            <span class="t-label-tiny">${Render.t("common_balance_label")}</span>
             <span class="t-label-lg">${Render.esc(settings.balance)}</span>
           </div>
-          <button class="btn btn-small" type="button">Payout Now</button>
+          <button class="btn btn-small" type="button">${Render.t("common_payout_cta")}</button>
         </div>
       </div>
 
@@ -35,7 +40,7 @@ function categoryRowHtml(category, rewards, balance) {
     <div class="flex-col gap-md">
       <div class="section-header">
         <h2 class="t-title-md" style="margin:0;">${Render.esc(category)}</h2>
-        <button class="btn btn-ghost" type="button">See All</button>
+        <button class="btn btn-ghost" type="button">${Render.t("common_see_all")}</button>
       </div>
       <div class="payout-row">
         ${items.map((r) => payoutCardHtml(r, balance)).join("")}
