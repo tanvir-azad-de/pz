@@ -34,56 +34,57 @@ would add an unnecessary layer (project linking, build settings) for no benefit 
 3. Branch: `main`, folder: `/ (root)`.
 4. Save. Site will be live at `https://<username>.github.io/<repo>/`.
 
-Since the app uses hash routing (`#/discover`, `#/game/:id`, etc.), no GitHub Pages rewrite
-rules or a `404.html` fallback are needed — every route is really just `index.html` with a
-different hash, which GitHub Pages serves correctly by default.
+Since the app uses hash routing (`#/<sheetId>/discover`, `#/<sheetId>/game/:id`, etc.), no
+GitHub Pages rewrite rules or a `404.html` fallback are needed — every route is really just
+`index.html` with a different hash, which GitHub Pages serves correctly by default. This is
+also why the sheet ID lives in the hash rather than as a path segment
+(`/pz/<sheet-id>/`) — GitHub Pages can't rewrite an arbitrary path segment to `index.html`
+without a `404.html` trick, and even then every load would carry an HTTP 404 status.
 
 ## Google Sheet publishing checklist
 
-Before/after deploying, confirm all **3** spreadsheets (master + pz-en + pz-de) are correctly
-exposed:
+There's no fixed set of spreadsheets to maintain anymore — any public sheet matching the
+schema in `01-data-model.md` works. Before pointing the app at a given sheet (or sharing its
+URL with others), confirm:
 
-1. Each spreadsheet → **Share** → **General access** → **Anyone with the link** → **Viewer**.
-   This includes the master sheet — it's fetched over the same unauthenticated gviz endpoint.
-2. pz-en and pz-de each need the 6 required tabs with exact lowercase names: `games`, `tasks`,
-   `rewards`, `wallet`, `settings`, `content` (see `01-data-model.md` for header rows), AND must
-   share identical gids with each other (duplicate one from the other rather than recreating
-   tabs independently, or the `TABS` map in `js/sheets.js` will be wrong for one of them).
-3. The master sheet needs exactly one row with `isActive` in column A and a valid pz-en/pz-de
-   spreadsheet ID in column B, on **gid 0**, with no header row.
-4. Verify each locale tab with a direct gviz request by **gid** (not `sheet=<name>`, which is
-   unreliable — see `03-sheets-integration.md`), e.g.:
+1. **Share → General access → Anyone with the link → Viewer.** The gviz endpoint this app
+   uses is unauthenticated; a private sheet returns an HTML sign-in page instead of data,
+   which the app surfaces as a "not publicly readable" error.
+2. The sheet has the 6 required tabs with exact lowercase names: `games`, `tasks`, `rewards`,
+   `wallet`, `settings`, `content` (see `01-data-model.md` for header rows and required
+   `settings`/`content` keys). Tabs are addressed by name, not gid, so there's no gid map to
+   keep in sync — any sheet with the right tab names works regardless of how it was created.
+3. Verify a tab resolves correctly with a direct gviz request **by name**:
    ```
-   curl "https://docs.google.com/spreadsheets/d/<SHEET_ID>/gviz/tq?tqx=out:json&gid=<TAB_GID>"
+   curl "https://docs.google.com/spreadsheets/d/<SHEET_ID>/gviz/tq?tqx=out:json&sheet=<TAB_NAME>"
    ```
-   Confirm `"status":"ok"` AND that the returned column headers match what you typed.
-5. Verify the master sheet resolves correctly:
-   ```
-   curl "https://docs.google.com/spreadsheets/d/1g9h9pcDypXhZEFuPyVZmaQ7DUI-RqqhpnV-zivLkeXY/gviz/tq?tqx=out:json&gid=0"
-   ```
-   Confirm the single row is `["isActive", "<a 25-60 char spreadsheet ID>"]`.
+   Confirm `"status":"ok"` AND that the returned column headers match what's expected.
 
 ## Pre-deploy checklist
 
-- [ ] All 3 spreadsheets (master, pz-en, pz-de) are publicly viewable.
-- [ ] pz-en and pz-de each have all 6 tabs, named exactly as specified, sharing identical gids.
-- [ ] Master sheet's `isActive` row (gid 0, no header) points at the intended default locale.
-- [ ] Each locale's `settings` tab has `currency_symbol` / `currency_position` /
-      `number_locale` as **plain text** cells (not Sheets-native number/currency format).
-- [ ] `wallet.type` in every locale sheet is `earned`/`spent` — never translated.
-- [ ] `rewards.brand` in every locale sheet stays the exact English brand name — never
-      translated (it's a logo lookup key, not display text).
-- [ ] `js/sheets.js` `MASTER_SHEET_ID` and `DEFAULT_SHEET_ID` constants are correct.
-- [ ] `data/fallback.json` still mirrors the 6-tab schema (update if columns ever change).
-      Currently an English-only bundle, intentionally shared by both locales for
-      offline/total-failure fallback.
+- [ ] The sheet(s) you intend to demo with are publicly viewable ("Anyone with the link —
+      Viewer").
+- [ ] Each has all 6 tabs, named exactly as specified (see `01-data-model.md`).
+- [ ] Each `settings` tab has the 4 required keys (`balance`, `referral_balance`,
+      `referral_first_task`, `referral_pct`) non-blank, and `currency_symbol` /
+      `currency_position` / `number_locale`, if present, are **plain text** cells (not
+      Sheets-native number/currency format).
+- [ ] Each `content` tab has all 73 required keys non-blank (see `01-data-model.md`).
+- [ ] `wallet.type` in every sheet is `earned`/`spent` — never translated.
+- [ ] `rewards.brand` stays the exact English brand name for any brand you want a bespoke
+      logo for (`PayPal`, `Amazon`, `Google Play`, `Apple`) — other brand names still render
+      fine via the letter-circle fallback.
 - [x] Brand logo PNGs (PayPal/Amazon/Google Play/Apple) dropped into `assets/icons/` and
       `render.js` (`brandLogo`/`brandLogoWide`) updated to reference them.
 - [ ] Open the deployed URL on an actual phone (or responsive mode pinned to a phone width) —
       this app has no desktop layout by design, so desktop testing is not meaningful.
-- [ ] Spot-check each of the 8 routes directly by URL (`#/discover`, `#/my-games`, `#/rewards`,
-      `#/profile`, `#/game/<a-real-id>`, `#/reward/<a-real-id>`, `#/wallet`, `#/invite`) to
-      confirm hash routing + GitHub Pages interact correctly — under BOTH locales.
+- [ ] Spot-check each of the 8 routes directly by URL under a real sheet ID
+      (`#/<sheetId>/discover`, `#/<sheetId>/my-games`, `#/<sheetId>/rewards`,
+      `#/<sheetId>/profile`, `#/<sheetId>/game/<a-real-id>`, `#/<sheetId>/reward/<a-real-id>`,
+      `#/<sheetId>/wallet`, `#/<sheetId>/invite`) to confirm hash routing + GitHub Pages
+      interact correctly.
+- [ ] Spot-check the error paths: `#/` (no ID), `#/not-a-real-id/discover` (bad ID format), a
+      404-ing fake ID, and (if testing a second sheet) a sheet missing a required tab/key.
 
 ## Rollback / iteration
 
@@ -95,9 +96,9 @@ demo of this scope.
 
 - GitHub Pages, branch `main`, root folder — not Vercel, not a `gh-pages` branch, not a `docs/`
   Pages source (to avoid clashing with this repo's documentation folder of the same name).
-- Hash routing chosen specifically because it requires zero GitHub Pages routing configuration.
+- Hash routing chosen specifically because it requires zero GitHub Pages routing configuration
+  — this is also why the sheet ID is a hash segment rather than a URL path segment.
 
 ## Open items
 
-- None blocking. Deployment can happen as soon as chunk 2 (shell + router) exists; later chunks
-  can ship as incremental pushes to the same branch.
+- None blocking.

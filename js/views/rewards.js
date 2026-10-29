@@ -28,7 +28,7 @@ function renderRewards(container, params, store) {
 
   container.querySelectorAll("[data-reward-id]").forEach((el) => {
     el.addEventListener("click", () => {
-      location.hash = `#/reward/${el.dataset.rewardId}`;
+      location.hash = App.hashFor("reward", el.dataset.rewardId);
     });
   });
 }

@@ -1,38 +1,24 @@
 /* Google Sheets data layer. See docs/01-data-model.md and docs/03-sheets-integration.md.
-   Fetches 6 tabs by gid (name-based lookup is broken on this spreadsheet — confirmed by
-   testing: sheet=<name> always returns the `games` tab regardless of the name requested).
-   Fetch-once, in-memory cache, per-tab fallback to data/fallback.json on failure.
+   Fetches 6 tabs BY NAME via the gviz JSON endpoint (name-based lookup works correctly —
+   confirmed live against multiple spreadsheets: ?sheet=<name> returns that exact tab,
+   case-insensitively; only a NAME THAT DOESN'T EXIST falls through to the first tab, which
+   validateHeaders() below catches). Gid-based addressing was dropped because gids are
+   per-spreadsheet-copy — they only matched across pz-en/pz-de because one was duplicated from
+   the other. An arbitrary third-party sheet (the whole point of this module now) has no such
+   guarantee, so tab name is the only identifier that travels across spreadsheets.
 
-   Locale resolution: before fetching the 6 content tabs, we first read a single cell out of
-   a separate "master" spreadsheet. Its row 2 (key "isActive") holds the spreadsheet ID of
-   whichever locale sheet ("pz-en" or "pz-de") should be live right now. All locale sheets are
-   duplicates of one another sharing the same 6 gids below, so only the spreadsheet ID varies
-   per locale — see docs/01-data-model.md for the master-sheet contract. */
+   No master sheet, no default sheet, no bundled fallback data. The spreadsheet ID comes from
+   the caller (see js/app.js, which reads it out of the URL hash). Any failure — bad ID, no
+   access, wrong schema, missing content keys — surfaces as a typed SheetError the caller
+   renders into a specific error screen; there is no silent degrade-to-English-default path
+   anymore, because there is no longer a "default" sheet to degrade to. */
 
 const Sheets = (() => {
-  const MASTER_SHEET_ID = "1g9h9pcDypXhZEFuPyVZmaQ7DUI-RqqhpnV-zivLkeXY";
-  const MASTER_GID = "0";
-  const MASTER_KEY = "isActive";
-
-  // Used whenever the master sheet is unreachable, malformed, or points at something that
-  // doesn't look like a spreadsheet ID — the app must never hard-fail just because the master
-  // cell got fat-fingered. This is the pz-en spreadsheet.
-  const DEFAULT_SHEET_ID = "1M70ITzDuJapNMhcd9H_HEPUyuOWHkJIMyrFBb4cSubU";
-
-  // Spreadsheet IDs look like 25-60 chars of [A-Za-z0-9_-]. Guards against the master cell
-  // holding a stale token (e.g. the old "pz-en" string), a URL, or blank/whitespace.
+  // Spreadsheet IDs look like 25-60 chars of [A-Za-z0-9_-]. Used to validate IDs parsed out
+  // of the URL hash (see js/app.js) before ever issuing a fetch.
   const SHEET_ID_PATTERN = /^[A-Za-z0-9_-]{25,60}$/;
 
-  // All locale spreadsheets are duplicates of one another (confirmed: identical gids across
-  // pz-en/pz-de), so one gid map covers every locale.
-  const TABS = {
-    games: "420976241",
-    tasks: "666986029",
-    rewards: "955004045",
-    wallet: "1476565906",
-    settings: "719558094",
-    content: "1744568315",
-  };
+  const TAB_NAMES = ["games", "tasks", "rewards", "wallet", "settings", "content"];
 
   const EXPECTED_COLUMNS = {
     games: ["id", "name", "image_url", "description", "total_reward", "max_per_task", "long_description", "has_cashback", "has_limited_bonus"],
@@ -54,54 +40,121 @@ const Sheets = (() => {
     content: ["key", "value"],
   };
 
-  let _cache = null;
+  // settings/content are key-value tabs (EXPECTED_COLUMNS only checks the 2 column headers
+  // exist) — these are the individual KEYS the rest of the app actually reads. A sheet that
+  // has the right columns but is missing one of these renders blank strings everywhere with
+  // no warning, which is worse than a clear "your sheet is missing X" error. Audited by
+  // grepping every Render.t()/tRaw()/content.*/settings.* call site in js/ (see PR description
+  // for the exact grep) and cross-checked against a live reference sheet — 73 content keys,
+  // 0 drift either direction.
+  //
+  // currency_symbol / currency_position / number_locale are deliberately NOT required —
+  // Render.initCurrency() (js/render.js) already sniffs/defaults them when absent.
+  const REQUIRED_SETTINGS_KEYS = ["balance", "referral_balance", "referral_first_task", "referral_pct"];
 
-  function gvizUrl(sheetId, gid) {
-    return `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gid}`;
+  const REQUIRED_CONTENT_KEYS = [
+    "bonus_1_cta",
+    "bonus_1_title",
+    "bonus_2_cta",
+    "bonus_2_title",
+    "common_balance_label",
+    "common_payout_cta",
+    "common_see_all",
+    "discover_all_games_title",
+    "discover_invite_cta",
+    "discover_trending_title",
+    "email",
+    "game_card_badge_cashback",
+    "game_card_badge_limited_bonus",
+    "game_card_play_cta",
+    "game_detail_cashback_cta",
+    "game_detail_cashback_subtitle",
+    "game_detail_cashback_title",
+    "game_detail_description_title",
+    "game_detail_max_per_task_label",
+    "game_detail_not_found",
+    "game_detail_play_cta",
+    "game_detail_see_more_cta",
+    "game_detail_task_active_badge",
+    "game_detail_tasks_subtitle",
+    "game_detail_tasks_title",
+    "game_detail_tasks_total_suffix",
+    "game_detail_total_reward_label",
+    "invite_card_discover_text",
+    "invite_cta",
+    "invite_hero_subtitle",
+    "invite_hero_title",
+    "invite_how_1",
+    "invite_how_2",
+    "invite_how_3",
+    "invite_how_4",
+    "invite_how_title",
+    "invite_referral_balance_label",
+    "invite_referral_pct_note",
+    "invite_reward_first_task_label",
+    "invite_reward_pct_caption",
+    "invite_reward_pct_label",
+    "invite_rewards_intro",
+    "invite_rewards_title",
+    "my_games_empty_body",
+    "my_games_empty_title",
+    "nav_title_discover",
+    "nav_title_game_fallback",
+    "nav_title_invite",
+    "nav_title_my_games",
+    "nav_title_profile",
+    "nav_title_reward_fallback",
+    "nav_title_rewards",
+    "nav_title_wallet",
+    "profile_bonuses_title",
+    "profile_delete_account_cta",
+    "profile_email_label",
+    "profile_menu_help",
+    "profile_menu_imprint",
+    "profile_menu_privacy",
+    "profile_menu_terms",
+    "profile_wallet_row_label",
+    "reward_detail_conditions_title",
+    "reward_detail_confirm_cta",
+    "reward_detail_how_title",
+    "reward_detail_not_found",
+    "tab_label_discover",
+    "tab_label_my_games",
+    "tab_label_profile",
+    "tab_label_rewards",
+    "wallet_copy_shop_cta",
+    "wallet_filter_all",
+    "wallet_filter_earned",
+    "wallet_filter_spent",
+  ];
+
+  // Thrown for every failure mode this module can detect, each with a `code` the caller
+  // (js/app.js) switches on to render a specific, actionable error screen instead of one
+  // generic "couldn't load data" message. `detail` carries whatever extra context that
+  // screen needs (tab name, missing column/key list, etc).
+  class SheetError extends Error {
+    constructor(code, message, detail) {
+      super(message);
+      this.name = "SheetError";
+      this.code = code;
+      this.detail = detail || null;
+    }
+  }
+
+  let _cache = null;
+  let _cachedSheetId = null;
+
+  function gvizUrl(sheetId, tabName) {
+    return `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(tabName)}`;
   }
 
   function parseGviz(text) {
     const match = text.match(/setResponse\(([\s\S]*)\);?\s*$/);
-    if (!match) throw new Error("Unexpected gviz response shape");
-    return JSON.parse(match[1]);
-  }
-
-  // The master sheet has no header row (gviz returns parsedNumHeaders:0, blank cols[].label),
-  // so it must NOT go through gvizToObjects() below — that function treats row 0 as the header
-  // when labels are blank, which would swallow the one data row this sheet has. Instead, scan
-  // rows directly for the isActive key/value pair and return the value as-is (untrimmed cell
-  // text, validated by the caller).
-  async function fetchMasterSheetId() {
-    const res = await fetch(gvizUrl(MASTER_SHEET_ID, MASTER_GID));
-    if (!res.ok) throw new Error(`HTTP ${res.status} for master sheet`);
-    const text = await res.text();
-    const json = parseGviz(text);
-    if (json.status !== "ok") throw new Error(`gviz status "${json.status}" for master sheet`);
-
-    const rows = (json.table && json.table.rows) || [];
-    for (const row of rows) {
-      const key = row.c && row.c[0] && row.c[0].v;
-      if (String(key || "").trim() === MASTER_KEY) {
-        const value = row.c[1] && row.c[1].v;
-        return String(value || "").trim();
-      }
-    }
-    throw new Error(`Master sheet has no "${MASTER_KEY}" row`);
-  }
-
-  // Resolves which locale spreadsheet to load. Never throws — any failure (network, missing
-  // row, malformed value) falls back to DEFAULT_SHEET_ID with a console warning, since a
-  // broken master cell must degrade to "show the default locale", not "show nothing".
-  async function resolveSheetId() {
+    if (!match) return null; // Not a gviz response at all — e.g. an HTML login/consent page.
     try {
-      const id = await fetchMasterSheetId();
-      if (!SHEET_ID_PATTERN.test(id)) {
-        throw new Error(`Master sheet value "${id}" doesn't look like a spreadsheet ID`);
-      }
-      return id;
+      return JSON.parse(match[1]);
     } catch (err) {
-      console.warn("Sheets.resolveSheetId: falling back to default locale —", err.message);
-      return DEFAULT_SHEET_ID;
+      return null;
     }
   }
 
@@ -148,18 +201,18 @@ const Sheets = (() => {
     return { headers, objects };
   }
 
-  function validateHeaders(tabName, headers) {
+  function missingColumns(tabName, headers) {
     const expected = EXPECTED_COLUMNS[tabName];
-    return expected.every((col) => headers.includes(col));
+    return expected.filter((col) => !headers.includes(col));
   }
 
-  // Schema validation (validateHeaders) only checks that expected COLUMNS exist — it can't
-  // catch a structurally broken ROW, e.g. a cell-internal newline that shifts an entire row's
-  // values one column to the right (this happened on an earlier pz-de games tab: a wrapped
-  // long_description produced a row with prose in the `id` column and "TRUE" in `name`). These
-  // guards drop rows that fail a cheap shape check for tabs where that's structurally
-  // identifiable, logging a warning instead of silently rendering garbage (a game card titled
-  // "TRUE", a task joined to no game, etc.).
+  // Schema validation only checks that expected COLUMNS exist — it can't catch a structurally
+  // broken ROW, e.g. a cell-internal newline that shifts an entire row's values one column to
+  // the right (this happened on an earlier pz-de games tab: a wrapped long_description
+  // produced a row with prose in the `id` column and "TRUE" in `name`). These guards drop rows
+  // that fail a cheap shape check for tabs where that's structurally identifiable, logging a
+  // warning instead of silently rendering garbage (a game card titled "TRUE", a task joined to
+  // no game, etc.).
   const ROW_GUARDS = {
     games: (row) => /^g\d+$/i.test(String(row.id || "").trim()),
     tasks: (row) => String(row.game_id || "").trim() !== "",
@@ -175,15 +228,41 @@ const Sheets = (() => {
     });
   }
 
-  async function fetchTab(sheetId, tabName, gid) {
-    const res = await fetch(gvizUrl(sheetId, gid));
-    if (!res.ok) throw new Error(`HTTP ${res.status} for tab "${tabName}"`);
+  async function fetchTab(sheetId, tabName) {
+    let res;
+    try {
+      res = await fetch(gvizUrl(sheetId, tabName));
+    } catch (err) {
+      throw new SheetError("NETWORK", `Network error fetching tab "${tabName}"`, { tabName, cause: err });
+    }
+
+    if (res.status === 404) {
+      throw new SheetError("NOT_FOUND", `Spreadsheet not found (HTTP 404)`, { sheetId });
+    }
+    if (!res.ok) {
+      throw new SheetError("NETWORK", `HTTP ${res.status} for tab "${tabName}"`, { tabName, status: res.status });
+    }
+
     const text = await res.text();
     const json = parseGviz(text);
-    if (json.status !== "ok") throw new Error(`gviz status "${json.status}" for tab "${tabName}"`);
+    if (!json) {
+      // gviz returns actual JSON for every real spreadsheet, public or not. A non-JSON body
+      // (an HTML Google Accounts / "request access" page) means the sheet exists but isn't
+      // shared "Anyone with the link".
+      throw new SheetError("NO_ACCESS", `Spreadsheet isn't publicly readable`, { sheetId });
+    }
+    if (json.status !== "ok") {
+      throw new SheetError("NOT_FOUND", `gviz status "${json.status}" for tab "${tabName}"`, { tabName });
+    }
+
     const { headers, objects } = gvizToObjects(json.table);
-    if (!validateHeaders(tabName, headers)) {
-      throw new Error(`Tab "${tabName}" headers don't match expected schema: got [${headers.join(", ")}]`);
+    const missing = missingColumns(tabName, headers);
+    if (missing.length > 0) {
+      throw new SheetError("BAD_SCHEMA", `Tab "${tabName}" is missing columns: ${missing.join(", ")}`, {
+        tabName,
+        missing,
+        got: headers,
+      });
     }
     return filterRows(tabName, objects);
   }
@@ -194,6 +273,13 @@ const Sheets = (() => {
       if (r.key) obj[r.key] = r.value;
     });
     return obj;
+  }
+
+  function missingKeys(obj, required) {
+    return required.filter((key) => {
+      const v = obj[key];
+      return v === undefined || v === null || String(v).trim() === "";
+    });
   }
 
   function collectBonuses(content) {
@@ -216,28 +302,35 @@ const Sheets = (() => {
   }
 
   async function fetchAll(sheetId) {
-    const names = Object.keys(TABS);
-    const results = await Promise.allSettled(
-      names.map((name) => fetchTab(sheetId, name, TABS[name]))
-    );
+    // All-or-nothing: with no bundled fallback data to blend in on a per-tab failure, a
+    // partial failure must surface as an error, not as mismatched data silently stitched
+    // together from two different spreadsheets' worth of content.
+    const results = await Promise.all(TAB_NAMES.map((name) => fetchTab(sheetId, name)));
 
-    const fallback = await loadFallback();
     const data = {};
-    const failedTabs = [];
-
-    names.forEach((name, i) => {
-      const r = results[i];
-      if (r.status === "fulfilled" && r.value.length > 0) {
-        data[name] = r.value;
-      } else {
-        failedTabs.push(name);
-        data[name] = fallback[name];
-      }
+    TAB_NAMES.forEach((name, i) => {
+      data[name] = results[i];
     });
 
     // settings/content are key-value tabs; collapse array-of-rows into a flat object.
-    data.settings = Array.isArray(data.settings) ? toKeyValue(data.settings) : data.settings;
-    data.content = Array.isArray(data.content) ? toKeyValue(data.content) : data.content;
+    data.settings = toKeyValue(data.settings);
+    data.content = toKeyValue(data.content);
+
+    const settingsMissing = missingKeys(data.settings, REQUIRED_SETTINGS_KEYS);
+    if (settingsMissing.length > 0) {
+      throw new SheetError("MISSING_KEYS", `settings tab is missing keys: ${settingsMissing.join(", ")}`, {
+        tabName: "settings",
+        missing: settingsMissing,
+      });
+    }
+    const contentMissing = missingKeys(data.content, REQUIRED_CONTENT_KEYS);
+    if (contentMissing.length > 0) {
+      throw new SheetError("MISSING_KEYS", `content tab is missing keys: ${contentMissing.join(", ")}`, {
+        tabName: "content",
+        missing: contentMissing,
+      });
+    }
+
     data.content.bonuses = collectBonuses(data.content);
 
     // wallet.type is a machine enum (js/views/wallet.js keys its earned/spent styling and
@@ -245,50 +338,25 @@ const Sheets = (() => {
     // string column, it must stay "earned"/"spent" in every locale sheet. Warn loudly rather
     // than silently rendering every row as "spent" if a locale sheet ever translates it.
     const WALLET_TYPES = ["earned", "spent"];
-    if (Array.isArray(data.wallet)) {
-      data.wallet.forEach((row, i) => {
-        const type = String(row.type || "").trim().toLowerCase();
-        if (!WALLET_TYPES.includes(type)) {
-          console.warn(`Sheets: wallet row ${i} has unrecognized type "${row.type}" — expected "earned" or "spent". This column must not be translated.`);
-        }
-      });
-    }
+    data.wallet.forEach((row, i) => {
+      const type = String(row.type || "").trim().toLowerCase();
+      if (!WALLET_TYPES.includes(type)) {
+        console.warn(`Sheets: wallet row ${i} has unrecognized type "${row.type}" — expected "earned" or "spent". This column must not be translated.`);
+      }
+    });
 
-    // Bundled offline content, exposed alongside the live content so Render.t() (js/render.js)
-    // can fall back to it per-key when a key exists here but hasn't been pasted into the live
-    // Sheet yet, without waiting for a total-failure fallback.
-    data.fallbackContent = fallback.content;
-
-    return { data, failedTabs };
+    return { data };
   }
 
-  let _fallbackPromise = null;
-  function loadFallback() {
-    if (!_fallbackPromise) {
-      _fallbackPromise = fetch("data/fallback.json").then((r) => r.json());
+  async function load(sheetId, force) {
+    if (!sheetId || !SHEET_ID_PATTERN.test(sheetId)) {
+      throw new SheetError("BAD_ID", `"${sheetId}" doesn't look like a Google Sheet ID`, { sheetId });
     }
-    return _fallbackPromise;
-  }
-
-  async function load(force) {
-    if (_cache && !force) return _cache;
-    // Fire the fallback bundle fetch immediately so it overlaps the master-sheet round-trip
-    // below instead of queuing strictly after it (loadFallback() is promise-memoized, so this
-    // doesn't cause a duplicate request — fetchAll() just awaits the same promise later).
-    loadFallback();
-    try {
-      const sheetId = await resolveSheetId();
-      _cache = await fetchAll(sheetId);
-      _cache.sheetId = sheetId;
-    } catch (err) {
-      // Total failure (e.g. offline): fall back entirely.
-      const fallback = await loadFallback();
-      fallback.content.bonuses = collectBonuses(fallback.content);
-      fallback.fallbackContent = fallback.content;
-      _cache = { data: fallback, failedTabs: Object.keys(TABS), error: err };
-    }
+    if (_cache && !force && _cachedSheetId === sheetId) return _cache;
+    _cache = await fetchAll(sheetId);
+    _cachedSheetId = sheetId;
     return _cache;
   }
 
-  return { load, TABS };
+  return { load, SheetError, SHEET_ID_PATTERN, TAB_NAMES };
 })();

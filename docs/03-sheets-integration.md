@@ -2,66 +2,58 @@
 
 ## Goal
 
-Fetch all 6 tabs once at app boot, normalize them into plain JS objects/arrays, cache in memory
-for the session, and degrade gracefully (skeletons → retry → bundled fallback) if the network
-or the sheet itself is unavailable or malformed.
+Given a spreadsheet ID (read from the URL — see "Sheet resolution" below), fetch all 6 tabs
+once per sheet load, normalize them into plain JS objects/arrays, validate them against a
+strict schema, cache in memory for the session, and fail with a specific, actionable error —
+never a blank screen or silently-wrong data — if the network, the ID, or the sheet itself
+doesn't check out.
 
-## Locale resolution (which spreadsheet to fetch)
+## Sheet resolution (which spreadsheet to fetch)
 
-Before fetching the 6 content tabs, `Sheets.load()` first resolves WHICH spreadsheet to fetch
-them from, by reading a single cell out of a separate master spreadsheet:
+There is no master sheet and no default/fallback sheet ID anywhere in the code. The
+spreadsheet ID is read directly out of the URL hash by `js/app.js`:
 
 ```js
-const MASTER_SHEET_ID = "1g9h9pcDypXhZEFuPyVZmaQ7DUI-RqqhpnV-zivLkeXY";
-const MASTER_GID = "0";
-const DEFAULT_SHEET_ID = "1M70ITzDuJapNMhcd9H_HEPUyuOWHkJIMyrFBb4cSubU"; // pz-en
+// #/<sheetId>/<route>/<param>, e.g. #/1M70ITzDuJapNMhcd9H_HEPUyuOWHkJIMyrFBb4cSubU/game/g1
+function parseHash() {
+  const hash = (location.hash || "").replace(/^#\/?/, "");
+  const segments = hash.split("/").filter((s) => s !== "");
+  const rawId = segments[0];
+  if (!rawId) return { sheetId: null, route: "discover", params: {} };
 
-async function resolveSheetId() {
-  try {
-    const id = await fetchMasterSheetId(); // scans master rows for the "isActive" key
-    if (!SHEET_ID_PATTERN.test(id)) throw new Error("not a spreadsheet ID");
-    return id;
-  } catch (err) {
-    console.warn("falling back to default locale —", err.message);
-    return DEFAULT_SHEET_ID;
-  }
+  const sheetId = extractSheetId(decodeURIComponent(rawId)); // also accepts a pasted full Sheets URL
+  const route = segments[1] || "discover";
+  const id = segments[2];
+  return { sheetId, route, params: { id } };
 }
 ```
 
-The master sheet has **no header row** (`parsedNumHeaders: 0`, blank `cols[].label]`), so it
-is NOT parsed by `gvizToObjects()` (below) — that function would treat row 0 as the header and
-discard the sheet's one real row. `fetchMasterSheetId()` instead scans `table.rows` directly for
-a row whose column A is `isActive` and returns column B.
+`extractSheetId()` also matches a pasted full Sheets URL
+(`https://docs.google.com/spreadsheets/d/<id>/edit#gid=0`) via
+`/\/spreadsheets\/d\/([A-Za-z0-9_-]{25,60})/`, so either form works in the hash.
 
-`resolveSheetId()` never throws — any failure (network, missing row, malformed value) resolves
-to `DEFAULT_SHEET_ID` with a `console.warn`, so a broken master cell degrades to "show pz-en",
-never to a hard failure. See `docs/01-data-model.md` for the master-sheet contract and how to
-flip locales.
+`js/sheets.js`'s `Sheets.load(sheetId)` validates the ID against `SHEET_ID_PATTERN`
+(`/^[A-Za-z0-9_-]{25,60}$/`) before issuing any fetch, throwing a `SheetError("BAD_ID", ...)`
+if it doesn't look like a real spreadsheet ID. There's no fallback value to degrade to — an
+invalid or absent ID is always a hard failure, rendered by `js/app.js` as a specific error
+screen (see "Loading / error states" below), not a guess at which sheet to show instead.
 
-The resolved spreadsheet ID is then used for all 6 `fetchTab()` calls below — **pz-en and pz-de
-are duplicates of each other and share identical gids**, so the `TABS` map (gid per tab name)
-is locale-independent; only the spreadsheet ID varies.
+Switching which sheet is active is purely editing the URL hash — no code change, no deploy,
+and no edit to any other spreadsheet.
 
 ## Fetch sequence
 
-1. `app.js` calls `Sheets.load()` once, before the router renders the first view.
-2. `Sheets.load()` resolves the locale spreadsheet ID (above), then issues 6 parallel
-   `fetch()` calls against it, one per tab, using `Promise.allSettled` (not `Promise.all` —
-   one bad tab must not block the others). Tabs are addressed by **gid**, not by name — see
-   the gotcha below.
+1. `js/app.js`'s `loadSheet()` parses the current hash, and if it has a sheet ID, calls
+   `Sheets.load(sheetId)` before the router renders the first view for that sheet.
+2. `Sheets.load()` issues 6 parallel `fetch()` calls, one per tab, using `Promise.all` (not
+   `allSettled` — see "Decisions" for why this flipped from the old per-tab-fallback design).
+   Tabs are addressed **by name**, not gid — see below.
 
 ```js
-const TABS = {
-  games:    "420976241",
-  tasks:    "666986029",
-  rewards:  "955004045",
-  wallet:   "1476565906",
-  settings: "719558094",
-  content:  "1744568315",
-};
+const TAB_NAMES = ["games", "tasks", "rewards", "wallet", "settings", "content"];
 
-function gvizUrl(sheetId, gid) {
-  return `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gid}`;
+function gvizUrl(sheetId, tabName) {
+  return `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(tabName)}`;
 }
 ```
 
@@ -70,13 +62,18 @@ function gvizUrl(sheetId, gid) {
 ```js
 function parseGviz(text) {
   const match = text.match(/setResponse\(([\s\S]*)\);?\s*$/);
-  if (!match) throw new Error("Unexpected gviz response shape");
-  return JSON.parse(match[1]);
+  if (!match) return null; // not a gviz response — e.g. an HTML sign-in/consent page
+  try { return JSON.parse(match[1]); } catch (err) { return null; }
 }
 ```
 
+   A `null` result (no match, or malformed JSON) means the sheet exists but gviz didn't give
+   back its usual response — in practice this is what a **private** (not "Anyone with the
+   link") spreadsheet returns: an HTML Google Accounts page instead of JSON. This is surfaced
+   as `SheetError("NO_ACCESS", ...)`.
+
 4. Convert the gviz table into an array of plain objects using **row 1 as the header source**,
-   not `table.cols[].label` (Figma/Sheets sometimes leaves `label` blank depending on how the
+   not `table.cols[].label` (Google Sheets sometimes leaves `label` blank depending on how the
    sheet was authored; row-1-as-header is explicit and predictable):
 
 ```js
@@ -99,19 +96,26 @@ function gvizToObjects(table) {
    > `table.cols[0].label` — if all `cols[].label` are non-empty, use those as headers and
    > `table.rows` as data directly; otherwise fall back to treating `rows[0]` as the header row.
 
-## ⚠️ Tab addressing: use gid, not sheet name
+## Tab addressing: by name, confirmed working
 
-Confirmed by direct testing against the live sheet: requesting `sheet=<name>` — even with the
-exact correct tab name, or a deliberately nonsense name — always returns the **`games`** tab's
-data with `status: "ok"`. Tab-name lookup is unreliable on this sheet; there is no error to
-catch. **All tab requests use `gid=<number>` instead** (see the `TABS` map above). If a tab is
-ever deleted and recreated, grab its new gid from the sheet's URL and update the map.
+Earlier drafts of this doc claimed `sheet=<name>` always returns the `games` tab regardless of
+the name requested, and addressed tabs by hardcoded `gid` instead. **Re-tested directly
+against multiple live spreadsheets and that claim was wrong**: `?sheet=tasks`, `?sheet=Tasks`,
+`?sheet=content`, etc. each return exactly that tab, byte-identical to the equivalent
+`?gid=<N>` request. Only a name that matches **no** tab in the sheet falls through to the
+first tab — which the header validation below (always run regardless of addressing mode)
+catches as a schema mismatch.
 
-## ⚠️ Header validation (still mandatory, even with gid addressing)
+Name-based addressing isn't just preferred now, it's required: a hardcoded gid map only ever
+worked across pz-en/pz-de because pz-de was duplicated from pz-en, so its gids happened to
+match. Any sheet created independently — which is every sheet a user points this app at now —
+has unrelated gids. There is no map that could cover an arbitrary third-party sheet; tab name
+is the only identifier guaranteed to mean the same thing across spreadsheets.
 
-A gid is stable but doesn't protect against someone restructuring a tab's columns. After
-extracting headers for each tab, compare them against a hardcoded expected-column list.
-Mismatch ⇒ treat as a failed fetch for that tab (same code path as a network error).
+## Header + required-key validation (still mandatory)
+
+A correct tab name doesn't protect against someone restructuring a tab's columns, or leaving a
+required `settings`/`content` key blank. Both are validated before any data reaches a view.
 
 ```js
 const EXPECTED_COLUMNS = {
@@ -123,81 +127,108 @@ const EXPECTED_COLUMNS = {
   content:  ["key","value"],
 };
 
-function validateHeaders(tab, headers) {
-  const expected = EXPECTED_COLUMNS[tab];
-  const ok = expected.every(col => headers.includes(col));
-  if (!ok) throw new Error(`Tab "${tab}" headers don't match expected schema`);
+function missingColumns(tabName, headers) {
+  return EXPECTED_COLUMNS[tabName].filter((col) => !headers.includes(col));
 }
+// missingColumns(...).length > 0 => throw SheetError("BAD_SCHEMA", ..., { tabName, missing })
 ```
+
+`settings`/`content` only need columns `key`/`value` at the schema level — the actual keys
+required within them are checked separately, since EXPECTED_COLUMNS can't express "this
+key/value table must contain a row with key X":
+
+```js
+const REQUIRED_SETTINGS_KEYS = ["balance", "referral_balance", "referral_first_task", "referral_pct"];
+const REQUIRED_CONTENT_KEYS = [ /* all 73 keys read by Render.t()/tRaw() and labelKey/titleKey
+                                   across js/app.js and js/views/ — see docs/01-data-model.md
+                                   for the full list */ ];
+
+function missingKeys(obj, required) {
+  return required.filter((key) => {
+    const v = obj[key];
+    return v === undefined || v === null || String(v).trim() === "";
+  });
+}
+// missingKeys(...).length > 0 => throw SheetError("MISSING_KEYS", ..., { tabName, missing })
+```
+
+`currency_symbol`/`currency_position`/`number_locale` are deliberately NOT in
+`REQUIRED_SETTINGS_KEYS` — `Render.initCurrency()` already handles their absence by sniffing a
+symbol off sample data, so requiring them would reject otherwise-valid minimal sheets over a
+purely cosmetic gap.
 
 ## Caching
 
-Fetch-once, in-memory only (per product decision — no localStorage, no TTL, no refetch on
-screen visits):
+Fetch-once per sheet ID, in-memory only (no localStorage, no TTL):
 
 ```js
 let _cache = null;
+let _cachedSheetId = null;
 
-async function load() {
-  if (_cache) return _cache;
-  _cache = await fetchAll(); // the Promise.allSettled logic above
+async function load(sheetId, force) {
+  if (!sheetId || !SHEET_ID_PATTERN.test(sheetId)) {
+    throw new SheetError("BAD_ID", `"${sheetId}" doesn't look like a Google Sheet ID`, { sheetId });
+  }
+  if (_cache && !force && _cachedSheetId === sheetId) return _cache;
+  _cache = await fetchAll(sheetId);
+  _cachedSheetId = sheetId;
   return _cache;
 }
 ```
 
-A page reload re-fetches (picking up any edits made to the sheet since). Switching tabs/screens
-within a session never refetches.
+A page reload re-fetches (picking up any edits made to the sheet since). Navigating within the
+same sheet never refetches. **Changing the sheet ID in the hash does** — `js/app.js`'s
+`onHashChange()` compares the new hash's sheet ID against the currently-loaded one and, if
+different, re-runs the full load sequence (skeleton → fetch → render) rather than treating it
+as an ordinary route change.
 
 ## Loading / error states
 
-Per-view render functions receive the already-resolved data; the loading state lives at the
-app-shell level, before routing even happens:
+Per-view render functions receive the already-resolved data; the loading/error state lives at
+the app-shell level (`js/app.js`), before routing happens for that sheet:
 
-1. **Skeleton**: on boot, before `Sheets.load()` resolves, `#view` shows skeleton placeholders
+1. **Skeleton**: while `Sheets.load()` is in flight, `#view` shows skeleton placeholders
    (shimmering gray blocks matching each screen's card shapes — defined in `components.css` as
-   `.skeleton`). The tab bar and nav bar render immediately with static chrome since they don't
-   need data beyond `settings.balance` (which also skeletons until resolved).
-2. **Partial failure**: if some tabs succeed and others fail validation/network, the app merges
-   in `data/fallback.json` values ONLY for the failed tabs (per-tab fallback, not all-or-nothing)
-   so e.g. a broken `wallet` tab doesn't blank out a working `games` tab.
-3. **Full failure + retry**: if the entire fetch fails (e.g. offline), `#view` shows a centered
-   message "Couldn't load data" with a **Retry** button that re-runs `Sheets.load()` (bypassing
-   `_cache`).
-4. **Fallback bundle**: `data/fallback.json` is always bundled in the repo and mirrors the
-   6-tab schema exactly. It is the data source used for any tab that fails validation after one
-   retry attempt, so the demo never shows a permanently empty screen.
-
-## Swapping which locale is live
-
-Edit the master sheet's `isActive` row (column B) to the target locale's spreadsheet ID — no
-code change, no deploy. See `docs/01-data-model.md` for the 3 spreadsheet IDs.
-
-## Adding a new locale / pointing at a different spreadsheet from scratch
-
-Change `DEFAULT_SHEET_ID` in `js/sheets.js` only if you're replacing the fallback locale itself.
-To add a brand-new locale sheet: duplicate an existing locale spreadsheet (so its 6 tab gids
-match the `TABS` map — gids are per-spreadsheet, but Sheets preserves them on "Make a copy"),
-translate its `content`/`wallet` tabs and set its `settings.currency_symbol` /
-`currency_position` / `number_locale`, then point the master sheet's `isActive` value at its ID.
-If you instead create a tab from scratch rather than duplicating, you must update every gid in
-the `TABS` map to match the new sheet's actual gids.
+   `.skeleton`).
+2. **All-or-nothing**: `fetchAll()` uses `Promise.all`, so any single tab failing — network,
+   404, bad schema — fails the whole load. There is no bundled fallback dataset to blend in
+   per-tab anymore (see "Decisions" for why), so a partial failure is just a failure: the app
+   either has a complete, valid sheet, or it shows an error screen. It never mixes rows from
+   one dataset with rows from another.
+3. **Typed errors → specific screens**: every failure mode is a `SheetError` with a `code`
+   (`BAD_ID`, `NOT_FOUND`, `NO_ACCESS`, `BAD_SCHEMA`, `MISSING_KEYS`, `NETWORK`), plus a
+   missing-sheet-ID case with no error object at all. `js/app.js`'s `errorContentFor()` maps
+   each to copy that tells whoever owns the sheet exactly what to fix — see
+   `docs/01-data-model.md`'s "Validation and failure modes" table for the full mapping.
+4. **Retry**: only offered for `NETWORK` (the one failure a plain retry can plausibly fix
+   without the user editing anything first). Every other error code requires fixing the URL or
+   the sheet before a retry would do anything different.
 
 ## Decisions
 
-- `Promise.allSettled`, not `Promise.all` — partial data beats no data for a demo.
+- **`Promise.all`, not `Promise.allSettled`.** This flipped from the original per-tab-fallback
+  design specifically because there's no longer a bundled fallback dataset to blend in for a
+  failed tab — with an arbitrary third-party sheet, "render this tab's rows from a different,
+  unrelated spreadsheet" is data corruption, not graceful degradation. An all-or-nothing load
+  with a clear error is more honest than a partially-correct render.
 - Row-1-as-header parsing, handling both gviz header representations.
-- **Tabs addressed by gid, not by name** — the live sheet's `sheet=<name>` lookup is broken
-  (always returns `games`), confirmed by direct testing.
-- Hardcoded `EXPECTED_COLUMNS` validation is mandatory, not optional.
-- No localStorage, no TTL-based cache — fetch once per page load, matches "simple demo" scope.
-- Fallback merges per-tab, not all-or-nothing.
-- **Locale is resolved via a master spreadsheet, not a URL param or build-time config** — so
-  non-technical staff can flip the live locale by editing one cell, with zero deploy. There is
-  deliberately no override mechanism (query string, localStorage) — the master sheet is the
-  single source of truth.
-- `data/fallback.json` stays a single English-only bundle, used for both locales' offline/
-  total-failure fallback — accepted tradeoff per product decision, rather than maintaining a
-  second bundle.
+- **Tabs addressed by name, not gid** — re-tested and confirmed working (see above); gid
+  addressing is incompatible with an arbitrary third-party sheet ID, since gids are
+  per-spreadsheet and have no reason to match across independently-created sheets.
+- Hardcoded `EXPECTED_COLUMNS` validation, plus `REQUIRED_SETTINGS_KEYS`/
+  `REQUIRED_CONTENT_KEYS` key validation, are both mandatory, not optional — this is what
+  "exact template copy" (the required contract for a sheet to be considered valid) means in
+  practice.
+- No localStorage, no TTL-based cache — fetch once per sheet ID, matches "simple demo" scope.
+- **No bundled fallback data (`data/fallback.json` removed).** The previous design's bundle
+  was a single English snapshot that made sense when only 2 known-good locale sheets existed;
+  it stops making sense once any public sheet can be loaded, since there's no longer a
+  meaningful "fallback" dataset to fall back to that has anything to do with the sheet that
+  failed.
+- **The spreadsheet ID is resolved from the URL hash, not a master spreadsheet, env var, or
+  build-time config.** This is the entire point of this change: anyone can point the app at
+  their own sheet by changing the URL, with zero deploy and zero other spreadsheet to
+  maintain.
 - Row-level sanity guards (`ROW_GUARDS` in `js/sheets.js`) drop structurally malformed
   `games`/`tasks` rows (e.g. `id` not matching `g\d+`) with a `console.warn`, since header
   validation alone can't catch a shifted row (confirmed root cause of an earlier pz-de
@@ -206,14 +237,17 @@ the `TABS` map to match the new sheet's actual gids.
   every fetch, since it's a machine enum read by exact string match in `js/views/wallet.js`,
   not translatable copy.
 
-## Open items
+## Pointing the app at a new sheet
 
-- If a tab is ever deleted/recreated in any locale spreadsheet, its gid changes — update the
-  `TABS` map in `js/sheets.js` accordingly (see `seed/README.md`). Since all locale sheets are
-  expected to be duplicates of one another, this should be done by duplicating the sheet with
-  the gid already fixed, not recreating tabs independently per locale.
-- `data/fallback.json` and `seed/*.tsv` are regenerated from the live pz-en sheet as a pair
-  (see `docs/01-data-model.md`) and include the `currency_symbol`/`currency_position`/
-  `number_locale` settings keys. If pz-en changes meaningfully, regenerate both again rather
-  than hand-editing either — hand-editing breaks the invariant that they're identical to each
-  other and to the live sheet.
+Copy `seed/*.tsv` into a new spreadsheet (see `seed/README.md`), keeping the 6 tab names and
+all required columns/keys exactly as documented in `docs/01-data-model.md`, share it "Anyone
+with the link — Viewer", then open `#/<new-sheet-id>/discover`. There is nothing in
+`js/sheets.js` to edit — no gid map, no master cell, no default ID.
+
+## Known limitation
+
+Since any public sheet ID can be loaded, the app is effectively rendering arbitrary
+third-party content once pointed at someone else's sheet. `games.image_url` /
+`wallet.icon_url` flow into inline `url(...)` / `<img src="...">` with only basic
+HTML-escaping, not full CSS/URL-context sanitization or a scheme allowlist. Accepted gap for
+this project's current scope — see `docs/01-data-model.md`'s "Known limitation" section.

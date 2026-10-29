@@ -63,7 +63,7 @@ function renderProfile(container, params, store) {
   const walletRow = container.querySelector("#wallet-row");
   if (walletRow) {
     walletRow.addEventListener("click", () => {
-      location.hash = "#/wallet";
+      location.hash = App.hashFor("wallet");
     });
   }
 
@@ -74,7 +74,7 @@ function renderProfile(container, params, store) {
   const inviteBonusBtn = container.querySelector('[data-bonus-slot="1"] .btn-pill-outline');
   if (inviteBonusBtn) {
     inviteBonusBtn.addEventListener("click", () => {
-      location.hash = "#/invite";
+      location.hash = App.hashFor("invite");
     });
   }
 }

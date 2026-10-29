@@ -11,7 +11,7 @@
 │   └── components.css      # game card, payout card, wallet card, badge, chip, pill, buttons
 ├── js/
 │   ├── app.js               # boot sequence, hash router, view registry, tab bar + nav bar render
-│   ├── sheets.js             # gviz fetch for all 6 tabs, cache, validation, fallback
+│   ├── sheets.js             # gviz fetch for all 6 tabs, cache, validation, typed errors
 │   ├── render.js              # shared DOM helpers: el(), escapeHtml(), skeleton(), formatMoney()
 │   └── views/
 │       ├── discover.js
@@ -24,8 +24,7 @@
 │       └── invite.js
 ├── assets/
 │   └── icons/              # icon SVGs, brand logo PNGs, illustration PNGs
-├── data/
-│   └── fallback.json        # bundled offline copy of all 6 tabs, used when Sheets fetch fails
+├── seed/                    # paste-ready TSV template for a new sheet
 ├── docs/                    # this documentation set
 ├── .gitignore
 ├── .nojekyll                # tells GitHub Pages not to run Jekyll on this static site
@@ -38,49 +37,63 @@ HTML/CSS/JS, deployable as-is to GitHub Pages or any static host.
 ## Routing
 
 Single-page app using hash-based routing (works identically on GitHub Pages with no server
-rewrite config, and on Vercel with zero config).
+rewrite config, and on Vercel with zero config). The hash's **first segment is always the
+active Google Sheet ID** — see `docs/03-sheets-integration.md` — with the route following it:
+`#/<sheetId>/<route>/<id>`.
 
 | Route | View module | Tab bar visible? | Nav bar | Back arrow goes to |
 |---|---|---|---|---|
-| `#/discover` (default) | `views/discover.js` | yes, Discover active | title "Discover" + wallet pill | — |
-| `#/my-games` | `views/my-games.js` | yes, My Games active | title "My Games" + wallet pill | — |
-| `#/rewards` | `views/rewards.js` | yes, Rewards active | title "Rewards" + wallet pill | — |
-| `#/profile` | `views/profile.js` | yes, Profile active | title "Profile" + wallet pill | — |
-| `#/game/:id` | `views/game-detail.js` | no | back arrow + game name + wallet pill | `#/discover` |
-| `#/reward/:id` | `views/reward-detail.js` | no | back arrow + brand name + wallet pill | `#/rewards` |
-| `#/wallet` | `views/wallet.js` | no | back arrow + "Wallet" + wallet pill | `#/profile` |
-| `#/invite` | `views/invite.js` | no | back arrow + "Invite Friends" + wallet pill (overlay) | browser history (see below) |
+| `#/<sheetId>/discover` (default) | `views/discover.js` | yes, Discover active | title "Discover" + wallet pill | — |
+| `#/<sheetId>/my-games` | `views/my-games.js` | yes, My Games active | title "My Games" + wallet pill | — |
+| `#/<sheetId>/rewards` | `views/rewards.js` | yes, Rewards active | title "Rewards" + wallet pill | — |
+| `#/<sheetId>/profile` | `views/profile.js` | yes, Profile active | title "Profile" + wallet pill | — |
+| `#/<sheetId>/game/:id` | `views/game-detail.js` | no | back arrow + game name + wallet pill | `#/<sheetId>/discover` |
+| `#/<sheetId>/reward/:id` | `views/reward-detail.js` | no | back arrow + brand name + wallet pill | `#/<sheetId>/rewards` |
+| `#/<sheetId>/wallet` | `views/wallet.js` | no | back arrow + "Wallet" + wallet pill | `#/<sheetId>/profile` |
+| `#/<sheetId>/invite` | `views/invite.js` | no | back arrow + "Invite Friends" + wallet pill (overlay) | browser history (see below) |
 
-`#/wallet` and `#/invite` are reached from Profile's two CTAs, not from the tab bar — they are
-detail screens per the original brief ("two CTA: one to Wallet Page another to Invite a friend
-screen"). `#/invite` is also reachable from Discover's "Get Bonus" CTA, so unlike the other
-detail routes it has no single correct "up" target — see the back-arrow note below.
+`#/<sheetId>/wallet` and `#/<sheetId>/invite` are reached from Profile's two CTAs, not from the
+tab bar — they are detail screens per the original brief ("two CTA: one to Wallet Page another
+to Invite a friend screen"). `#/<sheetId>/invite` is also reachable from Discover's "Get Bonus"
+CTA, so unlike the other detail routes it has no single correct "up" target — see the
+back-arrow note below.
+
+Every in-app navigation (tab bar taps, back arrow, wallet pill, view CTAs) builds its target
+hash via `App.hashFor(route, id)`, never a bare `"#/<route>"` string, so the active sheet ID
+survives every navigation. There is no code path that writes a hash without the sheet ID
+prefix.
 
 ### Router lifecycle (`app.js`)
 
-1. On `load` and on every `hashchange`, parse `location.hash` into `{route, params}` via a small
-   pattern match (supports one `:id` segment).
-2. Look up the view module in a registry object `{ "discover": renderDiscover, "game": renderGameDetail, ... }`.
-3. Clear `#view`, call the matched view's `render(container, params, data)` where `data` is the
-   already-fetched Sheets payload (see `03-sheets-integration.md` — fetched once at boot, not
-   per-navigation).
-4. Toggle tab bar visibility and nav bar content (title/back-arrow) based on the route table
+1. On `load` and on every `hashchange`, parse `location.hash` into `{sheetId, route, params}`.
+2. If the sheet ID in the new hash differs from the one currently loaded, run the full load
+   sequence for the new sheet (skeleton → `Sheets.load(sheetId)` → render) — switching sheets
+   is a data reload, not just a route change. Otherwise, just re-route within the already-loaded
+   sheet.
+3. Look up the view module in a registry object `{ "discover": renderDiscover, "game": renderGameDetail, ... }`.
+4. Clear `#view`, call the matched view's `render(container, params, data)` where `data` is the
+   already-fetched Sheets payload for the current sheet ID (see `03-sheets-integration.md` —
+   fetched once per sheet ID, not per-navigation).
+5. Toggle tab bar visibility and nav bar content (title/back-arrow) based on the route table
    above.
-5. Scroll the window to top on every navigation, after the new view has rendered (`#view` has no
+6. Scroll the window to top on every navigation, after the new view has rendered (`#view` has no
    bounded height/`overflow-y`, so it is not itself a scroll container — the window is the real
    scroller, and it must be reset after render so the new content's height exists and the browser
    can't clamp the offset back to a stale position).
-6. Unknown hash → redirect to `#/discover`.
+7. Unknown route (with a valid sheet ID) → redirect to `#/<sheetId>/discover`. Missing or
+   invalid sheet ID → render a specific error screen instead of guessing a sheet (see
+   `docs/03-sheets-integration.md`'s "Loading / error states").
 
 Browser/OS back and forward buttons work natively — no history-stack manipulation, each
 navigation is a real hash change. The nav-bar back **arrow**, however, is a separate "up"
 affordance, not browser-back: each detail route in `ROUTES` (`app.js`) declares a `parent`
-key, and the arrow always navigates straight there (`location.hash = "#/" + routeDef.parent`),
+key, and the arrow always navigates straight there via `App.hashFor(routeDef.parent)`,
 regardless of how the user actually arrived — this is what makes a cold load or reload of e.g.
-`#/reward/r5` return to `#/rewards` instead of falling back to `#/discover`. `#/invite` is the
-one route with no declared `parent` (it has two legitimate entry points, Profile and Discover,
-with no single correct "up" target), so its back arrow falls through to the older
-history.back()-or-#/discover-fallback behavior instead.
+`#/<sheetId>/reward/r5` return to `#/<sheetId>/rewards` instead of falling back to
+`#/<sheetId>/discover`. `#/<sheetId>/invite` is the one route with no declared `parent` (it
+has two legitimate entry points, Profile and Discover, with no single correct "up" target), so
+its back arrow falls through to the older history.back()-or-`#/<sheetId>/discover`-fallback
+behavior instead.
 
 ## Nav bar anatomy
 
@@ -159,8 +172,14 @@ body {
 
 ## Decisions
 
-- Hash routing, not path routing — no server rewrite rules needed on GitHub Pages.
-- Data fetched once at boot (see chunk 3), not per-navigation — tab switches are instant.
+- Hash routing, not path routing — no server rewrite rules needed on GitHub Pages. This also
+  avoids needing a `404.html` SPA-fallback shell or a runtime `<base href>` computation, both
+  of which would otherwise be required to serve a path-based `/<sheetId>/` URL from GitHub
+  Pages' static-only hosting.
+- The Google Sheet ID is part of the hash, not a hardcoded constant or master-sheet lookup —
+  see `docs/03-sheets-integration.md`. Data is fetched once per sheet ID (not per-navigation
+  within that sheet) — tab switches within a sheet are instant; switching sheets via the hash
+  triggers a full reload.
 - Tab bar is 4 items (Discover, My Games, Rewards, Profile) — Figma's 5-tab bar (including
   "Missions") is not implemented; no Missions screen exists.
 - No desktop layout, no breakpoints, fixed mobile-only viewport handling.

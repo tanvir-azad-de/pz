@@ -31,6 +31,10 @@ const App = (() => {
   };
 
   let store = null;
+  // The sheet ID currently loaded into `store`. Kept separate from parseHash()'s result so
+  // hashFor() can build same-sheet navigation links even mid-render, before route() has
+  // re-parsed the hash.
+  let currentSheetId = null;
 
   // --- Momentum-proof scroll reset ---------------------------------------
   // A touch fling keeps emitting compositor scroll deltas for ~100-300ms
@@ -114,10 +118,37 @@ const App = (() => {
     window.addEventListener("scroll", navScrollHandler, { passive: true });
   }
 
+  // Extracts a plausible spreadsheet ID out of a pasted full Google Sheets URL
+  // (https://docs.google.com/spreadsheets/d/<id>/edit#gid=0), so the hash accepts either a
+  // bare ID or a URL copied straight out of the browser's address bar.
+  function extractSheetId(raw) {
+    const urlMatch = String(raw || "").match(/\/spreadsheets\/d\/([A-Za-z0-9_-]{25,60})/);
+    return urlMatch ? urlMatch[1] : raw;
+  }
+
+  // Hash shape is #/<sheetId>/<route>/<param> — the sheet ID is the app's only configuration,
+  // read straight out of the URL (see docs/03-sheets-integration.md). There is no default
+  // sheet and no master sheet anymore: a hash with no ID segment, or one that doesn't look
+  // like a spreadsheet ID, resolves to sheetId:null / sheetId:"bad-value" respectively, and
+  // boot() below turns that into a specific error screen rather than ever guessing a sheet.
   function parseHash() {
-    const hash = (location.hash || "#/discover").replace(/^#\//, "");
-    const [route, id] = hash.split("/");
-    return { route: route || "discover", params: { id } };
+    const hash = (location.hash || "").replace(/^#\/?/, "");
+    const segments = hash.split("/").filter((s) => s !== "");
+    const rawId = segments[0];
+    if (!rawId) return { sheetId: null, route: "discover", params: {} };
+
+    const sheetId = extractSheetId(decodeURIComponent(rawId));
+    const route = segments[1] || "discover";
+    const id = segments[2];
+    return { sheetId, route, params: { id } };
+  }
+
+  // Builds a same-sheet navigation hash, e.g. hashFor("game", "g1") -> "#/<sheetId>/game/g1".
+  // Every in-app navigation (tab bar, back button, view CTAs) must go through this rather than
+  // writing a bare "#/<route>" hash, so the active sheet ID survives every navigation,
+  // reload, and share/bookmark.
+  function hashFor(route, id) {
+    return `#/${currentSheetId}/${route}${id !== undefined && id !== null ? "/" + id : ""}`;
   }
 
   function renderShell() {
@@ -146,7 +177,7 @@ const App = (() => {
 
     tabBar.querySelectorAll("[data-route]").forEach((el) => {
       el.addEventListener("click", () => {
-        location.hash = `#/${el.dataset.route}`;
+        location.hash = hashFor(el.dataset.route);
       });
     });
   }
@@ -190,7 +221,7 @@ const App = (() => {
     const walletPillBtn = document.getElementById("wallet-pill-btn");
     if (walletPillBtn) {
       walletPillBtn.addEventListener("click", () => {
-        location.hash = "#/wallet";
+        location.hash = hashFor("wallet");
       });
     }
 
@@ -204,11 +235,11 @@ const App = (() => {
         // (#/invite, reachable from both Profile and Discover) keep the older
         // history-first behavior, since neither entry point is the single correct parent.
         if (routeDef.parent) {
-          location.hash = `#/${routeDef.parent}`;
+          location.hash = hashFor(routeDef.parent);
         } else if (history.length > bootHistoryLength) {
           history.back();
         } else {
-          location.hash = "#/discover";
+          location.hash = hashFor("discover");
         }
       });
     }
@@ -234,16 +265,83 @@ const App = (() => {
     `;
   }
 
-  function renderErrorState(onRetry) {
+  // Every load failure (no ID, bad ID, 404, private sheet, wrong schema, missing content
+  // keys, network) renders here with a message specific to what's actually wrong, so whoever
+  // is pointing the app at their own sheet (see docs/03-sheets-integration.md) knows exactly
+  // what to fix instead of a generic "couldn't load data". There's no bundled fallback data to
+  // degrade to anymore, so this screen — not a half-English/half-broken render — is what a
+  // failure looks like.
+  //
+  // `retry` is omitted (no button) for failures a reload can't fix on its own (no ID / bad ID
+  // / bad schema / missing keys) — those need the URL or the sheet edited first.
+  function errorContentFor(err, rawSheetId) {
+    if (!err) {
+      return {
+        title: "No spreadsheet specified",
+        lines: ["Add a Google Sheet ID to the URL, e.g. #/<sheet-id>/discover."],
+      };
+    }
+    if (err.code === "BAD_ID") {
+      return {
+        title: "That doesn't look like a Google Sheet ID",
+        lines: [`Got: "${rawSheetId}"`, "Paste the spreadsheet's ID or its full edit URL after the #/."],
+      };
+    }
+    if (err.code === "NOT_FOUND") {
+      return {
+        title: "Spreadsheet not found",
+        lines: ["Check the ID, and that the sheet's sharing is set to \u201cAnyone with the link\u201d."],
+      };
+    }
+    if (err.code === "NO_ACCESS") {
+      return {
+        title: "This spreadsheet isn't publicly readable",
+        lines: ["Open Share \u2192 General access \u2192 set to \u201cAnyone with the link\u201d (Viewer)."],
+      };
+    }
+    if (err.code === "BAD_SCHEMA") {
+      const tab = err.detail && err.detail.tabName;
+      const missing = (err.detail && err.detail.missing) || [];
+      return {
+        title: "This isn't a valid PlayZone spreadsheet",
+        lines: [`Tab "${tab}" is missing column(s): ${missing.join(", ")}`, "See seed/ in the repo for the required tab layout."],
+      };
+    }
+    if (err.code === "MISSING_KEYS") {
+      const tab = err.detail && err.detail.tabName;
+      const missing = (err.detail && err.detail.missing) || [];
+      return {
+        title: `Your "${tab}" tab is missing required rows`,
+        lines: [`Missing key(s): ${missing.join(", ")}`, "Add a row for each in column A/B of that tab."],
+      };
+    }
+    // NETWORK and anything unanticipated: the one case a plain retry can plausibly fix.
+    return {
+      title: "Couldn't load data",
+      lines: ["Check your connection and try again."],
+      retry: true,
+    };
+  }
+
+  function renderErrorState(err, rawSheetId, onRetry) {
+    const { title, lines, retry } = errorContentFor(err, rawSheetId);
+
+    const tabBar = document.getElementById("tab-bar");
+    if (tabBar) tabBar.style.display = "none";
+    const navBar = document.getElementById("nav-bar");
+    if (navBar) navBar.innerHTML = "";
+
     const view = document.getElementById("view");
     view.innerHTML = `
       <div class="state-message">
-        <p class="t-body-lg">Couldn't load data</p>
-        <p class="t-body-md">Check your connection and try again.</p>
-        <button class="btn btn-small" type="button" id="retry-btn">Retry</button>
+        <p class="t-body-lg">${Render.esc(title)}</p>
+        ${lines.map((l) => `<p class="t-body-md">${Render.esc(l)}</p>`).join("")}
+        ${retry ? `<button class="btn btn-small" type="button" id="retry-btn">Retry</button>` : ""}
       </div>
     `;
-    document.getElementById("retry-btn").addEventListener("click", onRetry);
+    if (retry) {
+      document.getElementById("retry-btn").addEventListener("click", onRetry);
+    }
   }
 
   function route() {
@@ -276,44 +374,79 @@ const App = (() => {
     resetScrollToTop();
   }
 
-  async function boot() {
-    // Prevent the browser from re-applying a remembered window scroll offset
-    // on reload/back-forward, which would fight the explicit reset in route().
-    if ("scrollRestoration" in history) {
-      history.scrollRestoration = "manual";
-    }
-
-    // A deliberate scroll from the user always wins over the momentum-proof
-    // reset in resetScrollToTop() above.
-    window.addEventListener("touchstart", cancelScrollReset, { passive: true });
-    window.addEventListener("wheel", cancelScrollReset, { passive: true });
+  // Loads whichever sheet is currently in the hash and renders the app around it. Called at
+  // boot, on Retry, and whenever hashchange() below detects the hash now points at a
+  // DIFFERENT sheet ID than the one currently loaded (switching sheets is a full reload of
+  // the data layer, not just a route change).
+  async function loadSheet() {
+    const { sheetId } = parseHash();
+    const rawSheetId = sheetId;
 
     renderShell();
     renderSkeleton();
     bootHistoryLength = history.length;
 
+    if (!sheetId) {
+      store = null;
+      currentSheetId = null;
+      renderErrorState(null, rawSheetId, loadSheet);
+      return;
+    }
+
     try {
-      store = await Sheets.load();
-      Render.initContent(store.data.content, store.data.fallbackContent);
+      store = await Sheets.load(sheetId);
+      currentSheetId = sheetId;
+      Render.initContent(store.data.content);
       Render.initCurrency(store.data);
       // settings.number_locale (e.g. "de-DE") drives <html lang>, so screen readers and
       // browser features (spellcheck, font selection) match the active locale sheet. Falls
       // back to "en" if the sheet predates this key (see Render.initCurrency's own fallback).
       const numberLocale = (store.data.settings && store.data.settings.number_locale) || "en-US";
       document.documentElement.lang = numberLocale.split("-")[0];
-      if (store.failedTabs && store.failedTabs.length) {
-        console.warn("Using fallback data for tabs:", store.failedTabs.join(", "));
-      }
       renderTabBar();
+      const tabBar = document.getElementById("tab-bar");
+      if (tabBar) tabBar.style.display = "";
       route();
-      window.addEventListener("hashchange", route);
     } catch (err) {
       console.error(err);
-      renderErrorState(boot);
+      store = null;
+      currentSheetId = null;
+      renderErrorState(err, rawSheetId, loadSheet);
     }
   }
 
-  return { boot };
+  function onHashChange() {
+    const { sheetId } = parseHash();
+    if (sheetId !== currentSheetId) {
+      loadSheet();
+    } else {
+      route();
+    }
+  }
+
+  let _wired = false;
+
+  async function boot() {
+    if (!_wired) {
+      _wired = true;
+      // Prevent the browser from re-applying a remembered window scroll offset
+      // on reload/back-forward, which would fight the explicit reset in route().
+      if ("scrollRestoration" in history) {
+        history.scrollRestoration = "manual";
+      }
+
+      // A deliberate scroll from the user always wins over the momentum-proof
+      // reset in resetScrollToTop() above.
+      window.addEventListener("touchstart", cancelScrollReset, { passive: true });
+      window.addEventListener("wheel", cancelScrollReset, { passive: true });
+
+      window.addEventListener("hashchange", onHashChange);
+    }
+
+    await loadSheet();
+  }
+
+  return { boot, hashFor };
 })();
 
 document.addEventListener("DOMContentLoaded", App.boot);

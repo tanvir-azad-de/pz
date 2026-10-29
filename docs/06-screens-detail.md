@@ -4,6 +4,10 @@ Covers the 4 screens reached by tapping into a tab screen: Game Detail, Reward D
 Invite Friends. All are built at full fidelity to their Figma frames (per product decision),
 minus the status bar/prompt/search chrome dropped globally.
 
+> Routes below are written as `#/route` for brevity. The actual hash always carries the active
+> sheet ID first — see `docs/03-sheets-integration.md` — so `#/game/:id` really means
+> `#/<sheetId>/game/:id`.
+
 ## Game Detail (Figma node `1:4424`)
 
 Route `#/game/:id`. Back arrow + game name in nav bar. No tab bar; sticky "Play Now" footer.

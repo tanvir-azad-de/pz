@@ -1,50 +1,40 @@
 # 01 — Data Model (Google Sheets)
 
-## Locale sheets + master sheet
+# 01 — Data Model (Google Sheets)
 
-The app is served by **three** spreadsheets, not one:
+## The sheet is chosen at runtime, via the URL
 
-| Role | Sheet ID | Purpose |
+There is no master sheet, no default sheet, and no fixed locale set. The app renders whatever
+public Google Sheet is referenced by the URL hash: `#/<sheet-id>/<route>`, e.g.
+`#/1M70ITzDuJapNMhcd9H_HEPUyuOWHkJIMyrFBb4cSubU/discover`. A full Sheets URL
+(`https://docs.google.com/spreadsheets/d/<id>/edit`) in the hash also works — `js/app.js`
+extracts the ID. There is nothing in app code that knows about "pz-en"/"pz-de" or any other
+specific spreadsheet; those names below are just convenient examples of sheets this app has
+been tested against.
+
+Switching which content is shown is purely a URL change — paste a different sheet's ID into
+the hash. There is no code change and no "master cell" to edit.
+
+**What makes a sheet valid:** 6 tabs named exactly `games`, `tasks`, `rewards`, `wallet`,
+`settings`, `content`, with the columns documented below, shared "Anyone with the link —
+Viewer". `js/sheets.js` validates all of this on load (see "Validation and failure modes"
+below) and the app shows a specific, actionable error screen — not a blank page or English
+placeholder content — if any part of it doesn't hold.
+
+### Example sheets used during development
+
+| Sheet | ID | Purpose |
 |---|---|---|
-| Master | `1g9h9pcDypXhZEFuPyVZmaQ7DUI-RqqhpnV-zivLkeXY` | A single `isActive` row whose value is the spreadsheet ID of whichever locale sheet is currently live. |
-| pz-en | `1M70ITzDuJapNMhcd9H_HEPUyuOWHkJIMyrFBb4cSubU` | English content. Also the hardcoded `DEFAULT_SHEET_ID` fallback. |
-| pz-de | `12jvO2x_ay8umdq22SDwrpxkr_2HD705hujnnwNbGRrs` | German content. |
+| pz-en | `1M70ITzDuJapNMhcd9H_HEPUyuOWHkJIMyrFBb4cSubU` | English reference content, 19 games / 114 tasks / 12 rewards / 9 wallet rows / 7 settings keys / 73 content keys. |
+| pz-de | `12jvO2x_ay8umdq22SDwrpxkr_2HD705hujnnwNbGRrs` | German translation of the same dataset — proves the app is locale-agnostic (confirmed: identical schema, different `content`/`settings` values, different gids from pz-en since it was NOT duplicated gid-for-gid). |
 
-At boot, `js/sheets.js` (`Sheets.load()`) first fetches **gid 0** of the master sheet, reads the
-row whose column A is `isActive`, and takes column B as the spreadsheet ID to use for the 6
-content tabs below. **pz-en and pz-de are duplicates of each other — all 6 tab gids are
-identical across both** — so switching locale is purely "which spreadsheet ID", never "which
-gid map".
-
-The master sheet has **no header row** (gviz reports `parsedNumHeaders: 0`, blank
-`cols[].label`), by design — it's a single ad-hoc key/value pair, not a table. It is therefore
-parsed by a dedicated function (`fetchMasterSheetId` in `js/sheets.js`), NOT by the generic
-`gvizToObjects()` used for the 6 content tabs (which would misinterpret row 0 as a header and
-discard the one real row).
-
-**Failure handling:** if the master sheet is unreachable, has no `isActive` row, or its value
-doesn't look like a spreadsheet ID (`/^[A-Za-z0-9_-]{25,60}$/`), the app logs a `console.warn`
-and falls back to `DEFAULT_SHEET_ID` (pz-en). A broken master cell degrades to "show English",
-never to a hard failure.
-
-To switch the live locale: edit the master sheet's `isActive` row, column B, to the target
-locale's spreadsheet ID. No code change, no deploy.
-
-## Locale sheet (pz-en / pz-de)
-
-- URL: `https://docs.google.com/spreadsheets/d/1M70ITzDuJapNMhcd9H_HEPUyuOWHkJIMyrFBb4cSubU/edit`
-- Sheet ID: `1M70ITzDuJapNMhcd9H_HEPUyuOWHkJIMyrFBb4cSubU`
-- Sharing: must be public ("Anyone with the link can view") for the gviz endpoint to work
-  unauthenticated.
-- **Status as of 2026-10-23: all 6 tabs are fully populated** — 19 games, 114 tasks (6 per
-  game), 12 rewards, 9 wallet transactions, 7 settings keys, 73 content keys. `data/fallback.json`
-  and `seed/*.tsv` are regenerated directly from this live sheet (see `seed/README.md`), so all
-  three stay in lockstep — there is no longer a smaller/stale demo dataset.
+`seed/*.tsv` is a paste-ready template generated from the pz-en reference sheet — see
+`seed/README.md` for how to turn it into your own sheet.
 
 ## Fetch mechanism: gviz JSON endpoint
 
 ```
-https://docs.google.com/spreadsheets/d/<SHEET_ID>/gviz/tq?tqx=out:json&gid=<TAB_GID>
+https://docs.google.com/spreadsheets/d/<SHEET_ID>/gviz/tq?tqx=out:json&sheet=<TAB_NAME>
 ```
 
 - No API key required, CORS-friendly, returns typed values.
@@ -54,32 +44,27 @@ https://docs.google.com/spreadsheets/d/<SHEET_ID>/gviz/tq?tqx=out:json&gid=<TAB_
   has a proper header row recognized by gviz; otherwise `label` is empty and `id` is `ColN`.
   To be safe, **the app treats row 1 as headers explicitly** rather than relying on `cols[].label`.
 
-### ⚠️ Critical gotcha #1 — silent fallback on bad tab name
+### Tabs are addressed by name, not gid
 
-Confirmed by testing against the live sheet: requesting `sheet=<name>` with ANY name — including
-the correct tab names AND deliberately nonsense names like `zzzznope123` — returns
-`"status":"ok"` with the **`games`** tab's data every time. Tab-name-based lookup is completely
-unreliable on this sheet. A typo, or even a correctly-spelled tab name, will NOT throw — it will
-silently return the wrong tab's data.
+Confirmed by testing live against multiple independently-created spreadsheets:
+`?sheet=<name>` returns exactly that tab, case-insensitively, byte-identical to the equivalent
+`?gid=<N>` request. Only a name that doesn't match any tab falls through to the first tab in
+the sheet — which `js/sheets.js`'s column validation (below) catches, since the fallen-through
+tab's headers won't match what was requested.
 
-**Resolution: address tabs by numeric `gid` instead of `sheet=<name>`.** Each tab's gid is
-visible in the sheet's URL when that tab is active (`#gid=<number>`), and is stable unless the
-tab is deleted and recreated.
+Name-based addressing is required, not just preferred, now that the sheet ID is arbitrary:
+gids are per-spreadsheet — they only ever matched across pz-en/pz-de because pz-de happened to
+be duplicated from pz-en. A sheet created independently (as any user-supplied sheet will be)
+has unrelated gids, so a gid map hardcoded for one sheet would silently fetch the wrong tabs
+from another.
 
-| Tab | gid |
-|---|---|
-| `games` | `420976241` |
-| `tasks` | `666986029` |
-| `rewards` | `955004045` |
-| `wallet` | `1476565906` |
-| `settings` | `719558094` |
-| `content` | `1744568315` |
+### Header + key validation
 
-### ⚠️ Gotcha #2 — header validation still required
-
-Even with gid-based addressing, validate the returned header row against the expected column
-list for that gid before trusting the data. If it doesn't match, treat it as a fetch failure
-(trigger retry UI / fallback), not as "tab is empty." Implemented in `js/sheets.js` (chunk 3).
+Header validation (does tab X have all the columns `EXPECTED_COLUMNS[X]` requires) and,
+for `settings`/`content`, key validation (does the key/value tab have every key the rest of
+the app reads) both happen in `js/sheets.js` before any data reaches a view. A failure throws
+a typed `SheetError` (`BAD_SCHEMA` or `MISSING_KEYS`) that `js/app.js` turns into a specific
+error screen naming the tab and the missing columns/keys — see "Validation and failure modes".
 
 ## Tabs and columns
 
@@ -125,7 +110,7 @@ Rows for a given `game_id` render in sheet order (top to bottom = display order)
 | Column | Type | Notes |
 |---|---|---|
 | `id` | string | e.g. `r1` |
-| `category` | string, one of `Cash`, `Amazon`, `Google Play`, `Apple` | drives which horizontal row the card appears in |
+| `category` | string, e.g. `Cash`, `Amazon`, `Google Play`, `Apple` | drives which horizontal row the card appears in — your sheet can use any category names |
 | `brand` | string | logo label shown on the card, e.g. `PayPal`, `Zalando`, `Amazon` |
 | `amount` | string | e.g. `$5.00`, `$10.00` — pre-formatted by the sheet, shown verbatim |
 | `reward_detail_how_1` | string | Reward Detail "How it works" bullet 1 |
@@ -141,16 +126,14 @@ derived client-side: `settings.balance / rewards.amount`, as a percentage, clamp
 
 Brand logos (36px payout card + larger Reward Detail lockup) are NOT sourced from the sheet —
 they're resolved client-side from `brand` via `Render.brandLogo()` / `Render.brandLogoWide()`,
-which map known brand names to local PNGs in `assets/icons/` (falls back to a colored letter
-circle for unknown brands). The sheet previously had `icon_url`/`detail_image_url` columns for
-this, but they were never read by the app and have been removed.
+which map known brand names (`PayPal`, `Amazon`, `Google Play`, `Apple`) to local PNGs in
+`assets/icons/` (falls back to a colored letter circle for unknown brands — so a brand outside
+this list still renders, just without a bespoke logo).
 
 Reward Detail screen (tap any payout card) shows that single reward's `amount`, plus its own
 `reward_detail_how_1/2/3`, `reward_detail_conditions_1/2`, and `reward_detail_disclaimer` —
-each reward's copy is independent, letting Cash/Amazon/Google Play/Apple rewards carry
-brand-appropriate redemption instructions. The deprecated coin icon and its decorative
-`1 000`-style points number (previously static `content` tab copy), plus the later
-`Render.progressAmount()` derived currency figure that replaced it, have both been removed.
+each reward's copy is independent, letting different brands carry brand-appropriate
+redemption instructions.
 
 ### `wallet`
 
@@ -174,28 +157,36 @@ gviz returns both a raw value (`v`, e.g. `2.3`) and a formatted string (`f`, e.g
 data layer (`js/sheets.js`) reads `f` for every cell so these values arrive pre-formatted just
 like every other amount column, with no `$` hardcoded in the app.
 
-| `key` | Example `value` (as read by the app) | Used by |
-|---|---|---|
-| `balance` | `$2.30` (pz-en) / `2,30€` (pz-de) | wallet pill in every nav bar, Rewards balance card, Wallet balance card |
-| `referral_balance` | `$120.00` / `120,00€` | Invite Friends "Your Referral Balance" |
-| `referral_first_task` | `$5.00` / `5,00€` | Invite Friends reward rule, for completing first task |
-| `referral_pct` | `10` | Invite Friends "xx%" of game rewards — percent-formatted, not currency |
-| `currency_symbol` | `$` / `€` | Plain text, read verbatim. Drives `Render.splitAmount()`/`parseAmount()`/`formatAmount()` (`js/render.js`) — the ONLY code-level knowledge of which symbol is active. |
-| `currency_position` | `prefix` / `suffix` | Whether the symbol renders before or after the number (pz-en: `$5.00`, pz-de: `5,00€`). Any other value is treated as `prefix`. |
-| `number_locale` | `en-US` / `de-DE` | A BCP-47 tag passed to `Intl.NumberFormat`/`toLocaleString` to derive the decimal/thousands separators (`,`/`.` swap between locales) and to set `<html lang>` at boot (`js/app.js`). |
+| `key` | Required? | Example `value` | Used by |
+|---|---|---|---|
+| `balance` | **yes** | `$2.30` / `2,30€` | wallet pill in every nav bar, Rewards balance card, Wallet balance card |
+| `referral_balance` | **yes** | `$120.00` / `120,00€` | Invite Friends "Your Referral Balance" |
+| `referral_first_task` | **yes** | `$5.00` / `5,00€` | Invite Friends reward rule, for completing first task |
+| `referral_pct` | **yes** | `10` | Invite Friends "xx%" of game rewards — percent-formatted, not currency |
+| `currency_symbol` | optional | `$` / `€` | Plain text, read verbatim. Drives `Render.splitAmount()`/`parseAmount()`/`formatAmount()` (`js/render.js`) — the ONLY code-level knowledge of which symbol is active. If omitted, sniffed from sample data. |
+| `currency_position` | optional | `prefix` / `suffix` | Whether the symbol renders before or after the number (pz-en: `$5.00`, pz-de: `5,00€`). Any other value is treated as `prefix`. |
+| `number_locale` | optional | `en-US` / `de-DE` | A BCP-47 tag passed to `Intl.NumberFormat`/`toLocaleString` to derive the decimal/thousands separators (`,`/`.` swap between locales) and to set `<html lang>` (`js/app.js`). Defaults to `en-US`. |
 
-These 3 keys must be **plain text cells**, not Sheets-native currency/number formats — they're
-read via `v`, not `f`, so autoformatting would corrupt them. If they're absent (e.g. an older
-sheet, or `data/fallback.json`, which intentionally still lacks them), `Render.initCurrency()`
-falls back to sniffing a leading symbol off real data, assuming `en-US`/prefix — the original
-pre-locale behavior.
+`js/sheets.js` requires `balance`, `referral_balance`, `referral_first_task`, and
+`referral_pct` to be present and non-blank — a sheet missing any of them fails to load with a
+`MISSING_KEYS` error naming exactly which key(s) are missing, rather than rendering with blank
+amounts. The 3 currency keys are deliberately NOT required, so a minimal sheet still loads and
+falls back to sniffing a symbol off real data (assuming `en-US`/prefix).
+
+These 3 currency keys must be **plain text cells**, not Sheets-native currency/number formats
+— they're read via `v`, not `f`, so autoformatting would corrupt them.
 
 ### `content` (key/value — all static screen text)
 
 Flat key/value table. Every user-visible string that isn't per-row sheet data (game names,
 task amounts, brand names, etc.) lives here, so copy can be changed without a deploy. Looked
-up via `Render.t(key)` / `Render.tRaw(key)` (`js/render.js`), which falls through live sheet →
-bundled `data/fallback.json` → console warning + empty string.
+up via `Render.t(key)` / `Render.tRaw(key)` (`js/render.js`).
+
+**All 73 of the keys below are required** — `js/sheets.js` checks each one is present and
+non-blank before a sheet load can succeed, failing with a `MISSING_KEYS` error naming exactly
+which key(s) are missing. There is no bundled fallback content anymore, so an incomplete
+`content` tab is treated as an invalid sheet rather than a sheet that partially renders in
+English.
 
 ```
 email
@@ -211,7 +202,7 @@ invite_how_1 / invite_how_2 / invite_how_3 / invite_how_4
 tab_label_discover / tab_label_my_games / tab_label_rewards / tab_label_profile
 nav_title_discover / nav_title_my_games / nav_title_rewards / nav_title_profile
 nav_title_wallet / nav_title_invite
-nav_title_game_fallback / nav_title_reward_fallback   # shown if a #/game/:id or #/reward/:id has no match
+nav_title_game_fallback / nav_title_reward_fallback   # shown if a #/<sheetId>/game/:id or #/<sheetId>/reward/:id has no match
 
 # Shared across screens
 common_see_all / common_balance_label / common_payout_cta
@@ -258,13 +249,33 @@ key. An image path isn't user-visible copy, so the art stays a fixed asset in
 
 A handful of strings are intentionally NOT sheet-driven and remain hardcoded in app code:
 - `<title>PlayZone</title>` (`index.html`) — parsed before any JS runs.
-- The "Couldn't load data" / "Check your connection and try again." / "Retry" error state
-  (`js/app.js` `renderErrorState`) — only reachable when the live sheet fetch AND the bundled
-  `data/fallback.json` both fail, so no content source is available by definition.
+- Every error screen's copy (`js/app.js` `errorContentFor`) — necessarily hardcoded, since
+  these fire precisely when a `content` tab can't be trusted to supply its own text (missing,
+  unreachable, or incomplete sheet).
 - The `+` / `-` sign on Wallet amounts — derived from `wallet.type`, not copy (making it
   editable would let the data contradict itself: an "earned" row showing a minus sign).
 - The `%` after `settings.referral_pct` on Invite — a unit glyph on a numeric setting, same
   category as the wallet sign.
+
+## Validation and failure modes
+
+`js/sheets.js` throws a typed `SheetError` for every way a sheet load can fail; `js/app.js`
+renders a distinct error screen for each:
+
+| `SheetError.code` | Trigger | Error screen says |
+|---|---|---|
+| *(no sheet ID in hash)* | `#/` with nothing after it | "No spreadsheet specified" + how to add one |
+| `BAD_ID` | Hash segment isn't a valid-looking spreadsheet ID | "That doesn't look like a Google Sheet ID" + what was received |
+| `NOT_FOUND` | gviz returns HTTP 404 (confirmed: an invalid/nonexistent ID 404s) | "Spreadsheet not found" + check ID + sharing |
+| `NO_ACCESS` | gviz returns an HTML page (Google sign-in/consent) instead of its usual JS-wrapped JSON — happens when the sheet exists but isn't shared "Anyone with the link" | "This spreadsheet isn't publicly readable" + sharing instructions |
+| `BAD_SCHEMA` | A tab's header row is missing one or more columns `EXPECTED_COLUMNS` requires | "This isn't a valid PlayZone spreadsheet" + which tab + which columns |
+| `MISSING_KEYS` | `settings` or `content` is missing a required key, or it's present but blank | which tab + exactly which key(s) |
+| `NETWORK` | fetch rejects (offline, etc.) | "Couldn't load data" + Retry button |
+
+There is no bundled fallback dataset: any of the above is an all-or-nothing failure for the
+whole sheet load (`Promise.all`, not per-tab `allSettled`) — the app either renders a
+fully-loaded, fully-valid sheet, or a specific error screen. It never silently blends rows from
+an unrelated dataset into a partially-failed load.
 
 ## Decisions
 
@@ -276,22 +287,21 @@ A handful of strings are intentionally NOT sheet-driven and remain hardcoded in 
   symbol concatenated in JS. `js/render.js` exposes `splitAmount()` for the few spots that tint
   the symbol a different color than the number (nav-bar wallet pill, game card total), and
   `parseAmount()`/`formatAmount()` for the one place that must do arithmetic — summing a game's
-  task amounts (`Render.computedTotal()`). Both now read the active locale's
+  task amounts (`Render.computedTotal()`). Both read the active sheet's
   `currency_symbol`/`currency_position`/`number_locale` from `settings` (see above) rather than
-  sniffing format off sample data, so switching locale is purely a sheet-authoring change
-  (which spreadsheet the master points at + its `settings` values), never a code change.
-- **Enum-like columns must never be translated, in any locale sheet.** These are read by exact
+  sniffing format off sample data when those keys are present, so a given sheet's currency
+  presentation is purely a sheet-authoring concern, never a code change.
+- **Enum-like columns must never be translated, in any sheet.** These are read by exact
   string match in app code, not displayed as copy — translating them breaks the app silently
   (wrong badge, wrong filter, wrong card variant) rather than throwing:
   - `games.has_cashback` / `games.has_limited_bonus` / `tasks.is_active` — must stay
     `TRUE`/`FALSE`.
-  - `wallet.type` — must stay `earned`/`spent`. (A prior pz-de draft translated this to
-    `Verdient`/`Ausgegeben`; `js/sheets.js`'s `fetchAll()` now warns in the console if any
-    wallet row's `type` isn't `earned`/`spent`, but it doesn't correct the data.)
+  - `wallet.type` — must stay `earned`/`spent`. `js/sheets.js`'s `fetchAll()` warns in the
+    console if any wallet row's `type` isn't `earned`/`spent`, but doesn't correct the data.
   - `rewards.brand` — must stay the exact English brand name (`PayPal`, `Amazon`,
-    `Google Play`, `Apple`); it's a lookup key into `BRAND_SLUGS`/`BRAND_LETTER_COLORS`
-    (`js/render.js`) for logo PNGs, not display text. `rewards.category` (shown verbatim as a
-    section heading) IS safe to translate (pz-de uses `Bargeld` for `Cash`).
+    `Google Play`, `Apple`) to get a bespoke logo via `BRAND_SLUGS`/`BRAND_LETTER_COLORS`
+    (`js/render.js`); any other brand name still renders fine via the letter-circle fallback.
+    `rewards.category` (shown verbatim as a section heading) is always safe to translate.
   - `games.id` must stay the pattern `g<number>` — `js/sheets.js` drops any `games`/`tasks` row
     that fails a basic shape check (`id` not matching `g\d+`, or `tasks.game_id` blank) as a
     guard against structurally broken rows (e.g. a cell-internal newline shifting a row's
@@ -309,16 +319,15 @@ A handful of strings are intentionally NOT sheet-driven and remain hardcoded in 
 - Game Detail reuses `games.image_url` for both the wide hero and the small rounded icon —
   no separate `icon_url` column for games.
 - "How it works" / "Conditions" / disclaimer text on Reward Detail is per-reward (stored as
-  `reward_detail_*` columns on the `rewards` tab, not in `content`), so each Cash/Amazon/Google
-  Play/Apple reward can carry its own redemption copy.
+  `reward_detail_*` columns on the `rewards` tab, not in `content`), so each reward brand can
+  carry its own redemption copy.
 
-## Open items
+## Known limitation: untrusted sheet content
 
-- `seed/*.tsv` and `data/fallback.json` are both generated directly from the live pz-en sheet
-  (all 19 games, 114 tasks, 12 rewards, 9 wallet rows, 7 settings keys, 73 content keys) and
-  are kept byte-identical to it and to each other. If the live sheet changes, regenerate both
-  rather than hand-editing — a script fetches all 6 tabs via the same gviz normalization logic
-  as `js/sheets.js` and writes both outputs from one pass, so they can't drift from each other.
-- `data/fallback.json` is what the app renders from on live fetch failure (per-tab or total).
-  `seed/*.tsv` is a paste-ready snapshot of the same data, useful for resetting a sheet or
-  seeding pz-de before translation.
+Since the app will render whatever public sheet the URL points at, it's effectively rendering
+third-party content. Values from `games.image_url`/`wallet.icon_url` are interpolated into
+inline `style="background-image:url('...')"` / `<img src="...">` with only basic
+HTML-escaping (`Render.esc`) — not a URL-scheme allowlist or CSS-context-aware escaping. This
+is an accepted gap for the current demo scope: treat a sheet ID link the same way you'd treat
+any other link from an untrusted source, and don't open sheet IDs from sources you don't
+trust.

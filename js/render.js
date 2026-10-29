@@ -27,15 +27,15 @@ const Render = (() => {
   // ---- Content lookup ----
   // Every user-visible string that isn't per-row sheet data (game names, task amounts, etc.)
   // comes from the `content` tab so copy can be changed without a deploy. initContent() is
-  // called once at boot with both the live content object and the bundled data/fallback.json
-  // content object (see js/app.js). t() prefers the live value, falls back to the bundled one
-  // if the key is missing from the live sheet (e.g. a key added here before it's pasted into
-  // the Sheet), and finally warns + renders empty rather than "undefined" if neither has it.
+  // called once per sheet load with the live content object (see js/app.js). There is no
+  // bundled fallback tier anymore — js/sheets.js now REQUIRES every key in
+  // Sheets.REQUIRED_CONTENT_KEYS to be present and non-blank before a sheet load can succeed
+  // (see MISSING_KEYS in js/sheets.js), so by the time t()/tRaw() run, every key they're asked
+  // for is guaranteed to exist. The console.warn below is a last-resort guard for keys that
+  // AREN'T in that required list (there currently are none) rather than the normal path.
   let _liveContent = {};
-  let _fallbackContent = {};
-  function initContent(live, fallback) {
+  function initContent(live) {
     _liveContent = live || {};
-    _fallbackContent = fallback || {};
   }
 
   function t(key) {
@@ -44,10 +44,9 @@ const Render = (() => {
 
   // Unescaped lookup — only needed where the caller does its own single-point escaping
   // alongside other raw strings (e.g. js/app.js's nav title, which mixes a content-tab
-  // fallback with game/reward names pulled straight off the sheet).
+  // value with game/reward names pulled straight off the sheet).
   function tRaw(key) {
-    let v = _liveContent[key];
-    if (v === undefined || v === null || v === "") v = _fallbackContent[key];
+    const v = _liveContent[key];
     if (v === undefined || v === null) {
       console.warn(`Render.t: missing content key "${key}"`);
       return "";
@@ -112,10 +111,10 @@ const Render = (() => {
   }
 
   // Reads the locale's currency contract from the settings tab (settings.currency_symbol /
-  // currency_position / number_locale). Falls back to sniffing a symbol out of real sheet data
-  // the old way (assuming a leading symbol) if those keys are missing — e.g. data/fallback.json
-  // predates them — so older/incomplete sheets degrade to the pre-i18n behavior instead of
-  // breaking.
+  // currency_position / number_locale). These 3 keys are deliberately optional (unlike the
+  // keys in Sheets.REQUIRED_SETTINGS_KEYS) — a sheet that omits them falls back to sniffing a
+  // symbol out of real sheet data the old way (assuming a leading symbol), so a minimal sheet
+  // still renders usably instead of failing to load entirely over 3 cosmetic keys.
   function initCurrency(data) {
     const settings = (data && data.settings) || {};
     if (settings.currency_symbol) {

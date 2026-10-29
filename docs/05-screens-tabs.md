@@ -4,6 +4,10 @@ Covers the 4 screens reachable from the bottom tab bar: Discover, My Games, Rewa
 Section order, spacing, and data bindings below are read from each screen's Figma auto-layout
 (node IDs noted per screen).
 
+> Routes below are written as `#/route` for brevity. The actual hash always carries the active
+> sheet ID first — see `docs/03-sheets-integration.md` — so `#/discover` really means
+> `#/<sheetId>/discover`.
+
 ## Discover (Figma node `1:2127`)
 
 Route `#/discover`. Sections, top to bottom, each separated by `--space-section-gap` (24px):

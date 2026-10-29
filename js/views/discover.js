@@ -40,14 +40,14 @@ function renderDiscover(container, params, store) {
 
   container.querySelectorAll("[data-game-id]").forEach((el) => {
     el.addEventListener("click", () => {
-      location.hash = `#/game/${el.dataset.gameId}`;
+      location.hash = App.hashFor("game", el.dataset.gameId);
     });
   });
 
   const getBonusBtn = container.querySelector("#get-bonus-btn");
   if (getBonusBtn) {
     getBonusBtn.addEventListener("click", () => {
-      location.hash = "#/invite";
+      location.hash = App.hashFor("invite");
     });
   }
 }
