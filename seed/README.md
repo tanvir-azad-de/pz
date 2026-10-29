@@ -10,6 +10,11 @@ Since the app now reads any public sheet ID from the URL (`#/<sheet-id>/discover
 into a new spreadsheet, tweak the content, and point the app at it. No code change is
 involved.
 
+All `image_url`/`icon_url` columns (`games`, `wallet`, `rewards`) ship with placeholder photos
+from `picsum.photos` rather than real artwork — replace them with your own image URLs; a
+blank or 404ing URL degrades gracefully (see each tab's notes below and
+`docs/01-data-model.md`) rather than breaking the sheet load.
+
 ## How to create a new sheet from this template
 
 1. Create a new Google Sheet.
@@ -25,15 +30,18 @@ involved.
    - `wallet.type` — must stay `earned` / `spent`
    - `games.has_cashback`, `games.has_limited_bonus`, `tasks.is_active` — must stay
      `TRUE` / `FALSE`
-   - `rewards.brand` — keep `PayPal`, `Amazon`, `Google Play`, or `Apple` if you want that
-     reward to get a real logo (any other brand name still works, just without one)
    - `games.id` — must match `g<number>` (e.g. `g1`, `g2`, ...)
    - `games.href` — required column (the sheet won't load without it), but individual rows
      may be left blank; a blank row's "Play Now" button / "Play" pill just renders dimmed and
      does nothing instead of navigating. The template ships with Play Store search-result
      links as placeholders — replace with real store listing URLs.
-6. Set sharing: **Share → General access → Anyone with the link → Viewer.**
-7. Open `https://<your-pages-host>/#/<your-sheet-id>/discover`.
+6. `rewards.icon_url` (36×36 payout-card mark) and `rewards.image_url` (360×160 Reward Detail
+   lockup) are required columns, but individual cells may be left blank — a blank or 404ing
+   URL falls back to a colored letter-circle using the first letter of `rewards.brand`. The
+   template ships with placeholder photos (`picsum.photos`) in these columns — replace with
+   real brand logo URLs.
+7. Set sharing: **Share → General access → Anyone with the link → Viewer.**
+8. Open `https://<your-pages-host>/#/<your-sheet-id>/discover`.
 
 | Tab | File |
 |---|---|

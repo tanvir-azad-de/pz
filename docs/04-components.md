@@ -180,15 +180,10 @@ Icons are real SVG files in `assets/icons/`, registered in two manifests in `ren
 | `stopwatch` (img) | `badge-limited-bonus.svg` | 20 | game card Limited Bonus badge |
 
 Brand logos (`Render.brandLogo()` / `Render.brandLogoWide()`) are a separate mechanism from
-`icon.*` since they're keyed by brand name, not a fixed set: PNG `<img>` with an `onerror`
-fallback to a colored letter-circle for any unknown brand.
-
-| Brand | 36×36 (payout card) | 360×160 (Reward Detail, on white) |
-|---|---|---|
-| PayPal | `brand-paypal.png` | `brand-paypal-wide.png` |
-| Amazon | `brand-amazon.png` | `brand-amazon-wide.png` |
-| Google Play | `brand-google-play.png` | `brand-google-play-wide.png` |
-| Apple | `brand-apple.png` | `brand-apple-wide.png` |
+`icon.*` since they're sourced entirely from the sheet, not a fixed local asset set:
+`rewards.icon_url` (36×36, payout card) and `rewards.image_url` (360×160, Reward Detail, on
+white, `object-fit:contain`) rendered as a plain `<img>`, with an `onerror` fallback to a
+colored letter-circle (first letter of `rewards.brand`) for a blank or 404ing URL.
 
 Illustrations (decorative, non-interactive art) are plain `background-image`/`<img>` references.
 Most still carry a CSS gradient underneath as a fallback if the file 404s — **except

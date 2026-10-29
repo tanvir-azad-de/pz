@@ -71,11 +71,9 @@ URL with others), confirm:
       Sheets-native number/currency format).
 - [ ] Each `content` tab has all 73 required keys non-blank (see `01-data-model.md`).
 - [ ] `wallet.type` in every sheet is `earned`/`spent` — never translated.
-- [ ] `rewards.brand` stays the exact English brand name for any brand you want a bespoke
-      logo for (`PayPal`, `Amazon`, `Google Play`, `Apple`) — other brand names still render
-      fine via the letter-circle fallback.
-- [x] Brand logo PNGs (PayPal/Amazon/Google Play/Apple) dropped into `assets/icons/` and
-      `render.js` (`brandLogo`/`brandLogoWide`) updated to reference them.
+- [ ] `rewards` tab has `icon_url` and `image_url` columns (required headers, added
+      alongside the existing 10 columns — see `01-data-model.md`). Blank cells degrade to a
+      letter-circle rather than failing the sheet.
 - [ ] Open the deployed URL on an actual phone (or responsive mode pinned to a phone width) —
       this app has no desktop layout by design, so desktop testing is not meaningful.
 - [ ] Spot-check each of the 8 routes directly by URL under a real sheet ID

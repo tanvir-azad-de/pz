@@ -120,16 +120,21 @@ Rows for a given `game_id` render in sheet order (top to bottom = display order)
 | `reward_detail_conditions_1` | string | Reward Detail "Conditions" bullet 1 |
 | `reward_detail_conditions_2` | string | Reward Detail "Conditions" bullet 2 |
 | `reward_detail_disclaimer` | string | Reward Detail disclaimer box text |
+| `icon_url` | string (URL) | 36px rounded brand mark on the Rewards payout card |
+| `image_url` | string (URL) | 360×160 brand lockup on the Reward Detail header |
 
 There's no `progress_pct` column. The progress bar under the amount on each payout card is
 derived client-side: `settings.balance / rewards.amount`, as a percentage, clamped to 100%
 (once the balance covers the reward) and rounded to a whole percent for the inline fill width.
 
-Brand logos (36px payout card + larger Reward Detail lockup) are NOT sourced from the sheet —
-they're resolved client-side from `brand` via `Render.brandLogo()` / `Render.brandLogoWide()`,
-which map known brand names (`PayPal`, `Amazon`, `Google Play`, `Apple`) to local PNGs in
-`assets/icons/` (falls back to a colored letter circle for unknown brands — so a brand outside
-this list still renders, just without a bespoke logo).
+Brand logos (36px payout card + larger Reward Detail lockup) are sourced entirely from the
+sheet via `icon_url` / `image_url`, rendered by `Render.brandLogo()` / `Render.brandLogoWide()`
+(`js/render.js`) as a plain `<img>` with `object-fit` keeping an arbitrary aspect ratio from
+distorting. `brand` is used only for the `alt` text and the fallback letter — it is no longer
+an asset lookup key. A blank `icon_url`/`image_url` cell, or a URL that 404s, falls back to a
+colored letter-circle (first letter of `brand`, `var(--purple-400)` background) rather than a
+broken-image glyph.
+
 
 Reward Detail screen (tap any payout card) shows that single reward's `amount`, plus its own
 `reward_detail_how_1/2/3`, `reward_detail_conditions_1/2`, and `reward_detail_disclaimer` —
@@ -299,10 +304,6 @@ an unrelated dataset into a partially-failed load.
     `TRUE`/`FALSE`.
   - `wallet.type` — must stay `earned`/`spent`. `js/sheets.js`'s `fetchAll()` warns in the
     console if any wallet row's `type` isn't `earned`/`spent`, but doesn't correct the data.
-  - `rewards.brand` — must stay the exact English brand name (`PayPal`, `Amazon`,
-    `Google Play`, `Apple`) to get a bespoke logo via `BRAND_SLUGS`/`BRAND_LETTER_COLORS`
-    (`js/render.js`); any other brand name still renders fine via the letter-circle fallback.
-    `rewards.category` (shown verbatim as a section heading) is always safe to translate.
   - `games.id` must stay the pattern `g<number>` — `js/sheets.js` drops any `games`/`tasks` row
     that fails a basic shape check (`id` not matching `g\d+`, or `tasks.game_id` blank) as a
     guard against structurally broken rows (e.g. a cell-internal newline shifting a row's
@@ -326,9 +327,9 @@ an unrelated dataset into a partially-failed load.
 ## Known limitation: untrusted sheet content
 
 Since the app will render whatever public sheet the URL points at, it's effectively rendering
-third-party content. Values from `games.image_url`/`wallet.icon_url` are interpolated into
-inline `style="background-image:url('...')"` / `<img src="...">` with only basic
-HTML-escaping (`Render.esc`) — not a URL-scheme allowlist or CSS-context-aware escaping. This
-is an accepted gap for the current demo scope: treat a sheet ID link the same way you'd treat
-any other link from an untrusted source, and don't open sheet IDs from sources you don't
-trust.
+third-party content. Values from `games.image_url`/`wallet.icon_url`/`rewards.icon_url`/
+`rewards.image_url` are interpolated into inline `style="background-image:url('...')"` /
+`<img src="...">` with only basic HTML-escaping (`Render.esc`) — not a URL-scheme allowlist or
+CSS-context-aware escaping. This is an accepted gap for the current demo scope: treat a sheet
+ID link the same way you'd treat any other link from an untrusted source, and don't open
+sheet IDs from sources you don't trust.

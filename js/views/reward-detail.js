@@ -12,7 +12,7 @@ function renderRewardDetail(container, params, store) {
     <div class="screen-stack" style="padding-bottom: 140px;">
       <div class="padded-x">
         <div class="flex-col" style="background:#fff;border-radius:var(--radius-xl);padding:20px 16px;align-items:center;">
-          ${Render.brandLogoWide(reward.brand)}
+          ${Render.brandLogoWide(reward.image_url, reward.brand)}
         </div>
       </div>
 

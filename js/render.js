@@ -238,53 +238,42 @@ const Render = (() => {
     icon[key] = () => imgIcon(key);
   });
 
-  // Brand -> filename slug for assets/icons/brand-{slug}.png / brand-{slug}-wide.png.
-  const BRAND_SLUGS = {
-    PayPal: "paypal",
-    Amazon: "amazon",
-    "Google Play": "google-play",
-    Apple: "apple",
-  };
+  // Brand logos (icon/image) are sourced entirely from the sheet (rewards.icon_url /
+  // rewards.image_url) — brand name is used only for alt text and the letter-circle
+  // fallback, never as an asset lookup key. See docs/01-data-model.md.
 
-  const BRAND_LETTER_COLORS = {
-    PayPal: "#003087",
-    Amazon: "#FF9900",
-    "Google Play": "#34A853",
-    Apple: "#A3AAAE",
-  };
-
-  // Fallback used when a brand has no PNG (unknown brand, or onerror on a known one):
-  // colored circle + first letter.
+  // Fallback used when a reward has no icon/image URL (blank cell, or onerror on a bad URL):
+  // colored circle + first letter. No per-brand color map — arbitrary sheet-supplied brand
+  // names get a consistent neutral color instead of a bespoke one.
   function brandLogoFallback(brand, size) {
     const letter = esc((brand || "?").trim().charAt(0).toUpperCase());
-    const bg = BRAND_LETTER_COLORS[brand] || "var(--purple-400)";
-    return `<div class="brand-logo" style="width:${size}px;height:${size}px;background:${bg}">${letter}</div>`;
+    return `<div class="brand-logo" style="width:${size}px;height:${size}px;background:var(--purple-400)">${letter}</div>`;
   }
 
   // Called from onerror="" on brand <img> tags — restores the letter-circle fallback if the
-  // PNG is missing/renamed. Must stay reachable as Render._brandLogoFallback (invoked from
+  // sheet-supplied URL 404s. Must stay reachable as Render._brandLogoFallback (invoked from
   // markup, not JS call sites).
   function _brandLogoFallback(imgEl, brand, size) {
     imgEl.outerHTML = brandLogoFallback(brand, size);
   }
 
   // 36px rounded brand mark on the Rewards payout card (js/views/rewards.js). .brand-logo
-  // clips to a circle via border-radius, so the PNG just needs to cover that area.
-  function brandLogo(brand, size) {
+  // clips to a circle via border-radius, so the sheet-supplied image just needs to cover
+  // that area. `url` is rewards.icon_url; blank cell falls back to the letter-circle.
+  function brandLogo(url, brand, size) {
     const s = size || 36;
-    const slug = BRAND_SLUGS[brand];
-    if (!slug) return brandLogoFallback(brand, s);
-    return `<img class="brand-logo" width="${s}" height="${s}" src="assets/icons/brand-${slug}.png" alt="${esc(brand)}" onerror="Render._brandLogoFallback(this,'${esc(brand)}',${s})" />`;
+    if (!url) return brandLogoFallback(brand, s);
+    return `<img class="brand-logo" width="${s}" height="${s}" src="${esc(url)}" alt="${esc(brand)}" onerror="Render._brandLogoFallback(this,'${esc(brand)}',${s})" />`;
   }
 
   // 360x160 wide brand lockup on the Reward Detail header (js/views/reward-detail.js), shown
-  // on a white card. Fixed 360x160 box per spec; object-fit:contain keeps the brand PNG
-  // (720x320 source) from distorting. Falls back to the letter-circle (at a larger size,
-  // since there's no wide-format fallback) if the PNG 404s.
-  function brandLogoWide(brand) {
-    const slug = BRAND_SLUGS[brand];
-    if (!slug) return brandLogoFallback(brand, 64);
-    return `<img src="assets/icons/brand-${slug}-wide.png" alt="${esc(brand)}" width="360" height="160" style="width:360px;height:160px;object-fit:contain;" onerror="Render._brandLogoFallback(this,'${esc(brand)}',64)" />`;
+  // on a white card. Fixed 360x160 box per spec; object-fit:contain keeps an arbitrary
+  // sheet-supplied image (rewards.image_url) from distorting regardless of its native aspect
+  // ratio. Falls back to the letter-circle (at a larger size, since there's no wide-format
+  // fallback) if the URL is blank or 404s.
+  function brandLogoWide(url, brand) {
+    if (!url) return brandLogoFallback(brand, 64);
+    return `<img src="${esc(url)}" alt="${esc(brand)}" width="360" height="160" style="width:360px;height:160px;object-fit:contain;" onerror="Render._brandLogoFallback(this,'${esc(brand)}',64)" />`;
   }
 
   return {

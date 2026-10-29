@@ -66,7 +66,7 @@ function payoutCardHtml(reward, balance) {
     <button class="payout-card" type="button" data-reward-id="${Render.esc(reward.id)}">
       <div class="payout-card__body">
         <div class="payout-card__brand">
-          ${Render.brandLogo(reward.brand, 36)}
+          ${Render.brandLogo(reward.icon_url, reward.brand, 36)}
           <span class="t-body-md payout-card__brand-name">${Render.esc(reward.brand)}</span>
         </div>
         <span class="t-title-md payout-card__amount">${Render.esc(reward.amount)}</span>

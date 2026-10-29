@@ -34,6 +34,8 @@ const Sheets = (() => {
       "reward_detail_conditions_1",
       "reward_detail_conditions_2",
       "reward_detail_disclaimer",
+      "icon_url",
+      "image_url",
     ],
     wallet: ["date", "type", "name", "subtitle", "amount", "status", "icon_url", "coupon_code"],
     settings: ["key", "value"],

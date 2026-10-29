@@ -105,8 +105,9 @@ Game Detail
 Route `#/reward/:id`. Back arrow + `rewards.brand` in nav bar. Sticky "Confirm Payout" footer.
 
 1. **Offer card** — white card (`background: #fff`, `border-radius: 20px`, `padding: 20px 16px`),
-   centered content: large brand logo via `Render.brandLogoWide(reward.brand)` (local PNG,
-   fixed 360×160 box, falls back to a letter circle for unknown brands — see `01-data-model.md`).
+   centered content: large brand logo via `Render.brandLogoWide(reward.image_url, reward.brand)`
+   (sheet-supplied URL, fixed 360×160 `object-fit:contain` box, falls back to a letter circle
+   if blank/404 — see `01-data-model.md`).
 
 2. **Amount row** — below the white card: `rewards.amount` in large text (`.t-display-lg`,
    32/800). Deprecated coin icon removed; no secondary derived currency figure.
