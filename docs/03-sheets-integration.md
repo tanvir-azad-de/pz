@@ -119,7 +119,7 @@ required `settings`/`content` key blank. Both are validated before any data reac
 
 ```js
 const EXPECTED_COLUMNS = {
-  games:    ["id","name","image_url","description","total_reward","max_per_task","long_description","has_cashback","has_limited_bonus"],
+  games:    ["id","name","image_url","description","total_reward","max_per_task","long_description","has_cashback","has_limited_bonus","href"],
   tasks:    ["game_id","name","amount","is_active"],
   rewards:  ["id","category","brand","amount","reward_detail_how_1","reward_detail_how_2","reward_detail_how_3","reward_detail_conditions_1","reward_detail_conditions_2","reward_detail_disclaimer"],
   wallet:   ["date","type","name","subtitle","amount","status","icon_url","coupon_code"],

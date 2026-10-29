@@ -28,6 +28,10 @@ involved.
    - `rewards.brand` — keep `PayPal`, `Amazon`, `Google Play`, or `Apple` if you want that
      reward to get a real logo (any other brand name still works, just without one)
    - `games.id` — must match `g<number>` (e.g. `g1`, `g2`, ...)
+   - `games.href` — required column (the sheet won't load without it), but individual rows
+     may be left blank; a blank row's "Play Now" button / "Play" pill just renders dimmed and
+     does nothing instead of navigating. The template ships with Play Store search-result
+     links as placeholders — replace with real store listing URLs.
 6. Set sharing: **Share → General access → Anyone with the link → Viewer.**
 7. Open `https://<your-pages-host>/#/<your-sheet-id>/discover`.
 

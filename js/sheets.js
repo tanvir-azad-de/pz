@@ -21,7 +21,7 @@ const Sheets = (() => {
   const TAB_NAMES = ["games", "tasks", "rewards", "wallet", "settings", "content"];
 
   const EXPECTED_COLUMNS = {
-    games: ["id", "name", "image_url", "description", "total_reward", "max_per_task", "long_description", "has_cashback", "has_limited_bonus"],
+    games: ["id", "name", "image_url", "description", "total_reward", "max_per_task", "long_description", "has_cashback", "has_limited_bonus", "href"],
     tasks: ["game_id", "name", "amount", "is_active"],
     rewards: [
       "id",

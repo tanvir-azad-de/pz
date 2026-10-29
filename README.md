@@ -86,9 +86,12 @@ setup and pre-deploy checklist.
 
 - All icon, brand logo, illustration, and favicon assets are in place — see
   `docs/04-components.md` icon inventory.
-- All interactions beyond navigation (Play Now, Confirm Payout, Get Bonus, Copy & Shop, etc.)
-  are visual only — no backend, no persistence, by design.
-- Sheet content (game names, descriptions, image/icon URLs, brand names) is rendered without
-  sanitizing beyond basic HTML-escaping. Since any public sheet ID can be loaded, this is only
-  safe because the app trusts whoever authored the sheet you point it at — treat shared sheet
-  links the same way you'd treat any other untrusted link.
+- All interactions beyond navigation and the Play Now / Discover "Play" CTAs (Confirm Payout,
+  Get Bonus, Copy & Shop, etc.) are visual only — no backend, no persistence, by design. "Play
+  Now" (Game Detail) and the game card's "Play" pill (Discover) navigate to `games.href` via
+  `location.href`; a blank `href` renders them dimmed and inert instead.
+- Sheet content (game names, descriptions, image/icon URLs, brand names, `games.href`) is
+  rendered without sanitizing beyond basic HTML-escaping, which does not validate URL schemes.
+  Since any public sheet ID can be loaded, this is only safe because the app trusts whoever
+  authored the sheet you point it at — treat shared sheet links the same way you'd treat any
+  other untrusted link.

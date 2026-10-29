@@ -229,6 +229,13 @@
   font-weight: 800;
 }
 
+/* Dimmed state for CTAs tied to sheet data that may be blank (e.g. games.href) — keeps the
+   button's existing color/shape, just signals "temporarily unavailable". */
+.btn-disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 /* ---------- Badges / chips ---------- */
 .badge {
   display: inline-flex;

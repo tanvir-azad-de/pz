@@ -39,7 +39,12 @@ function renderDiscover(container, params, store) {
   `;
 
   container.querySelectorAll("[data-game-id]").forEach((el) => {
-    el.addEventListener("click", () => {
+    el.addEventListener("click", (e) => {
+      const playPill = e.target.closest("[data-play-href]");
+      if (playPill) {
+        location.href = playPill.dataset.playHref;
+        return;
+      }
       location.hash = App.hashFor("game", el.dataset.gameId);
     });
   });
@@ -63,6 +68,7 @@ function gameCardHtml(game) {
   const { symbol, rest, position } = Render.splitAmount(game.total_reward);
   const symbolHtml = `<span class="t-title-sm" style="color:var(--color-primary);">${Render.esc(symbol)}</span>`;
   const restHtml = `<span class="t-title-sm">${Render.esc(rest)}</span>`;
+  const playHref = Render.playHref(game);
 
   return `
     <button class="game-card" type="button" data-game-id="${Render.esc(game.id)}">
@@ -79,7 +85,7 @@ function gameCardHtml(game) {
         <div class="game-card__amount">
           ${position === "suffix" ? restHtml + symbolHtml : symbolHtml + restHtml}
         </div>
-        <span class="btn btn-play">${Render.t("game_card_play_cta")}</span>
+        <span class="btn btn-play${playHref ? "" : " btn-disabled"}"${playHref ? ` data-play-href="${Render.esc(playHref)}"` : ""}>${Render.t("game_card_play_cta")}</span>
       </div>
     </button>
   `;

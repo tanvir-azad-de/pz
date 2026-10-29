@@ -30,7 +30,10 @@ Route `#/discover`. Sections, top to bottom, each separated by `--space-section-
    of the shared game card component for every row in `games` (including the trending one —
    Figma shows it duplicated in both sections, so the app does too, for fidelity).
 
-Each card navigates to `#/game/:id` on tap.
+Each card navigates to `#/game/:id` on tap — except the card's "Play" pill (`.btn-play`),
+which instead opens `games.href` (Play Store / App Store link) directly via `location.href`,
+same tab. When `href` is blank for that row, the pill renders dimmed (`.btn-disabled`) and a
+tap on it falls through to the normal card navigation.
 
 ```
 Discover

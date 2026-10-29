@@ -81,6 +81,7 @@ error screen naming the tab and the missing columns/keys — see "Validation and
 | `long_description` | string | paragraph, shown in the Game Detail "Description" card with "...See More" truncation |
 | `has_cashback` | boolean (`TRUE`/`FALSE`) | shows the "Cashback" badge (dollar icon) on the card |
 | `has_limited_bonus` | boolean (`TRUE`/`FALSE`) | shows the "Limited Bonus" badge (stopwatch icon) on the card |
+| `href` | string (URL) | Play Store / App Store link. Drives the Discover card's "Play" pill and the Game Detail "Play Now" button via `location.href` (same tab). Required column, but may be blank per-row — a blank value renders the button/pill dimmed and inert (`Render.playHref`) instead of failing the sheet load. No scheme validation is performed. |
 
 **Convention:** row 2 (the first data row) is the **Trending Game** shown on Discover. All rows
 render in both Discover → "All Games" and My Games (My Games shows the identical list as

@@ -140,6 +140,7 @@ Canonical button styles, reused everywhere:
 .btn-small         { height:36px; border-radius:8px; background:var(--color-primary); color:var(--color-on-primary); padding:13px 20px; font:14px/21px; font-weight:800; }
 .btn-ghost         { height:36px; border-radius:8px; background:transparent; color:var(--color-on-bg); padding:13px 0; font:14px/21px; font-weight:800; }
 .btn-pill-outline  { height:36px; border-radius:54px; background:transparent; border:1px solid currentColor; padding:12px 0; font:16px/21px; font-weight:800; }
+.btn-disabled      { opacity:0.4; cursor:not-allowed; } /* modifier, stacks on top of any .btn-* above */
 ```
 
 Sticky footer CTAs (Play Now / Confirm Payout / Invite Friends) use `.btn-primary`, wrapped in a

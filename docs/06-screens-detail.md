@@ -63,8 +63,10 @@ Route `#/game/:id`. Back arrow + game name in nav bar. No tab bar; sticky "Play 
    12/300), truncated to ~2 lines with a trailing "...See More" (visual only — tapping expands
    in place by removing the `line-clamp`, no navigation).
 
-7. **Sticky footer** — "Play Now" (`.btn-primary`, full width, 58px), visual only (no real game
-   launch).
+7. **Sticky footer** — "Play Now" (`.btn-primary`, full width, 58px). Navigates to
+   `games.href` (Play Store / App Store link) via `location.href`, same tab. When `href` is
+   blank for that row, the button renders with `.btn-disabled` (dimmed, `disabled` attribute)
+   instead of launching anything.
 
 **Overlay nav bar.** Because the hero is `position: absolute; top: 0`, it needs `#view` to
 start at viewport `y: 0` to sit behind the nav bar — but `#view` is a scroll container
@@ -95,7 +97,7 @@ Game Detail
 ├─ IAP cashback card (static copy)
 ├─ Tasks card (header total = SUM(tasks.amount), N task rows, active badge)
 ├─ Description card (long_description, See More)
-└─ Sticky "Play Now"
+└─ Sticky "Play Now" (games.href, dimmed/disabled when blank)
 ```
 
 ## Reward Detail (Figma node `1:6256`)

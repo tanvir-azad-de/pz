@@ -24,6 +24,16 @@ const Render = (() => {
     return String(v).trim().toUpperCase() === "TRUE";
   }
 
+  // games.href is a Play Store / App Store link, used to make the "Play Now" CTA (Game
+  // Detail) and the card's "Play" pill (Discover) functional. Returns "" when the column is
+  // blank/missing so callers can render a disabled state instead of a dead link. Rendered
+  // as-is with no scheme validation (esc() only escapes HTML, not javascript:/data: URLs) —
+  // this trusts the sheet owner, same stance documented for other sheet-sourced URLs in
+  // README.md "Known gaps".
+  function playHref(game) {
+    return String((game && game.href) || "").trim();
+  }
+
   // ---- Content lookup ----
   // Every user-visible string that isn't per-row sheet data (game names, task amounts, etc.)
   // comes from the `content` tab so copy can be changed without a deploy. initContent() is
@@ -280,6 +290,7 @@ const Render = (() => {
   return {
     esc,
     boolTrue,
+    playHref,
     parseAmount,
     splitAmount,
     formatAmount,

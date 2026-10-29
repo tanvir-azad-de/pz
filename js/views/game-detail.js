@@ -11,6 +11,7 @@ function renderGameDetail(container, params, store) {
   const tasks = store.data.tasks.filter((t) => t.game_id === game.id);
   const total = Render.computedTotal(tasks);
   const isActive = (t) => Render.boolTrue(t.is_active);
+  const playHref = Render.playHref(game);
 
   container.innerHTML = `
     <div class="screen-stack game-detail-stack" style="padding-bottom: 140px; ">
@@ -69,9 +70,16 @@ function renderGameDetail(container, params, store) {
     </div>
 
     <div class="sticky-footer">
-      <button class="btn btn-primary" type="button">${Render.t("game_detail_play_cta")}</button>
+      <button class="btn btn-primary${playHref ? "" : " btn-disabled"}" type="button" id="play-now-btn"${playHref ? "" : " disabled"}>${Render.t("game_detail_play_cta")}</button>
     </div>
   `;
+
+  const playNowBtn = container.querySelector("#play-now-btn");
+  if (playNowBtn && playHref) {
+    playNowBtn.addEventListener("click", () => {
+      location.href = playHref;
+    });
+  }
 
   const seeMore = container.querySelector("#see-more");
   const desc = container.querySelector("#game-desc");
